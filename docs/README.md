@@ -11,6 +11,34 @@ Project research, design notes, decisions, and other written docs live here.
 | [`design/`](design/) | Technical or product design notes |
 | [`decisions/`](decisions/) | Architecture and product decision records |
 
+## Current documents
+
+### Research
+
+| Doc | Topic |
+|-----|-------|
+| [research/pgs-overview.md](research/pgs-overview.md) | PGS architecture and relevance |
+| [research/pgs-api-inventory.md](research/pgs-api-inventory.md) | Full public API inventory (~384 methods) |
+| [research/pgs-dependencies.md](research/pgs-dependencies.md) | Java deps → TypeScript mapping |
+| [research/pgs-fill-hatch-patterns.md](research/pgs-fill-hatch-patterns.md) | Hatch / fill composition recipes |
+| [research/pgs-overlap-occlusion.md](research/pgs-overlap-occlusion.md) | Overlap cutting / fore-background |
+
+### Design
+
+| Doc | Topic |
+|-----|-------|
+| [design/typescript-pgs-port.md](design/typescript-pgs-port.md) | Installable npm library shape |
+| [design/pgs-comparison-harness.md](design/pgs-comparison-harness.md) | Fixtures, goldens, tolerances |
+| [design/processing-oracle-cli.md](design/processing-oracle-cli.md) | Headless Processing oracle CLI |
+| [design/development-phases.md](design/development-phases.md) | Phased delivery plan |
+
+### Decisions
+
+| Doc | Topic |
+|-----|-------|
+| [decisions/0001-clean-room-mit.md](decisions/0001-clean-room-mit.md) | Clean-room MIT vs GPL port |
+| [decisions/0002-pen-plotter-output.md](decisions/0002-pen-plotter-output.md) | Pen-plotter: stroke marks only, skip solid fills |
+
 ## Creating a document
 
 1. Copy the matching template from `templates/` into the right content folder.
