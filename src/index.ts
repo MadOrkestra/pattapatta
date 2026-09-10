@@ -74,3 +74,11 @@ export { clipSegmentToPath, clipSegmentsToPath } from './segmentSet/clip.js'
 
 export { hatch, parallel as hatchParallel, cross as hatchCross } from './hatch/index.js'
 export type { ParallelHatchOptions } from './hatch/index.js'
+
+export {
+  circlePacking,
+  squareLatticePack,
+  hexLatticePack,
+  stochasticPack,
+  circleOverlapsPath,
+} from './circlePacking/index.js'

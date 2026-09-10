@@ -75,6 +75,7 @@ void parseOracleArgs() {
 void runSelectedCases() {
   boolean wantBoolean = runAll || suiteFilter.equals("boolean");
   boolean wantHatch = runAll || suiteFilter.equals("hatch");
+  boolean wantPacking = runAll || suiteFilter.equals("packing");
 
   if (wantBoolean) {
     runBooleanCases(caseFilter);
@@ -82,8 +83,11 @@ void runSelectedCases() {
   if (wantHatch) {
     runHatchCases(caseFilter);
   }
+  if (wantPacking) {
+    runPackingCases(caseFilter);
+  }
 
-  if (!wantBoolean && !wantHatch) {
+  if (!wantBoolean && !wantHatch && !wantPacking) {
     throw new RuntimeException("Unknown suite filter: " + suiteFilter);
   }
 }

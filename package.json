@@ -32,6 +32,10 @@
       "types": "./dist/hatch/index.d.ts",
       "import": "./dist/hatch/index.js"
     },
+    "./circlePacking": {
+      "types": "./dist/circlePacking/index.d.ts",
+      "import": "./dist/circlePacking/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

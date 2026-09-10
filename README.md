@@ -31,5 +31,6 @@ npx pattapatta --help
 - Phase 1b: Processing oracle (`oracle/processing/OracleMain`)
 - Phase 2: `shapeBoolean` + predicates (Clipper2), oracle-compared
 - Phase 3: `segmentSet` + `hatch` (parallel/cross), oracle-compared
+- Phase 4: `circlePacking` (square/hex lattice + seeded stochastic), oracle-compared
 
 Design notes live in `docs/`.
