@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Phase 7: README consumer examples, publish prep; remaining exotic inventory methods deferred with notes.
+- Publish prep (npm ignore oracle jars; version bump); keep regenerating GitBook assets with `npm run docs:examples`.
 
 ## Document history
 

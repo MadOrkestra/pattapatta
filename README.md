@@ -1,8 +1,24 @@
 # pattapatta
 
-Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, boolean path ops, and SVG I/O for Node and the browser.
+Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
 
-**Stroke marks only** — solid area fills are not the goal. See `docs/decisions/0002-pen-plotter-output.md`.
+**Stroke marks only** — solid area fills are not the goal.
+
+## Documentation (GitBook)
+
+Consumer docs live in [`gitbook/`](./gitbook/) and are configured for GitBook via [`.gitbook.yaml`](./.gitbook.yaml).
+
+| | |
+|-|-|
+| Quickstart | [gitbook/quickstart.md](./gitbook/quickstart.md) |
+| Getting started | [gitbook/getting-started.md](./gitbook/getting-started.md) |
+| API + pictures | [gitbook/SUMMARY.md](./gitbook/SUMMARY.md) |
+
+Regenerate example SVGs:
+
+```bash
+npm run docs:examples
+```
 
 ## Install
 
@@ -13,10 +29,10 @@ npm install pattapatta
 ## Usage
 
 ```ts
-import { parseSvg, toSvg, union, polygon, vec2 } from 'pattapatta'
+import { parseSvg, toSvg, union, createRect } from 'pattapatta'
 
-const a = polygon([vec2(0, 0), vec2(2, 0), vec2(2, 1), vec2(0, 1)])
-const b = polygon([vec2(1, 0), vec2(3, 0), vec2(3, 1), vec2(1, 1)])
+const a = createRect(0, 0, 2, 1)
+const b = createRect(1, 0, 2, 1)
 const merged = union(a, b)
 console.log(toSvg(merged))
 ```
@@ -27,10 +43,4 @@ npx pattapatta --help
 
 ## Status
 
-- Phase 1: geometry types + SVG round-trip
-- Phase 1b: Processing oracle (`oracle/processing/OracleMain`)
-- Phase 2: `shapeBoolean` + predicates (Clipper2), oracle-compared
-- Phase 3: `segmentSet` + `hatch` (parallel/cross), oracle-compared
-- Phase 4: `circlePacking` (square/hex lattice + seeded stochastic), oracle-compared
-
-Design notes live in `docs/`.
+Phases 1–6 of the library surface are in place (boolean, hatch, packing, morphology, hull, triangulation, Voronoi, tiling, meshing, …). See `docs/design/development-phases.md`. Design research stays under `docs/`.

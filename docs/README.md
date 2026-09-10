@@ -2,6 +2,8 @@
 
 Project research, design notes, decisions, and other written docs live here.
 
+**User-facing GitBook** (quickstart, getting started, pictured API): see [`../gitbook/`](../gitbook/) and [`.gitbook.yaml`](../.gitbook.yaml).
+
 ## Layout
 
 | Path | Purpose |

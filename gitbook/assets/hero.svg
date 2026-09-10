@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 8 8 L 92 8 L 92 92 L 8 92 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <path d="M 8.000000000000007 22.575382144217315 L 92 83.60495035621575" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 16.395046482851647 L 92 77.42461711726457" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 28.755725323645166 L 92 89.78529804191294" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 10.214704957194186 L 92 71.24427483627643" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 34.936063483485945 L 86.54177532442168 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 13.458229399476458 8 L 92 65.06393495972033" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 41.116407944099414 L 78.03525597370916 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 21.964741913296926 8 L 92 58.88359209261104" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 47.2967387813866 L 69.52876489871144 92.00000000000001" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 30.4712415463108 8 L 92 52.703259398017565" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 53.477085685370945 L 61.022244494158755 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 38.97775053832726 8 L 92.00000000000001 46.52291937064078" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 59.65742373541584 L 52.51573800067074 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 47.484261236315945 8 L 91.99999999999999 40.34257715024697" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 65.8377577122885 L 44.00923974985419 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 55.990762653251906 8 L 91.99999999999999 34.16224318815456" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 72.01810251963613 L 35.50272431218163 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 64.49727801471101 8 L 92 27.981896472059418" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 78.19844350010544 L 26.996213233679526 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 73.00378190127478 8 L 92 21.80156077087686" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 84.37877740765758 L 18.48971377799981 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 81.51029800888439 8 L 92 15.621214340942089" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 8 90.55912220042356 L 9.983198302306192 92" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <path d="M 90.01680114929765 8 L 92 9.44087835359916" stroke="#ccc" stroke-width="0.8" fill="none"/>
+  <circle cx="49.99880253175753" cy="49.99880253175753" r="41.99880253175753" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="84.78820492539249" cy="84.78820492539249" r="7.200842160176045" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="15.209400138122618" cy="84.7882049253925" r="7.200842160176016" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="84.7882049253925" cy="15.209400138122618" r="7.200842160176016" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="15.20940013812262" cy="15.20940013812262" r="7.200842160175981" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="11.598474334917851" cy="25.39470119681744" r="3.598474334917851" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="11.312090564318854" cy="73.5943349354577" r="3.3120905643188543" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+  <circle cx="25.39470119681744" cy="11.598474334917851" r="3.598474334917851" stroke="#c45c26" stroke-width="1.4" fill="none"/>
+</svg>

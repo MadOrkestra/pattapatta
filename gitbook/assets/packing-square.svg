@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 10 10 L 90 10 L 90 90 L 10 90 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <circle cx="10" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="10" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="10" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="10" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="10" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="10" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="26" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="42" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="58" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="74" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="10" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="26" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="42" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="58" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="74" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="90" cy="90" r="8" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+</svg>

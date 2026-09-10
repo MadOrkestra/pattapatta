@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 10 10 L 90 10 L 90 90 L 10 90 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <circle cx="46.49537540972233" cy="15.994240771979094" r="5.9942407719790936" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="71.04043118655682" cy="48.49443342536688" r="18.959568813443184" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="31.060501467436552" cy="54.20857796445489" r="21.060501467436552" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="25.59330014511943" cy="16.687430534511805" r="6.687430534511805" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="73.49856464192271" cy="80.38186615332961" r="9.61813384667039" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="52.114286199212074" cy="76.53870785608888" r="9.629831742047994" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="84.94574466720223" cy="71.54953837394714" r="4.840356549412105" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="71.21356852352619" cy="14.551151227205992" r="4.551151227205992" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="53.21564447134733" cy="33.19439386948943" r="4.531157694141104" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="70.49667662009597" cy="23.839707914739847" r="4.76502928514636" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="18.242792543023825" cy="24.793884474784136" r="4.255355102346028" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+  <circle cx="20.1356210000813" cy="79.42477175965905" r="6.420572797287765" stroke="#c45c26" stroke-width="1.2" fill="none"/>
+</svg>

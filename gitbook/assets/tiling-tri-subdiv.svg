@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 50 10 L 60 28.75 L 40 28.75 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 60 28.75 L 70 47.5 L 50 47.5 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 40 28.75 L 50 47.5 L 30 47.5 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 60 28.75 L 50 47.5 L 40 28.75 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 70 47.5 L 80 66.25 L 60 66.25 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 80 66.25 L 90 85 L 70 85 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 60 66.25 L 70 85 L 50 85 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 80 66.25 L 70 85 L 60 66.25 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 30 47.5 L 40 66.25 L 20 66.25 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 40 66.25 L 50 85 L 30 85 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 20 66.25 L 30 85 L 10 85 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 40 66.25 L 30 85 L 20 66.25 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 70 47.5 L 60 66.25 L 50 47.5 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 60 66.25 L 50 85 L 40 66.25 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 50 47.5 L 40 66.25 L 30 47.5 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 60 66.25 L 40 66.25 L 50 47.5 Z" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+</svg>
