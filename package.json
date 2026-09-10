@@ -80,6 +80,18 @@
       "types": "./dist/construction/index.d.ts",
       "import": "./dist/construction/index.js"
     },
+    "./tiling": {
+      "types": "./dist/tiling/index.d.ts",
+      "import": "./dist/tiling/index.js"
+    },
+    "./polygonisation": {
+      "types": "./dist/polygonisation/index.d.ts",
+      "import": "./dist/polygonisation/index.js"
+    },
+    "./meshing": {
+      "types": "./dist/meshing/index.d.ts",
+      "import": "./dist/meshing/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Remaining Phase 6: tiling, meshing, polygonisation, optimisation extras; then Phase 7 docs/publish.
+- Phase 7: README consumer examples, publish prep; remaining exotic inventory methods deferred with notes.
 
 ## Document history
 

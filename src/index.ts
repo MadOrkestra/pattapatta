@@ -192,3 +192,42 @@ export {
   createStar,
   createKochSnowflake,
 } from './construction/index.js'
+
+export {
+  tiling,
+  squareGrid as squareTiling,
+  hexTiling,
+  rectSubdivision,
+  quadSubdivision,
+  triangleSubdivision,
+  sliceDivision,
+  hatchSubdivision,
+} from './tiling/index.js'
+
+export {
+  polygonisation,
+  maxArea,
+  minArea,
+  minPerimeter,
+  horizontal as polygoniseHorizontal,
+  vertical as polygoniseVertical,
+  angular,
+  circular,
+  onion,
+  onionLayers,
+  hilbert as hilbertPolygonise,
+} from './polygonisation/index.js'
+
+export {
+  meshing,
+  extractInnerEdges,
+  extractInnerVertices,
+  findContainingFace,
+  splitEdges,
+  gabrielFaces,
+  relativeNeighborFaces,
+  dualFaces,
+  radialSortFaces,
+  centroidSortFaces,
+  areaMerge,
+} from './meshing/index.js'
