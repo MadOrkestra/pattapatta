@@ -19,6 +19,7 @@ Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), 
 |------|---------|
 | [Quickstart](/quickstart) | Install and draw something in 2 minutes |
 | [Getting started](/getting-started) | Mental model, imports, a full mini pipeline |
+| [Live demos](/demos) | Interactive packing and hatch in the browser |
 | [API reference](/api/shape-boolean) | Every module with pictured examples |
 
 ## Design notes

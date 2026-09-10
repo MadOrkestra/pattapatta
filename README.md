@@ -4,17 +4,7 @@ Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)
 
 **Stroke marks only** — solid area fills are not the goal.
 
-## Documentation (SvelteKit PWA)
-
-Consumer docs are a SvelteKit + shadcn-svelte app in [`website/`](./website/):
-
-```bash
-npm run docs:dev      # http://localhost:5173
-npm run docs:build    # static build → website/build
-npm run docs:examples # regenerate SVG figures into website/static/assets
-```
-
-Content is Markdown (mdsvex) with pictured API pages; installable offline via the service worker.
+[![npm](https://img.shields.io/npm/v/pattapatta.svg)](https://www.npmjs.com/package/pattapatta)
 
 ## Install
 
@@ -22,21 +12,47 @@ Content is Markdown (mdsvex) with pictured API pages; installable offline via th
 npm install pattapatta
 ```
 
-## Usage
+Requires **Node ≥ 18** (ESM). Works in modern browsers via bundlers.
+
+## Quick example
 
 ```ts
-import { parseSvg, toSvg, union, createRect } from 'pattapatta'
+import { createRect, union, hatchParallel, toSvg, group, segmentsToOpenPaths } from 'pattapatta'
 
 const a = createRect(0, 0, 2, 1)
 const b = createRect(1, 0, 2, 1)
 const merged = union(a, b)
-console.log(toSvg(merged))
+const strokes = hatchParallel(merged.paths[0]!, { spacing: 0.08, count: 40 })
+console.log(toSvg(group(segmentsToOpenPaths(strokes))))
 ```
 
 ```bash
 npx pattapatta --help
+npx pattapatta svg:roundtrip in.svg -o out.svg
 ```
 
-## Status
+## Docs site
 
-Phases 1–6 of the library surface are in place (boolean, hatch, packing, morphology, hull, triangulation, Voronoi, tiling, meshing, …). See `docs/design/development-phases.md`. Internal research stays under `docs/`.
+Local documentation PWA (SvelteKit + shadcn):
+
+```bash
+npm run docs:dev
+npm run docs:build
+npm run docs:examples   # regenerate SVG figures
+```
+
+## Modules
+
+| Import | Role |
+|--------|------|
+| `pattapatta` | Types, SVG, all facades |
+| `pattapatta/shapeBoolean` | Union / intersect / subtract / occlusion |
+| `pattapatta/hatch` | Parallel / cross hatch fills |
+| `pattapatta/circlePacking` | Lattices (`overlap` \| `contained`), LEC, stochastic |
+| `pattapatta/morphology` | Buffer, simplify, warps |
+| `pattapatta/voronoi` | Voronoi cells |
+| … | See `website/` API pages |
+
+## License
+
+MIT — clean-room implementation (not a GPL line-port of PGS). See `docs/decisions/`.

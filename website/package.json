@@ -11,6 +11,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
+	"dependencies": {
+		"pattapatta": "file:.."
+	},
 	"devDependencies": {
 		"@fontsource-variable/roboto": "^5.3.0",
 		"@internationalized/date": "^3.12.4",

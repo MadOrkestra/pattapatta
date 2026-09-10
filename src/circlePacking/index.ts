@@ -3,30 +3,47 @@ import { circle } from '../types/index.js'
 import { bounds, containsPoint } from '../predicates/index.js'
 
 /**
- * Square lattice of equal circles; include a circle if it overlaps the path
- * (PGS: center inside shape buffered by ~0.95 * radius).
+ * Lattice inclusion mode.
+ * - `overlap` (default): PGS-compatible — keep disks that overlap the path.
+ * - `contained`: keep only disks fully inside the path (plotter-friendly fill).
  */
-export function squareLatticePack(path: Path, diameter: number): Circle[] {
+export type LatticePackMode = 'overlap' | 'contained'
+
+/**
+ * Square lattice of equal circles.
+ * @see docs/decisions/0003-deferred-circle-packing.md
+ */
+export function squareLatticePack(
+  path: Path,
+  diameter: number,
+  mode: LatticePackMode = 'overlap',
+): Circle[] {
   const d = Math.max(diameter, 0.1)
   const r = d / 2
   const b = bounds(path)
   const out: Circle[] = []
   const w = b.maxX - b.minX + d + b.minX
   const h = b.maxY - b.minY + d + b.minY
+  const accept =
+    mode === 'contained' ? circleContainedInPath : circleOverlapsPath
 
   for (let x = b.minX; x < w; x += d) {
     for (let y = b.minY; y < h; y += d) {
       const c = circle(x, y, r)
-      if (circleOverlapsPath(c, path)) out.push(c)
+      if (accept(c, path)) out.push(c)
     }
   }
   return out
 }
 
 /**
- * Hexagonal lattice of equal circles; include if overlaps the path.
+ * Hexagonal lattice of equal circles.
  */
-export function hexLatticePack(path: Path, diameter: number): Circle[] {
+export function hexLatticePack(
+  path: Path,
+  diameter: number,
+  mode: LatticePackMode = 'overlap',
+): Circle[] {
   const d = Math.max(diameter, 0.1)
   const r = d / 2
   const b = bounds(path)
@@ -35,12 +52,14 @@ export function hexLatticePack(path: Path, diameter: number): Circle[] {
   const z = r * Math.sqrt(3)
   const out: Circle[] = []
   let offset = 0
+  const accept =
+    mode === 'contained' ? circleContainedInPath : circleOverlapsPath
 
   for (let x = b.minX; x < w; x += z) {
     offset = offset === r ? 0 : r
     for (let y = b.minY - offset; y < h; y += d) {
       const c = circle(x, y, r)
-      if (circleOverlapsPath(c, path)) out.push(c)
+      if (accept(c, path)) out.push(c)
     }
   }
   return out
@@ -79,22 +98,14 @@ export function stochasticPack(
  * `tolerance` controls coarse grid step as a fraction of the bbox diagonal
  * (PGS uses a related accuracy knob; values ~0.5–1 are reasonable).
  *
- * Deferred (Phase 4b): `tangencyPack`, `trinscribedPack`, `obstaclePack`
- * need fuller PGS-equivalent algorithms; use lattices / LEC / stochastic for now.
+ * Deferred: `tangencyPack`, `trinscribedPack` — see ADR 0003.
  */
 export function maximumInscribedPack(
   path: Path,
   n: number,
   tolerance = 1,
 ): Circle[] {
-  const packing: Circle[] = []
-  const tol = Math.max(0.01, tolerance)
-  for (let i = 0; i < n; i++) {
-    const next = findLargestEmptyCircle(path, packing, tol)
-    if (!next || next.r <= 1e-9) break
-    packing.push(next)
-  }
-  return packing
+  return obstaclePack(path, [], n, tolerance)
 }
 
 /**
@@ -114,6 +125,28 @@ export function maximumInscribedPackUntil(
     packing.push(next)
   }
   return packing
+}
+
+/**
+ * Successive LECs inside `path`, treating `obstacles` as already-placed disks.
+ * Simpler than full PGS obstacle packing; sufficient for “avoid these circles.”
+ */
+export function obstaclePack(
+  path: Path,
+  obstacles: Circle[],
+  n: number,
+  tolerance = 1,
+): Circle[] {
+  const packing: Circle[] = obstacles.map((c) => ({ ...c }))
+  const placed: Circle[] = []
+  const tol = Math.max(0.01, tolerance)
+  for (let i = 0; i < n; i++) {
+    const next = findLargestEmptyCircle(path, packing, tol)
+    if (!next || next.r <= 1e-9) break
+    packing.push(next)
+    placed.push(next)
+  }
+  return placed
 }
 
 /**
@@ -237,6 +270,13 @@ export function circleOverlapsPath(c: Circle, path: Path): boolean {
   return dist <= c.r * 0.95
 }
 
+/** True if the disk lies fully inside the path. */
+export function circleContainedInPath(c: Circle, path: Path): boolean {
+  const center = { x: c.x, y: c.y }
+  if (!containsPoint(path, center)) return false
+  return distanceToBoundary(center, path) + 1e-9 >= c.r
+}
+
 /** Distance from point to polygon: 0 if inside, else distance to boundary. */
 export function distanceToPolygon(p: Vec2, path: Path): number {
   if (containsPoint(path, p)) return 0
@@ -351,7 +391,9 @@ export const circlePacking = {
   stochasticPack,
   maximumInscribedPack,
   maximumInscribedPackUntil,
+  obstaclePack,
   frontChainPack,
   repulsionPack,
   circleOverlapsPath,
+  circleContainedInPath,
 }

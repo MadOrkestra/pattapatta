@@ -70,7 +70,8 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Host/deploy `website/build`; keep regenerating figures with `npm run docs:examples`.
+- Publish `pattapatta@0.1.0` when ready (`npm publish` — dry-run already covered by `npm pack`).
+- Host/deploy `website/build` later; keep regenerating figures with `npm run docs:examples`.
 
 ## Document history
 

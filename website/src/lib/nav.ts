@@ -15,6 +15,7 @@ export const navGroups: NavGroup[] = [
 			{ title: 'Welcome', href: '/' },
 			{ title: 'Quickstart', href: '/quickstart' },
 			{ title: 'Getting started', href: '/getting-started' },
+			{ title: 'Live demos', href: '/demos' },
 		],
 	},
 	{

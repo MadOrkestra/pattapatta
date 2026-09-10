@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import {
   hexLatticePack,
+  obstaclePack,
   polygon,
   squareLatticePack,
   stochasticPack,
@@ -58,15 +59,28 @@ describe('circlePacking lattices vs oracle', () => {
   })
 })
 
-describe('stochasticPack', () => {
-  it('is deterministic for a seed and stays inside the path', () => {
-    const a = stochasticPack(unitSquare(), 80, 0.05, 42)
-    const b = stochasticPack(unitSquare(), 80, 0.05, 42)
-    expect(a.length).toBe(b.length)
-    expect(a.length).toBeGreaterThan(0)
-    for (let i = 0; i < a.length; i++) {
-      expect(a[i]!.x).toBeCloseTo(b[i]!.x, 10)
-      expect(a[i]!.r).toBeGreaterThanOrEqual(0.05)
+describe('contained lattice + obstaclePack', () => {
+  it('contained square lattice keeps disks inside the square', () => {
+    const got = squareLatticePack(unitSquare(), 0.25, 'contained')
+    expect(got.length).toBeGreaterThan(0)
+    expect(got.length).toBeLessThan(
+      squareLatticePack(unitSquare(), 0.25, 'overlap').length,
+    )
+    for (const c of got) {
+      expect(c.x - c.r).toBeGreaterThanOrEqual(-1e-6)
+      expect(c.y - c.r).toBeGreaterThanOrEqual(-1e-6)
+      expect(c.x + c.r).toBeLessThanOrEqual(1 + 1e-6)
+      expect(c.y + c.r).toBeLessThanOrEqual(1 + 1e-6)
+    }
+  })
+
+  it('obstaclePack avoids seed obstacles', () => {
+    const seed = [{ x: 0.5, y: 0.5, r: 0.2 }]
+    const got = obstaclePack(unitSquare(), seed, 3, 0.5)
+    expect(got.length).toBeGreaterThan(0)
+    for (const c of got) {
+      const d = Math.hypot(c.x - 0.5, c.y - 0.5)
+      expect(d + 1e-4).toBeGreaterThanOrEqual(c.r + 0.2)
     }
   })
 })

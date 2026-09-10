@@ -1,0 +1,11 @@
+# Extra publish excludes (package.json "files" is the allowlist).
+website/
+docs/
+oracle/
+tests/
+scripts/
+gitbook/
+src/
+*.tgz
+.env
+.env.*

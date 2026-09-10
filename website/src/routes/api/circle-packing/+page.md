@@ -8,25 +8,41 @@ Lattice, stochastic, and inscribed circle packings.
 import {
   squareLatticePack, hexLatticePack, stochasticPack,
   maximumInscribedPack, maximumInscribedPackUntil,
-  frontChainPack, repulsionPack, circleOverlapsPath,
+  frontChainPack, repulsionPack, obstaclePack,
+  circleOverlapsPath, circleContainedInPath,
   circlePacking,
+  type LatticePackMode,
 } from 'pattapatta'
+```
+
+## Lattice modes
+
+`LatticePackMode`: `'overlap'` (default, PGS-compatible) | `'contained'` (fully inside — better for plotter fills).
+
+```ts
+squareLatticePack(path, 0.25)              // overlap
+squareLatticePack(path, 0.25, 'contained')
+hexLatticePack(path, 0.25, 'contained')
 ```
 
 ## Functions
 
 | Function | Description |
 |----------|-------------|
-| `squareLatticePack(path, diameter)` | Square lattice; keep overlapping disks |
-| `hexLatticePack(path, diameter)` | Hex lattice |
+| `squareLatticePack(path, diameter, mode?)` | Square lattice |
+| `hexLatticePack(path, diameter, mode?)` | Hex lattice |
 | `stochasticPack(path, points, minRadius, seed?)` | Seeded random growth |
 | `maximumInscribedPack(path, n, tolerance?)` | Iterative LEC packing |
 | `maximumInscribedPackUntil(path, minR, tolerance?)` | Until radius threshold |
+| `obstaclePack(path, obstacles, n, tolerance?)` | LEC pack avoiding seed disks |
 | `frontChainPack(path, minR, maxR, seed?)` | Seeded front-chain style |
 | `repulsionPack(path, minR, maxR, seed?, iterations?)` | Overlap + push |
 | `circleOverlapsPath(c, path)` | Disk overlaps filled path |
+| `circleContainedInPath(c, path)` | Disk fully inside path |
 
-**Deferred:** `tangencyPack`, `trinscribedPack`, `obstaclePack`.
+**Deferred:** `tangencyPack`, `trinscribedPack` — see ADR 0003.
+
+Try interactive controls on [Live demos](/demos).
 
 ## Examples
 

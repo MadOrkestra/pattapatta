@@ -82,10 +82,13 @@ export {
   stochasticPack,
   maximumInscribedPack,
   maximumInscribedPackUntil,
+  obstaclePack,
   frontChainPack,
   repulsionPack,
   circleOverlapsPath,
+  circleContainedInPath,
 } from './circlePacking/index.js'
+export type { LatticePackMode } from './circlePacking/index.js'
 
 export { morphology, buffer, erosionDilation, dilationErosion, simplify, reducePrecision, chaikinCut, smooth, radialWarp, sineWarp, minkSum, minkDifference } from './morphology/index.js'
 export type { BufferOptions } from './morphology/index.js'

@@ -42,6 +42,7 @@ Project research, design notes, decisions, and other written docs live here.
 |-----|-------|
 | [decisions/0001-clean-room-mit.md](decisions/0001-clean-room-mit.md) | Clean-room MIT vs GPL port |
 | [decisions/0002-pen-plotter-output.md](decisions/0002-pen-plotter-output.md) | Pen-plotter: stroke marks only, skip solid fills |
+| [decisions/0003-deferred-circle-packing.md](decisions/0003-deferred-circle-packing.md) | Contained lattices; defer tangency/trinscribed packs |
 
 ## Creating a document
 

@@ -5,6 +5,29 @@
   "type": "module",
   "sideEffects": false,
   "license": "MIT",
+  "author": "MadOrkestra",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadOrkestra/pattapatta.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MadOrkestra/pattapatta/issues"
+  },
+  "homepage": "https://github.com/MadOrkestra/pattapatta#readme",
+  "keywords": [
+    "pen-plotter",
+    "svg",
+    "geometry",
+    "hatching",
+    "circle-packing",
+    "boolean",
+    "clipper",
+    "voronoi",
+    "pgs"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -110,7 +133,8 @@
     "docs:examples": "npm run build && node scripts/generate-docs-examples.mjs",
     "docs:dev": "npm run --prefix website dev",
     "docs:build": "npm run --prefix website build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test && npm run build"
   },
   "engines": {
     "node": ">=18"
