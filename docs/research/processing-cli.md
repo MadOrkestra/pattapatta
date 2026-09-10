@@ -273,9 +273,8 @@ Suggested env vars for scripts (not part of upstream CLI):
 
 ## Next steps
 
-- Scaffold `oracle/processing` + `run-oracle.sh` using `processing cli --sketch=… --run`.
-- Document `PROCESSING` path detection for macOS app bundle vs Linux `PATH`.
-- Add first boolean/hatch smoke cases that `exit()` after writing goldens.
+- Keep expanding oracle suites as library modules land.
+- Confirm display-less CI behaviour on Linux images.
 
 ## Document history
 
