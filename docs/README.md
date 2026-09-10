@@ -22,6 +22,7 @@ Project research, design notes, decisions, and other written docs live here.
 | [research/pgs-dependencies.md](research/pgs-dependencies.md) | Java deps → TypeScript mapping |
 | [research/pgs-fill-hatch-patterns.md](research/pgs-fill-hatch-patterns.md) | Hatch / fill composition recipes |
 | [research/pgs-overlap-occlusion.md](research/pgs-overlap-occlusion.md) | Overlap cutting / fore-background |
+| [research/processing-cli.md](research/processing-cli.md) | Processing 4 CLI: create, edit, build, run, export |
 
 ### Design
 

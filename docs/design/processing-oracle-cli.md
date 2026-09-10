@@ -4,7 +4,7 @@ status: active
 owners: []
 created: 2026-09-10
 updated: 2026-09-10
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Processing oracle CLI
@@ -12,6 +12,8 @@ version: 0.2.0
 ## Context
 
 Validate `pattapatta` against real PGS by running a headless Processing project from the shell that writes SVG and JSON goldens.
+
+CLI how-to (create / edit / build / run / export, sketch layout, libraries): [processing-cli.md](../research/processing-cli.md).
 
 ## Goals
 
@@ -80,7 +82,7 @@ Suggested flags:
 
 1. Resolve `PROCESSING_JAVA` / `PROCESSING_PATH` (documented in oracle README).
 2. Ensure PGS library is on the sketch `code/` or sketchbook `libraries` path.
-3. Launch sketch in batch mode (`--sketch` / Java classpath approach as available on the machine).
+3. Launch with `processing cli --sketch=<abs> --run …` (see [processing-cli.md](../research/processing-cli.md); legacy: `processing-java`).
 4. Sketch: `noLoop()`, load fixture, call PGS, write `<out>/<suite>/<case>.json` + `.svg`, `exit()`.
 
 ### Export rules
@@ -113,12 +115,11 @@ flowchart LR
 
 ## Open questions
 
-- Exact Processing 4 CLI flags on macOS once the user’s install path is known.
-- Whether to vendor a PGS jar under `oracle/processing/lib` (license: GPL — OK for oracle tooling, keep out of npm pack).
+- Whether to vendor a PGS jar under `oracle/processing/lib` or sketch `code/` (license: GPL — OK for oracle tooling, keep out of npm pack).
 
 ## Next steps
 
-- Phase 1b: scaffold sketch + script; confirm run with user’s Processing install.
+- Phase 1b: scaffold sketch + script using `processing cli --sketch=… --run`.
 - Expand cases as modules land.
 
 ## Document history
@@ -127,3 +128,4 @@ flowchart LR
 |---------|------------|--------|---------------|
 | 0.1.0   | 2026-09-10 | agent  | Initial design |
 | 0.2.0   | 2026-09-10 | agent  | Plotter SVG: fill none |
+| 0.3.0   | 2026-09-10 | agent  | Link Processing CLI research; resolve flag open question |
