@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Publish prep (npm ignore oracle jars; version bump); keep regenerating GitBook assets with `npm run docs:examples`.
+- Host/deploy `website/build`; keep regenerating figures with `npm run docs:examples`.
 
 ## Document history
 

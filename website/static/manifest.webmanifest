@@ -1,0 +1,30 @@
+{
+	"name": "pattapatta",
+	"short_name": "pattapatta",
+	"description": "Pen-plotter geometry docs — hatching, packing, boolean paths",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#fafaf9",
+	"theme_color": "#1c1917",
+	"lang": "en",
+	"icons": [
+		{
+			"src": "/icons/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icons/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icons/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}

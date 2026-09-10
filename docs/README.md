@@ -2,7 +2,7 @@
 
 Project research, design notes, decisions, and other written docs live here.
 
-**User-facing GitBook** (quickstart, getting started, pictured API): see [`../gitbook/`](../gitbook/) and [`.gitbook.yaml`](../.gitbook.yaml).
+**User-facing docs** (SvelteKit PWA): see [`../website/`](../website/). Run `npm run docs:dev` from the repo root.
 
 ## Layout
 
