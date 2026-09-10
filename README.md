@@ -30,5 +30,6 @@ npx pattapatta --help
 - Phase 1: geometry types + SVG round-trip
 - Phase 1b: Processing oracle (`oracle/processing/OracleMain`)
 - Phase 2: `shapeBoolean` + predicates (Clipper2), oracle-compared
+- Phase 3: `segmentSet` + `hatch` (parallel/cross), oracle-compared
 
 Design notes live in `docs/`.

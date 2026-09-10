@@ -24,6 +24,14 @@
       "types": "./dist/predicates/index.d.ts",
       "import": "./dist/predicates/index.js"
     },
+    "./segmentSet": {
+      "types": "./dist/segmentSet/index.d.ts",
+      "import": "./dist/segmentSet/index.js"
+    },
+    "./hatch": {
+      "types": "./dist/hatch/index.d.ts",
+      "import": "./dist/hatch/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

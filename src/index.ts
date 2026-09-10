@@ -61,3 +61,16 @@ export {
   ringsToPath,
 } from './compare/index.js'
 export type { OracleCase } from './compare/index.js'
+
+export {
+  segmentSet,
+  parallelSegments,
+  filterByMinLength,
+  filterAxisAligned,
+  segmentLength,
+  segmentsToOpenPaths,
+} from './segmentSet/index.js'
+export { clipSegmentToPath, clipSegmentsToPath } from './segmentSet/clip.js'
+
+export { hatch, parallel as hatchParallel, cross as hatchCross } from './hatch/index.js'
+export type { ParallelHatchOptions } from './hatch/index.js'

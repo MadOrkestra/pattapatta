@@ -7,6 +7,8 @@ export default defineConfig([
       'svg/index': 'src/svg/index.ts',
       'shapeBoolean/index': 'src/shapeBoolean/index.ts',
       'predicates/index': 'src/predicates/index.ts',
+      'segmentSet/index': 'src/segmentSet/index.ts',
+      'hatch/index': 'src/hatch/index.ts',
     },
     format: ['esm'],
     dts: true,
