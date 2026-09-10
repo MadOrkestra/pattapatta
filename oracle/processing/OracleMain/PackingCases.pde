@@ -9,6 +9,9 @@ void runPackingCases(String filter) {
   if (caseMatches("hex-lattice-unit-square", filter)) {
     runHexLatticeUnitSquare();
   }
+  if (caseMatches("max-inscribed-5-unit-square", filter)) {
+    runMaxInscribedUnitSquare();
+  }
 }
 
 PShape loadUnitSquare() {
@@ -34,6 +37,12 @@ void runHexLatticeUnitSquare() {
   double diameter = 0.25;
   java.util.List<PVector> circles = PGS_CirclePacking.hexLatticePack(cell, diameter);
   writePackingCase("packing", "hex-lattice-unit-square", "circlePacking.hexLatticePack", circles);
+}
+
+void runMaxInscribedUnitSquare() {
+  PShape cell = loadUnitSquare();
+  java.util.List<PVector> circles = PGS_CirclePacking.maximumInscribedPack(cell, 5, 1.0);
+  writePackingCase("packing", "max-inscribed-5-unit-square", "circlePacking.maximumInscribedPack", circles);
 }
 
 void writePackingCase(String suite, String caseId, String operation, java.util.List<PVector> circles) {

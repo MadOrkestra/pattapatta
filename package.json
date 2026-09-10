@@ -36,6 +36,10 @@
       "types": "./dist/circlePacking/index.d.ts",
       "import": "./dist/circlePacking/index.js"
     },
+    "./morphology": {
+      "types": "./dist/morphology/index.d.ts",
+      "import": "./dist/morphology/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

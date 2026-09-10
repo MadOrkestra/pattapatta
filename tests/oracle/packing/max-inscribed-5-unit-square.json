@@ -1,0 +1,11 @@
+{
+  "id": "packing/max-inscribed-5-unit-square",
+  "seed": 1,
+  "operation": "circlePacking.maximumInscribedPack",
+  "outputs": {
+    "paths": [],
+    "lines": [],
+    "circles": [{ "x": 0.5, "y": 0.5, "r": 0.5 }, { "x": 0.5, "y": 0.5, "r": -0.5 }, { "x": 0.5, "y": 0.5, "r": -0.5 }, { "x": 0.5, "y": 0.5, "r": -0.5 }, { "x": 0.5, "y": 0.5, "r": -0.5 }],
+    "scalars": { "area": 0.0 }
+  }
+}

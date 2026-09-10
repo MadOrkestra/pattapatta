@@ -80,5 +80,12 @@ export {
   squareLatticePack,
   hexLatticePack,
   stochasticPack,
+  maximumInscribedPack,
+  maximumInscribedPackUntil,
+  frontChainPack,
+  repulsionPack,
   circleOverlapsPath,
 } from './circlePacking/index.js'
+
+export { morphology, buffer, erosionDilation } from './morphology/index.js'
+export type { BufferOptions } from './morphology/index.js'

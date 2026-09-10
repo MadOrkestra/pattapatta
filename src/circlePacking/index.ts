@@ -49,7 +49,7 @@ export function hexLatticePack(path: Path, diameter: number): Circle[] {
 /**
  * Seeded stochastic packing: sample random points, grow max non-overlapping
  * radius (tangent to nearest circle or limited by distance to boundary).
- * Phase 4: no triangulation Steiner mode yet (`triangulatePoints` deferred).
+ * Triangulation Steiner mode deferred.
  */
 export function stochasticPack(
   path: Path,
@@ -65,17 +65,166 @@ export function stochasticPack(
     const p = vecInBounds(b, rng)
     if (!containsPoint(path, p)) continue
 
-    const distBoundary = distanceToBoundary(p, path)
-    let maxR = distBoundary
-    for (const c of packing) {
-      const d = Math.hypot(p.x - c.x, p.y - c.y) - c.r
-      maxR = Math.min(maxR, d)
-    }
+    const maxR = clearanceRadius(p, path, packing)
     if (maxR < minRadius) continue
     packing.push(circle(p.x, p.y, maxR))
   }
 
   return packing
+}
+
+/**
+ * Pack up to `n` maximum inscribed circles via iterative largest-empty-circle
+ * search (grid + local refine). Circles are fully contained and non-overlapping.
+ * `tolerance` controls coarse grid step as a fraction of the bbox diagonal
+ * (PGS uses a related accuracy knob; values ~0.5–1 are reasonable).
+ */
+export function maximumInscribedPack(
+  path: Path,
+  n: number,
+  tolerance = 1,
+): Circle[] {
+  const packing: Circle[] = []
+  const tol = Math.max(0.01, tolerance)
+  for (let i = 0; i < n; i++) {
+    const next = findLargestEmptyCircle(path, packing, tol)
+    if (!next || next.r <= 1e-9) break
+    packing.push(next)
+  }
+  return packing
+}
+
+/**
+ * Pack inscribed circles while radius stays ≥ `minRadius`.
+ */
+export function maximumInscribedPackUntil(
+  path: Path,
+  minRadius: number,
+  tolerance = 1,
+): Circle[] {
+  const packing: Circle[] = []
+  const tol = Math.max(0.01, tolerance)
+  const minR = Math.max(0.01, minRadius)
+  for (;;) {
+    const next = findLargestEmptyCircle(path, packing, tol)
+    if (!next || next.r < minR) break
+    packing.push(next)
+  }
+  return packing
+}
+
+/**
+ * Front-chain-inspired packing of (possibly varying) radii in the path envelope,
+ * then keep circles that overlap the path. Seeded for determinism.
+ * Not a line-by-line port of PGS FrontChainPacker — same role, approximate layout.
+ */
+export function frontChainPack(
+  path: Path,
+  radiusMin: number,
+  radiusMax: number,
+  seed = 1,
+): Circle[] {
+  let rMin = Math.max(1e-6, Math.min(radiusMin, radiusMax))
+  let rMax = Math.max(rMin, Math.max(radiusMin, radiusMax))
+  const rng = mulberry32(seed >>> 0)
+  const b = bounds(path)
+  const packing: Circle[] = []
+
+  // Seed a few circles near the envelope, then grow a frontier of tangent candidates.
+  const seeds = 8
+  for (let i = 0; i < seeds; i++) {
+    const p = vecInBounds(b, rng)
+    const r = rMin + rng() * (rMax - rMin)
+    const c = circle(p.x, p.y, r)
+    if (!overlapsAny(c, packing) && circleOverlapsPath(c, path)) {
+      packing.push(c)
+    }
+  }
+
+  const maxCircles = 400
+  let guard = 0
+  while (packing.length < maxCircles && guard++ < maxCircles * 8) {
+    if (packing.length === 0) break
+    const base = packing[Math.floor(rng() * packing.length)]!
+    const ang = rng() * Math.PI * 2
+    const r = rMin + rng() * (rMax - rMin)
+    const dist = base.r + r
+    const c = circle(
+      base.x + Math.cos(ang) * dist,
+      base.y + Math.sin(ang) * dist,
+      r,
+    )
+    if (
+      c.x < b.minX - rMax ||
+      c.x > b.maxX + rMax ||
+      c.y < b.minY - rMax ||
+      c.y > b.maxY + rMax
+    ) {
+      continue
+    }
+    if (!overlapsAny(c, packing) && circleOverlapsPath(c, path)) {
+      packing.push(c)
+    }
+  }
+
+  return packing.filter((c) => circleOverlapsPath(c, path))
+}
+
+/**
+ * Seed random circles in the envelope, then iteratively repulse overlaps;
+ * keep those that overlap the path (PGS repulsionPack role).
+ */
+export function repulsionPack(
+  path: Path,
+  radiusMin: number,
+  radiusMax: number,
+  seed = 1,
+  iterations = 80,
+): Circle[] {
+  const rMin = Math.max(1e-6, Math.min(radiusMin, radiusMax))
+  const rMax = Math.max(rMin, Math.max(radiusMin, radiusMax))
+  const rng = mulberry32(seed >>> 0)
+  const b = bounds(path)
+  const area = Math.max(1e-6, (b.maxX - b.minX) * (b.maxY - b.minY))
+  const avgR = (rMin + rMax) / 2
+  const target = Math.max(
+    4,
+    Math.floor(area / (Math.PI * avgR * avgR) * 0.6),
+  )
+
+  const circles: Circle[] = []
+  for (let i = 0; i < target; i++) {
+    const p = vecInBounds(b, rng)
+    circles.push(circle(p.x, p.y, rMin + rng() * (rMax - rMin)))
+  }
+
+  for (let iter = 0; iter < iterations; iter++) {
+    for (let i = 0; i < circles.length; i++) {
+      for (let j = i + 1; j < circles.length; j++) {
+        const a = circles[i]!
+        const bC = circles[j]!
+        const dx = bC.x - a.x
+        const dy = bC.y - a.y
+        const dist = Math.hypot(dx, dy) || 1e-9
+        const minDist = a.r + bC.r
+        if (dist >= minDist) continue
+        const push = ((minDist - dist) / 2) * 0.5
+        const ux = dx / dist
+        const uy = dy / dist
+        a.x -= ux * push
+        a.y -= uy * push
+        bC.x += ux * push
+        bC.y += uy * push
+      }
+    }
+    // Soft clamp to inflated envelope
+    for (const c of circles) {
+      c.x = Math.min(b.maxX + c.r, Math.max(b.minX - c.r, c.x))
+      c.y = Math.min(b.maxY + c.r, Math.max(b.minY - c.r, c.y))
+    }
+  }
+
+  return circles.filter((c) => circleOverlapsPath(c, path))
 }
 
 /** True if disk overlaps the filled path (including partial exterior overlap). */
@@ -89,6 +238,67 @@ export function circleOverlapsPath(c: Circle, path: Path): boolean {
 export function distanceToPolygon(p: Vec2, path: Path): number {
   if (containsPoint(path, p)) return 0
   return distanceToBoundary(p, path)
+}
+
+function findLargestEmptyCircle(
+  path: Path,
+  obstacles: Circle[],
+  tolerance: number,
+): Circle | null {
+  const b = bounds(path)
+  const diag = Math.hypot(b.maxX - b.minX, b.maxY - b.minY) || 1
+  // denser grid for smaller tolerance
+  const step = Math.max(diag * 0.02 * Math.sqrt(tolerance), diag * 0.01)
+  let best: Circle | null = null
+
+  for (let x = b.minX; x <= b.maxX; x += step) {
+    for (let y = b.minY; y <= b.maxY; y += step) {
+      const p = { x, y }
+      if (!containsPoint(path, p)) continue
+      const r = clearanceRadius(p, path, obstacles)
+      if (!best || r > best.r) best = circle(p.x, p.y, r)
+    }
+  }
+
+  if (!best) return null
+
+  // Local refine around best
+  let cur = best
+  let span = step
+  for (let iter = 0; iter < 8; iter++) {
+    let improved = cur
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx === 0 && dy === 0) continue
+        const p = { x: cur.x + dx * span, y: cur.y + dy * span }
+        if (!containsPoint(path, p)) continue
+        const r = clearanceRadius(p, path, obstacles)
+        if (r > improved.r) improved = circle(p.x, p.y, r)
+      }
+    }
+    cur = improved
+    span *= 0.5
+  }
+  return cur
+}
+
+function clearanceRadius(
+  p: Vec2,
+  path: Path,
+  obstacles: Circle[],
+): number {
+  let r = distanceToBoundary(p, path)
+  for (const c of obstacles) {
+    r = Math.min(r, Math.hypot(p.x - c.x, p.y - c.y) - c.r)
+  }
+  return Math.max(0, r)
+}
+
+function overlapsAny(c: Circle, packing: Circle[]): boolean {
+  for (const o of packing) {
+    if (Math.hypot(c.x - o.x, c.y - o.y) < c.r + o.r - 1e-9) return true
+  }
+  return false
 }
 
 function distanceToBoundary(p: Vec2, path: Path): number {
@@ -136,5 +346,9 @@ export const circlePacking = {
   squareLatticePack,
   hexLatticePack,
   stochasticPack,
+  maximumInscribedPack,
+  maximumInscribedPackUntil,
+  frontChainPack,
+  repulsionPack,
   circleOverlapsPath,
 }
