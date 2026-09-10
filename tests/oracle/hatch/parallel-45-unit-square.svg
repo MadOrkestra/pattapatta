@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 -0.1 1.2 1.2" fill="none">
+  <path d="M 0.0 0.10644531 L 0.8935547 1.0" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.10644531 0.0 L 1.0 0.8935547" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.0 0.31835938 L 0.6816406 1.0" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.31835938 0.0 L 1.0 0.6816406" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.0 0.53027344 L 0.46972656 1.0" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.53027344 0.0 L 1.0 0.46972656" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.0 0.7421875 L 0.2578125 1.0" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.7421875 0.0 L 1.0 0.2578125" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.0 0.9550781 L 0.044921875 1.0" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M 0.9550781 0.0 L 1.0 0.044921875" stroke="#000" stroke-width="1" fill="none" />
+</svg>

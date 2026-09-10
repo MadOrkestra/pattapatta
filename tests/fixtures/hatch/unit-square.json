@@ -1,0 +1,10 @@
+{
+  "id": "hatch/unit-square",
+  "seed": 1,
+  "operation": "fixture",
+  "inputs": {
+    "paths": [
+      { "rings": [[[0, 0], [1, 0], [1, 1], [0, 1]]] }
+    ]
+  }
+}

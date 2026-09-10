@@ -17,6 +17,7 @@ Project research, design notes, decisions, and other written docs live here.
 
 | Doc | Topic |
 |-----|-------|
+| [research/processing-cli.md](research/processing-cli.md) | Processing 4 CLI (`processing cli`) |
 | [research/pgs-overview.md](research/pgs-overview.md) | PGS architecture and relevance |
 | [research/pgs-api-inventory.md](research/pgs-api-inventory.md) | Full public API inventory (~384 methods) |
 | [research/pgs-dependencies.md](research/pgs-dependencies.md) | Java deps → TypeScript mapping |

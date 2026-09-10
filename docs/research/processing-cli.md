@@ -246,7 +246,8 @@ void draw() {}
 ```
 
 ```bash
-processing cli --sketch="$PWD/oracle/processing/sketch" --run "$PWD/tests/oracle"
+processing cli --sketch="$PWD/oracle/processing/OracleMain" --run \
+  --out "$PWD/tests/oracle" --fixtures "$PWD/tests/fixtures" --all
 ```
 
 ### Relation to this repo
@@ -268,7 +269,7 @@ Suggested env vars for scripts (not part of upstream CLI):
 
 - Whether `processing sketch` will gain create/rename/delete commands in later 4.x releases.
 - Best practice for truly display-less CI (current CLI already reports AWT disabled; confirm on Linux CI images).
-- Whether to vendor PGS under `oracle/processing/sketch/code/` vs sketchbook `libraries/` (license: GPL — OK for oracle tooling).
+- Whether to vendor PGS under `oracle/processing/OracleMain/code/` vs sketchbook `libraries/` (license: GPL — OK for oracle tooling).
 
 ## Next steps
 

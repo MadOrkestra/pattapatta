@@ -4,4 +4,6 @@ coverage/
 *.tgz
 .DS_Store
 tests/candidates/
+oracle/processing/_build/
+oracle/processing/OracleMain/code/*.jar
 *.log

@@ -1,0 +1,11 @@
+{
+  "id": "boolean/occlusion-two-rects",
+  "seed": 1,
+  "operation": "shapeBoolean.occlusionSubtract",
+  "outputs": {
+    "paths": [{ "rings": [[[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]] }, { "rings": [[[1.0, 0.0], [3.0, 0.0], [3.0, 1.0], [1.0, 1.0]]] }],
+    "lines": [],
+    "circles": [],
+    "scalars": { "area": 3.0 }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "boolean/subtract-two-rects",
+  "seed": 1,
+  "operation": "shapeBoolean.subtract",
+  "outputs": {
+    "paths": [{ "rings": [[[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]] }],
+    "lines": [],
+    "circles": [],
+    "scalars": { "area": 1.0 }
+  }
+}

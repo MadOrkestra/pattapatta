@@ -1,0 +1,11 @@
+{
+  "id": "boolean/union-two-rects",
+  "seed": 1,
+  "operation": "shapeBoolean.union",
+  "outputs": {
+    "paths": [{ "rings": [[[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [2.0, 1.0], [3.0, 1.0], [3.0, 0.0], [2.0, 0.0], [1.0, 0.0]]] }],
+    "lines": [],
+    "circles": [],
+    "scalars": { "area": 3.0 }
+  }
+}

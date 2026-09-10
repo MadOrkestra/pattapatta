@@ -1,0 +1,11 @@
+{
+  "id": "boolean/two-rects",
+  "seed": 1,
+  "operation": "fixture",
+  "inputs": {
+    "paths": [
+      { "rings": [[[0, 0], [2, 0], [2, 1], [0, 1]]] },
+      { "rings": [[[1, 0], [3, 0], [3, 1], [1, 1]]] }
+    ]
+  }
+}

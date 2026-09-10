@@ -4,7 +4,7 @@ status: active
 owners: []
 created: 2026-09-10
 updated: 2026-09-10
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Processing oracle CLI
@@ -44,18 +44,15 @@ CLI how-to (create / edit / build / run / export, sketch layout, libraries): [pr
 ```
 oracle/processing/
   README.md
-  sketch/
-    OracleMain.pde
-    cases/
-      BooleanCases.pde
-      HatchCases.pde
-      PackingCases.pde
-      OcclusionCases.pde
-    export/
-      JsonExport.pde
-      SvgExport.pde
   scripts/
     run-oracle.sh
+  OracleMain/                 # sketch folder (name == OracleMain.pde)
+    OracleMain.pde
+    FixtureIO.pde
+    SvgExport.pde
+    BooleanCases.pde
+    HatchCases.pde
+    code/                     # optional PGS jar(s); gitignored *.jar
 ```
 
 ### CLI
@@ -117,11 +114,6 @@ flowchart LR
 
 - Whether to vendor a PGS jar under `oracle/processing/lib` or sketch `code/` (license: GPL — OK for oracle tooling, keep out of npm pack).
 
-## Next steps
-
-- Phase 1b: scaffold sketch + script using `processing cli --sketch=… --run`.
-- Expand cases as modules land.
-
 ## Document history
 
 | Version | Date       | Author | Summary       |
@@ -129,3 +121,8 @@ flowchart LR
 | 0.1.0   | 2026-09-10 | agent  | Initial design |
 | 0.2.0   | 2026-09-10 | agent  | Plotter SVG: fill none |
 | 0.3.0   | 2026-09-10 | agent  | Link Processing CLI research; resolve flag open question |
+| 0.4.0   | 2026-09-10 | agent  | In-repo OracleMain sketch layout |
+
+## Next steps
+
+- Expand packing/occlusion suites as modules land.
