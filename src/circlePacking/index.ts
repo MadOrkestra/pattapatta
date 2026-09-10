@@ -78,6 +78,9 @@ export function stochasticPack(
  * search (grid + local refine). Circles are fully contained and non-overlapping.
  * `tolerance` controls coarse grid step as a fraction of the bbox diagonal
  * (PGS uses a related accuracy knob; values ~0.5–1 are reasonable).
+ *
+ * Deferred (Phase 4b): `tangencyPack`, `trinscribedPack`, `obstaclePack`
+ * need fuller PGS-equivalent algorithms; use lattices / LEC / stochastic for now.
  */
 export function maximumInscribedPack(
   path: Path,

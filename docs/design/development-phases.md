@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Continue Phase 1; commit scaffolds and SVG work to `main` as they complete.
+- Continue Phase 5 remaining morphology/processing APIs; then Phase 6 facades.
 
 ## Document history
 

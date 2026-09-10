@@ -40,6 +40,22 @@
       "types": "./dist/morphology/index.d.ts",
       "import": "./dist/morphology/index.js"
     },
+    "./transformation": {
+      "types": "./dist/transformation/index.d.ts",
+      "import": "./dist/transformation/index.js"
+    },
+    "./processing": {
+      "types": "./dist/processing/index.d.ts",
+      "import": "./dist/processing/index.js"
+    },
+    "./conversion": {
+      "types": "./dist/conversion/index.d.ts",
+      "import": "./dist/conversion/index.js"
+    },
+    "./contour": {
+      "types": "./dist/contour/index.d.ts",
+      "import": "./dist/contour/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

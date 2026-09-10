@@ -87,5 +87,46 @@ export {
   circleOverlapsPath,
 } from './circlePacking/index.js'
 
-export { morphology, buffer, erosionDilation } from './morphology/index.js'
+export { morphology, buffer, erosionDilation, dilationErosion, simplify, reducePrecision } from './morphology/index.js'
 export type { BufferOptions } from './morphology/index.js'
+
+export {
+  transformation,
+  translate,
+  translateToOrigin,
+  translateCentroidTo,
+  rotate,
+  rotateAroundCenter,
+  scale,
+  originScale,
+  flipHorizontal,
+  flipVertical,
+  resizeByWidth,
+  resizeByHeight,
+} from './transformation/index.js'
+
+export {
+  processing,
+  extractPerimeter,
+  extractHoles,
+  densify,
+  removeSmallHoles,
+  generateRandomPoints,
+} from './processing/index.js'
+
+export {
+  conversion,
+  copy,
+  flatten,
+  roundVertexCoords,
+  toArray,
+  fromArray,
+  toContours,
+  fromContours,
+} from './conversion/index.js'
+
+export {
+  contour,
+  offsetCurvesOutward,
+  offsetCurvesInward,
+} from './contour/index.js'
