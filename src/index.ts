@@ -26,3 +26,38 @@ export {
 
 export { parseSvg, toSvg, parsePathData, serializePathData } from './svg/index.js'
 export type { ToSvgOptions } from './svg/index.js'
+
+export {
+  shapeBoolean,
+  union,
+  unionAll,
+  intersect,
+  subtract,
+  subtractAll,
+  symDifference,
+  complement,
+  occlusionSubtract,
+  overlapRegions,
+} from './shapeBoolean/index.js'
+
+export {
+  predicates,
+  area,
+  areaGroup,
+  ringArea,
+  centroid,
+  containsPoint,
+  bounds,
+  width,
+  height,
+  areaSimilarity,
+} from './predicates/index.js'
+
+export {
+  relativeAreaError,
+  containmentAgreement,
+  assertAreaClose,
+  oraclePathsToGroup,
+  ringsToPath,
+} from './compare/index.js'
+export type { OracleCase } from './compare/index.js'

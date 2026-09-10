@@ -5,6 +5,8 @@ export default defineConfig([
     entry: {
       index: 'src/index.ts',
       'svg/index': 'src/svg/index.ts',
+      'shapeBoolean/index': 'src/shapeBoolean/index.ts',
+      'predicates/index': 'src/predicates/index.ts',
     },
     format: ['esm'],
     dts: true,

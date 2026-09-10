@@ -13,15 +13,12 @@ npm install pattapatta
 ## Usage
 
 ```ts
-import { parseSvg, toSvg, groupFromPaths } from 'pattapatta'
+import { parseSvg, toSvg, union, polygon, vec2 } from 'pattapatta'
 
-const group = parseSvg(`
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect x="10" y="10" width="40" height="30" />
-  </svg>
-`)
-
-console.log(toSvg(group, { viewBox: '0 0 100 100' }))
+const a = polygon([vec2(0, 0), vec2(2, 0), vec2(2, 1), vec2(0, 1)])
+const b = polygon([vec2(1, 0), vec2(3, 0), vec2(3, 1), vec2(1, 1)])
+const merged = union(a, b)
+console.log(toSvg(merged))
 ```
 
 ```bash
@@ -30,4 +27,8 @@ npx pattapatta --help
 
 ## Status
 
-Phase 1 scaffold: geometry types + SVG round-trip. Boolean, hatch, and packing modules come next. Design notes live in `docs/`.
+- Phase 1: geometry types + SVG round-trip
+- Phase 1b: Processing oracle (`oracle/processing/OracleMain`)
+- Phase 2: `shapeBoolean` + predicates (Clipper2), oracle-compared
+
+Design notes live in `docs/`.

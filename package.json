@@ -16,6 +16,14 @@
       "types": "./dist/svg/index.d.ts",
       "import": "./dist/svg/index.js"
     },
+    "./shapeBoolean": {
+      "types": "./dist/shapeBoolean/index.d.ts",
+      "import": "./dist/shapeBoolean/index.js"
+    },
+    "./predicates": {
+      "types": "./dist/predicates/index.d.ts",
+      "import": "./dist/predicates/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -41,5 +49,8 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9"
+  },
+  "dependencies": {
+    "clipper2-ts": "^2.0.1-18"
   }
 }
