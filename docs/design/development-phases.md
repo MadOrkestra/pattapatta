@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Continue Phase 5 remaining morphology/processing APIs; then Phase 6 facades.
+- Finish remaining Phase 5/6 inventory methods (voronoi, meshing, optimisation); defer exotic morph warps with ADR when skipped.
 
 ## Document history
 

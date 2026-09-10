@@ -87,7 +87,7 @@ export {
   circleOverlapsPath,
 } from './circlePacking/index.js'
 
-export { morphology, buffer, erosionDilation, dilationErosion, simplify, reducePrecision } from './morphology/index.js'
+export { morphology, buffer, erosionDilation, dilationErosion, simplify, reducePrecision, chaikinCut, smooth, radialWarp, sineWarp, minkSum, minkDifference } from './morphology/index.js'
 export type { BufferOptions } from './morphology/index.js'
 
 export {
@@ -95,6 +95,7 @@ export {
   translate,
   translateToOrigin,
   translateCentroidTo,
+  translateCornerTo,
   rotate,
   rotateAroundCenter,
   scale,
@@ -103,15 +104,24 @@ export {
   flipVertical,
   resizeByWidth,
   resizeByHeight,
+  shear,
 } from './transformation/index.js'
 
 export {
   processing,
   extractPerimeter,
+  extractBoundary,
   extractHoles,
   densify,
   removeSmallHoles,
   generateRandomPoints,
+  generateRandomGridPoints,
+  pointsOnExterior,
+  segmentsOnExterior,
+  slice,
+  centroidSplit,
+  dissolve,
+  intersectionPoints,
 } from './processing/index.js'
 
 export {
@@ -130,3 +140,13 @@ export {
   offsetCurvesOutward,
   offsetCurvesInward,
 } from './contour/index.js'
+
+export { hull, convexHull, convexHullPath, boundingBox } from './hull/index.js'
+
+export {
+  triangulation,
+  earCutTriangulation,
+  delaunayTriangulation,
+} from './triangulation/index.js'
+
+export { pointSet, random as randomPoints, squareGrid, hexGrid, ring as pointRing } from './pointSet/index.js'

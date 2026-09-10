@@ -56,6 +56,18 @@
       "types": "./dist/contour/index.d.ts",
       "import": "./dist/contour/index.js"
     },
+    "./hull": {
+      "types": "./dist/hull/index.d.ts",
+      "import": "./dist/hull/index.js"
+    },
+    "./triangulation": {
+      "types": "./dist/triangulation/index.d.ts",
+      "import": "./dist/triangulation/index.js"
+    },
+    "./pointSet": {
+      "types": "./dist/pointSet/index.d.ts",
+      "import": "./dist/pointSet/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

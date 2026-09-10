@@ -77,10 +77,35 @@ export function resizeByHeight(p: Path, height: number): Path {
   return scale(p, height / h, height / h, { x: b.minX, y: b.minY })
 }
 
+/** Move the AABB min corner to `target`. */
+export function translateCornerTo(p: Path, target: Vec2): Path {
+  const b = bounds(p)
+  return translate(p, target.x - b.minX, target.y - b.minY)
+}
+
+/** Shear: x' = x + shx * y, y' = y + shy * x (about origin or pivot). */
+export function shear(
+  p: Path,
+  shx: number,
+  shy = 0,
+  pivot?: Vec2,
+): Path {
+  const o = pivot ?? { x: 0, y: 0 }
+  return mapPath(p, (v) => {
+    const x = v.x - o.x
+    const y = v.y - o.y
+    return {
+      x: o.x + x + shx * y,
+      y: o.y + y + shy * x,
+    }
+  })
+}
+
 export const transformation = {
   translate,
   translateToOrigin,
   translateCentroidTo,
+  translateCornerTo,
   rotate,
   rotateAroundCenter,
   scale,
@@ -89,4 +114,5 @@ export const transformation = {
   flipVertical,
   resizeByWidth,
   resizeByHeight,
+  shear,
 }
