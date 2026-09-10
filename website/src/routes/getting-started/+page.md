@@ -86,6 +86,8 @@ const out = toSvg(group([...hatches, ...circlePaths]), {
 
 ![Inscribed packing example](/assets/packing-inscribed.svg)
 
+More chained recipes (union → hatch, star cut → cross hatch, ring → hatch, …) live on [Examples](/examples). Try them interactively under [Live demos](/demos).
+
 ## Coordinates
 
 There is no fixed unit. Use plotter millimetres, pixels, or normalized `[0,1]` — just keep `strokeWidth` consistent with your scale.

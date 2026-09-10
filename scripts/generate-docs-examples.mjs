@@ -539,6 +539,93 @@ function vb(minX, minY, w, h) {
 }
 
 {
+  // Chained pipelines: construct → boolean/buffer → hatch/pack
+  {
+    const a = createRect(10, 25, 50, 40)
+    const b = createRect(40, 35, 50, 40)
+    const merged = union(a, b)
+    const target = merged.paths[0]
+    const fill = target
+      ? segsToGroup(
+          hatchParallel(target, { spacing: 6, count: 40, angle: Math.PI / 4 }),
+        )
+      : group([])
+    write(
+      'pipeline-union-hatch.svg',
+      wrap({
+        viewBox: vb(0, 0, 110, 100),
+        body: `${pathTag(a, MUTED, 1)}
+  ${pathTag(b, MUTED, 1)}
+  ${groupTags(merged, ACCENT, 1.5)}
+  ${groupTags(fill, STROKE, 0.9)}`,
+      }),
+    )
+  }
+
+  {
+    const outer = createRect(10, 10, 80, 80)
+    const inner = createRect(30, 30, 40, 40)
+    const frame = subtract(outer, inner)
+    const target = frame.paths[0]
+    const packs = target ? hexLatticePack(target, 10, 'contained') : []
+    write(
+      'pipeline-frame-pack.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(outer, MUTED, 1)}
+  ${pathTag(inner, MUTED, 1)}
+  ${groupTags(frame, ACCENT, 1.5)}
+  ${circlesTags(packs, STROKE, 1)}`,
+      }),
+    )
+  }
+
+  {
+    const star = createStar(50, 50, 38, 16, 5)
+    const hole = createCircle(50, 50, 14)
+    const cut = subtract(star, hole)
+    const target = cut.paths[0]
+    const fill = target
+      ? segsToGroup(hatchCross(target, { spacing: 6, count: 40, angle: Math.PI / 4 }))
+      : group([])
+    write(
+      'pipeline-star-cut-hatch.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(star, MUTED, 1)}
+  ${pathTag(hole, MUTED, 1)}
+  ${groupTags(cut, ACCENT, 1.5)}
+  ${groupTags(fill, STROKE, 0.9)}`,
+      }),
+    )
+  }
+
+  {
+    const seed = createCircle(50, 50, 28)
+    const buffered = buffer(seed, 8)
+    const outer = buffered.paths[0] ?? createCircle(50, 50, 36)
+    const inner = createCircle(50, 50, 18)
+    const ring = subtract(outer, inner)
+    const target = ring.paths[0]
+    const fill = target
+      ? segsToGroup(
+          hatchParallel(target, { spacing: 5, count: 40, angle: Math.PI / 5 }),
+        )
+      : group([])
+    write(
+      'pipeline-ring-hatch.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(outer, MUTED, 1)}
+  ${pathTag(inner, MUTED, 1)}
+  ${groupTags(ring, ACCENT, 1.5)}
+  ${groupTags(fill, STROKE, 0.9)}`,
+      }),
+    )
+  }
+}
+
+{
   // quickstart hero
   const frame = createRect(8, 8, 84, 84)
   const packs = maximumInscribedPack(frame, 8, 0.45)

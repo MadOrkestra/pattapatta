@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 10 25 L 60 25 L 60 65 L 10 65 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <path d="M 40 35 L 90 35 L 90 75 L 40 75 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <path d="M 60 35 L 90 35 L 90 75 L 40 75 L 40 65 L 10 65 L 10 25 L 60 25 Z" stroke="#c45c26" stroke-width="1.5" fill="none"/>
+  <path d="M 20.757362365722656 25 L 70.75736236572266 75" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 29.242637634277344 25 L 79.24263763427734 75" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 12.272079467773438 25 L 62.27207946777344 75" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 37.72792053222656 25 L 87.72792053222656 75" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 10 31.21320343017578 L 53.786796569824205 74.99999999999999" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 46.21320343017578 25 L 90 68.78679656982422" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 10 39.698484033744094 L 35.30151743572354 65" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 40 69.69848229139686 L 45.301518016505966 75" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 54.69848316257048 25 L 60 30.301517145332312" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 64.69848258178807 35 L 90 60.301518887679634" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 10 48.18376159667969 L 26.816238403320312 65" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 73.18376159667969 35 L 90 51.81623840332031" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 10 56.66904974016943 L 18.330950021629 65" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+  <path d="M 81.66905045497857 35.000000000000014 L 90 43.33094930681989" stroke="#1a1a1a" stroke-width="0.9" fill="none"/>
+</svg>
