@@ -1,5 +1,6 @@
 import { triangulateD } from 'clipper2-ts'
-import type { Path } from '../types/index.js'
+import { Delaunay } from 'd3-delaunay'
+import type { Path, Vec2 } from '../types/index.js'
 import { polygon } from '../types/index.js'
 import { pathToPathsD, pathDToRing } from '../clipper/convert.js'
 
@@ -31,7 +32,27 @@ export function delaunayTriangulation(p: Path): Path[] {
   return earCutTriangulation(p, { useDelaunay: true })
 }
 
+/** Delaunay triangulation of a point set (d3-delaunay). */
+export function delaunayTriangulationPoints(points: Vec2[]): Path[] {
+  if (points.length < 3) return []
+  const delaunay = Delaunay.from(
+    points,
+    (d) => d.x,
+    (d) => d.y,
+  )
+  const tris: Path[] = []
+  const { triangles } = delaunay
+  for (let i = 0; i < triangles.length; i += 3) {
+    const a = points[triangles[i]!]!
+    const b = points[triangles[i + 1]!]!
+    const c = points[triangles[i + 2]!]!
+    tris.push(polygon([a, b, c]))
+  }
+  return tris
+}
+
 export const triangulation = {
   earCutTriangulation,
   delaunayTriangulation,
+  delaunayTriangulationPoints,
 }

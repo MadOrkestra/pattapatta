@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Finish remaining Phase 5/6 inventory methods (voronoi, meshing, optimisation); defer exotic morph warps with ADR when skipped.
+- Remaining Phase 6: tiling, meshing, polygonisation, optimisation extras; then Phase 7 docs/publish.
 
 ## Document history
 

@@ -147,6 +147,48 @@ export {
   triangulation,
   earCutTriangulation,
   delaunayTriangulation,
+  delaunayTriangulationPoints,
 } from './triangulation/index.js'
 
-export { pointSet, random as randomPoints, squareGrid, hexGrid, ring as pointRing } from './pointSet/index.js'
+export {
+  pointSet,
+  random as randomPoints,
+  squareGrid,
+  hexGrid,
+  ring as pointRing,
+  poisson,
+  prunePointsWithinDistance,
+} from './pointSet/index.js'
+
+export {
+  optimisation,
+  envelope,
+  maximumInscribedCircle,
+  largestEmptyCircle,
+  largestEmptyCircles,
+  maximumInscribedAARectangle,
+  closestPoint,
+  closestVertex,
+  closestPointPair,
+  farthestPointPair,
+  minimumBoundingCircle,
+} from './optimisation/index.js'
+
+export {
+  voronoi,
+  compoundVoronoi,
+  innerVoronoi,
+  innerVoronoiRaw,
+} from './voronoi/index.js'
+export type { VoronoiOptions } from './voronoi/index.js'
+
+export {
+  construction,
+  createCircle,
+  createRect,
+  createRegularPolygon,
+  createRing,
+  createArc,
+  createStar,
+  createKochSnowflake,
+} from './construction/index.js'

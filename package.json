@@ -68,6 +68,18 @@
       "types": "./dist/pointSet/index.d.ts",
       "import": "./dist/pointSet/index.js"
     },
+    "./optimisation": {
+      "types": "./dist/optimisation/index.d.ts",
+      "import": "./dist/optimisation/index.js"
+    },
+    "./voronoi": {
+      "types": "./dist/voronoi/index.d.ts",
+      "import": "./dist/voronoi/index.js"
+    },
+    "./construction": {
+      "types": "./dist/construction/index.d.ts",
+      "import": "./dist/construction/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -89,12 +101,14 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@types/d3-delaunay": "^6.0.4",
     "@types/node": "^22.13.10",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9"
   },
   "dependencies": {
-    "clipper2-ts": "^2.0.1-18"
+    "clipper2-ts": "^2.0.1-18",
+    "d3-delaunay": "^6.0.4"
   }
 }
