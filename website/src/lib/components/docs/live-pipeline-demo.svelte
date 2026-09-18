@@ -26,7 +26,7 @@
 		{
 			value: 'frame-pack',
 			label: 'Frame → pack',
-			description: 'Frame (rect − rect) → hex lattice pack (contained)',
+			description: 'Frame (rect − rect) → hex lattice pack (overlap, clipped)',
 		},
 		{
 			value: 'star-cut-hatch',
@@ -62,7 +62,6 @@
 
 		const hatchOpts = {
 			spacing: hatchSpacing,
-			count: 40,
 			angle: hatchAngle,
 		};
 
@@ -90,7 +89,7 @@
 				resultPaths = frame.paths;
 				const target = frame.paths[0];
 				if (target) {
-					circles = hexLatticePack(target, packDiameter, 'contained');
+					circles = hexLatticePack(target, packDiameter);
 				}
 				break;
 			}
@@ -208,14 +207,25 @@
 		{#each scene.inputDs as d, i (i)}
 			<path {d} class="stroke-stone-400 dark:stroke-stone-500" stroke-width="1" />
 		{/each}
+		{#if scene.circles.length}
+			<defs>
+				<clipPath id="pipeline-pack-clip" clipPathUnits="userSpaceOnUse">
+					{#each scene.resultDs as d, i (i)}
+						<path {d} clip-rule="evenodd" />
+					{/each}
+				</clipPath>
+			</defs>
+			<g clip-path="url(#pipeline-pack-clip)">
+				{#each scene.circles as c, i (i)}
+					<circle cx={c.x} cy={c.y} r={c.r} class="stroke-foreground" stroke-width="1" />
+				{/each}
+			</g>
+		{/if}
 		{#each scene.resultDs as d, i (i)}
 			<path {d} class="stroke-foreground" stroke-width="1.25" />
 		{/each}
 		{#each scene.hatchDs as d, i (i)}
 			<path {d} class="stroke-foreground" stroke-width="1" />
-		{/each}
-		{#each scene.circles as c, i (i)}
-			<circle cx={c.x} cy={c.y} r={c.r} class="stroke-foreground" stroke-width="1" />
 		{/each}
 	</svg>
 </div>

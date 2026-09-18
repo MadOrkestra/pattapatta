@@ -84,4 +84,35 @@ describe('hatch vs oracle', () => {
       }
     }
   })
+
+  it('auto count covers the AABB at tight spacing', () => {
+    const cell = polygon([
+      vec2(15, 15),
+      vec2(85, 15),
+      vec2(85, 85),
+      vec2(15, 85),
+    ])
+    const capped = hatch.parallel(cell, {
+      spacing: 2,
+      angle: Math.PI / 4,
+      count: 40,
+    })
+    const filled = hatch.parallel(cell, {
+      spacing: 2,
+      angle: Math.PI / 4,
+    })
+    expect(filled.length).toBeGreaterThan(capped.length)
+
+    // Extreme corners should be reached by some clipped hatch endpoint.
+    const near = (x: number, y: number) =>
+      filled.some(
+        (s) =>
+          Math.hypot(s.a.x - x, s.a.y - y) < 3 ||
+          Math.hypot(s.b.x - x, s.b.y - y) < 3,
+      )
+    expect(near(15, 15)).toBe(true)
+    expect(near(85, 85)).toBe(true)
+    expect(near(15, 85)).toBe(true)
+    expect(near(85, 15)).toBe(true)
+  })
 })

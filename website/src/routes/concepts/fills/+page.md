@@ -17,7 +17,7 @@ import { createRect, hatchParallel, segmentsToOpenPaths } from 'pattapatta'
 
 const region = createRect(15, 15, 70, 70)
 const strokes = segmentsToOpenPaths(
-  hatchParallel(region, { spacing: 6, count: 24, angle: Math.PI / 4 }),
+  hatchParallel(region, { spacing: 6, angle: Math.PI / 4 }),
 )
 ```
 

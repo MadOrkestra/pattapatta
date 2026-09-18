@@ -12,7 +12,10 @@ export type ParallelHatchOptions = {
    * Default: diagonal of path bounds.
    */
   length?: number
-  /** Number of parallel lines (PGS `n`). Default `30`. */
+  /**
+   * Number of parallel lines (PGS `n`).
+   * Default: enough lines to cover the path AABB at the given spacing.
+   */
   count?: number
   /** Hatch field center. Default: path centroid of exterior bounds center. */
   center?: { x: number; y: number }
@@ -21,6 +24,9 @@ export type ParallelHatchOptions = {
 /**
  * Fill a closed path with parallel hatch strokes (plotter-safe).
  * Composes `parallelSegments` + clip-to-path (PGS dysonHatching recipe).
+ *
+ * When `count` is omitted, line count is derived from `spacing` and the path
+ * bounds so the hatch covers the whole region (no corner gaps).
  */
 export function parallel(path: Path, options: ParallelHatchOptions = {}): Segment[] {
   if (!path.closed || !path.rings[0]) {
@@ -34,9 +40,9 @@ export function parallel(path: Path, options: ParallelHatchOptions = {}): Segmen
   }
   const diag = Math.hypot(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY)
   const length = options.length ?? Math.max(diag, 1e-6)
-  const spacing = options.spacing ?? 0.15
+  const spacing = Math.max(options.spacing ?? 0.15, 1e-9)
   const angle = options.angle ?? Math.PI / 4
-  const count = options.count ?? 30
+  const count = options.count ?? hatchLineCount(bounds, spacing, angle)
 
   const raw = parallelSegments(
     center.x,
@@ -55,6 +61,31 @@ export function cross(path: Path, options: ParallelHatchOptions = {}): Segment[]
   const a = parallel(path, options)
   const b = parallel(path, { ...options, angle: angle + Math.PI / 2 })
   return [...a, ...b]
+}
+
+/** Lines needed so perpendicular spacing covers the AABB at `angle`. */
+function hatchLineCount(
+  bounds: { minX: number; minY: number; maxX: number; maxY: number },
+  spacing: number,
+  angle: number,
+): number {
+  const nx = Math.cos(angle + Math.PI / 2)
+  const ny = Math.sin(angle + Math.PI / 2)
+  const corners: [number, number][] = [
+    [bounds.minX, bounds.minY],
+    [bounds.maxX, bounds.minY],
+    [bounds.maxX, bounds.maxY],
+    [bounds.minX, bounds.maxY],
+  ]
+  let minP = Infinity
+  let maxP = -Infinity
+  for (const [x, y] of corners) {
+    const p = x * nx + y * ny
+    minP = Math.min(minP, p)
+    maxP = Math.max(maxP, p)
+  }
+  const extent = maxP - minP
+  return Math.max(1, Math.ceil(extent / spacing) + 1)
 }
 
 function pathBounds(path: Path) {

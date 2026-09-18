@@ -15,7 +15,6 @@
 	const hatchPaths = $derived.by(() => {
 		const strokes = hatchParallel(cell, {
 			spacing: Math.max(2, Number(spacing) || 2),
-			count: 40,
 			angle: ((Number(angleDeg) || 0) * Math.PI) / 180,
 		});
 		return segmentsToOpenPaths(strokes).map((p) => serializePathData(p.rings, p.closed));

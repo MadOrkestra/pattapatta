@@ -15,7 +15,7 @@ import { hatchParallel, hatchCross, hatch } from 'pattapatta'
 |--------|---------|---------|
 | `angle` | `π/4` | Line direction (radians) |
 | `spacing` | `0.15` | Perpendicular spacing |
-| `count` | `30` | Number of lines |
+| `count` | *auto* | Line count; omit to cover the whole path AABB |
 | `length` | bbox diagonal | Pre-clip half-length |
 | `center` | bbox center | Field center |
 
@@ -31,7 +31,7 @@ Two perpendicular parallel fields.
 
 ```ts
 const strokes = hatchParallel(createRect(15, 15, 70, 70), {
-  spacing: 6, count: 24, angle: Math.PI / 4,
+  spacing: 6, angle: Math.PI / 4,
 })
 ```
 
@@ -40,7 +40,7 @@ const strokes = hatchParallel(createRect(15, 15, 70, 70), {
 ![Cross hatch](/assets/hatch-cross.svg)
 
 ```ts
-const strokes = hatchCross(createRect(15, 15, 70, 70), { spacing: 8, count: 18 })
+const strokes = hatchCross(createRect(15, 15, 70, 70), { spacing: 8 })
 ```
 
 Serialize with `toSvg(group(segmentsToOpenPaths(strokes)))`.

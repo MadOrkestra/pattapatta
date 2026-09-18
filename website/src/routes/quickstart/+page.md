@@ -43,7 +43,7 @@ const b = createRect(40, 35, 50, 40)
 const merged = union(a, b)
 const target = merged.paths[0]!
 const strokes = segmentsToOpenPaths(
-  hatchParallel(target, { spacing: 6, count: 40, angle: Math.PI / 4 }),
+  hatchParallel(target, { spacing: 6, angle: Math.PI / 4 }),
 )
 
 console.log(
@@ -68,7 +68,7 @@ import {
 } from 'pattapatta'
 
 const cell = createRect(15, 15, 70, 70)
-const strokes = hatchParallel(cell, { spacing: 6, count: 24, angle: Math.PI / 4 })
+const strokes = hatchParallel(cell, { spacing: 6, angle: Math.PI / 4 })
 const svg = toSvg(group(segmentsToOpenPaths(strokes)), {
   viewBox: '0 0 100 100',
   strokeWidth: 1,

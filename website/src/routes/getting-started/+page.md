@@ -65,7 +65,7 @@ const frame = subtract(paper, hole) // Group
 
 const target = frame.paths[0]!
 const hatches = segmentsToOpenPaths(
-  hatchParallel(target, { spacing: 4, count: 40, angle: Math.PI / 6 }),
+  hatchParallel(target, { spacing: 4, angle: Math.PI / 6 }),
 )
 const packs = maximumInscribedPack(target, 5, 0.5)
 
