@@ -9,3 +9,4 @@ oracle/processing/OracleMain/code/*.jar
 *.log
 website/build/
 website/.svelte-kit/
+.pnpm-store/
