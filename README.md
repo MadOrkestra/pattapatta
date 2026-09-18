@@ -54,6 +54,27 @@ pnpm docs:examples   # regenerate SVG figures
 | `pattapatta/voronoi` | Voronoi cells |
 | … | See `website/` API pages |
 
+## Releasing
+
+This repo uses [Changesets](https://github.com/changesets/changesets). Only the root `pattapatta` package is published; `website` is ignored.
+
+1. In a PR that changes the library, run `pnpm changeset`, commit the file under `.changeset/`, and merge to `main`.
+2. The **Release** workflow opens or updates a **Version Packages** PR (bumps version, updates `CHANGELOG.md`).
+3. Merging that PR publishes to npm and creates a GitHub Release.
+
+Repo secret required for publish: `NPM_TOKEN` (npm automation token with publish access).
+
+The first automated release will bump from the current `0.1.0` (e.g. to `0.1.1` or higher) when you add a changeset. To put exactly `0.1.0` on npm once, run `pnpm release` locally after setting an npm token.
+
+Local checks used by CI:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm test
+pnpm typecheck
+pnpm build
+```
+
 ## License
 
 MIT — clean-room implementation (not a GPL line-port of PGS). See `docs/decisions/`.

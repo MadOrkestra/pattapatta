@@ -134,6 +134,9 @@
     "docs:examples": "pnpm run build && node scripts/generate-docs-examples.mjs",
     "docs:dev": "pnpm --filter website dev",
     "docs:build": "pnpm --filter website build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
     "prepack": "pnpm run build",
     "prepublishOnly": "pnpm test && pnpm run build"
   },
@@ -142,9 +145,12 @@
     "pnpm": ">=10"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@types/d3-delaunay": "^6.0.4",
     "@types/node": "^22.13.10",
     "tsup": "^8.4.0",

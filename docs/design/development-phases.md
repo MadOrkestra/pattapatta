@@ -70,8 +70,8 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Publish `pattapatta@0.1.0` when ready (`npm publish` — dry-run already covered by `npm pack`).
-- Host/deploy `website/build` later; keep regenerating figures with `npm run docs:examples`.
+- Ship via Changesets: add a changeset (`pnpm changeset`), merge to `main`, then merge the **Version Packages** PR (publishes to npm + GitHub Releases). Requires repo secret `NPM_TOKEN`. First automated bump will be past the current `0.1.0` unless you publish that version once manually with `pnpm release`.
+- Host/deploy `website/build` later; keep regenerating figures with `pnpm docs:examples`.
 
 ## Document history
 
