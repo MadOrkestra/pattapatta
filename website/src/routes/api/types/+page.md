@@ -7,9 +7,20 @@ Constructors and structural types for geometry.
 ```ts
 import {
   vec2, circle, segment, path, polygon, polyline, group,
-  type Vec2, type Path, type Group, type Circle, type Segment,
+  type Vec2, type Ring, type Path, type Group, type Circle, type Segment,
 } from 'pattapatta'
 ```
+
+## Types
+
+| Type | Meaning |
+|------|---------|
+| `Vec2` | `{ x, y }` |
+| `Ring` | `Vec2[]` — one closed or open vertex loop |
+| `Path` | `{ rings: Ring[], closed: boolean }` — exterior + holes |
+| `Group` | `{ paths: Path[] }` |
+| `Circle` | `{ x, y, r }` |
+| `Segment` | `{ a: Vec2, b: Vec2 }` |
 
 ## Functions
 

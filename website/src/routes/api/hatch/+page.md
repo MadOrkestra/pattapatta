@@ -5,11 +5,11 @@
 ## Imports
 
 ```ts
-import { hatchParallel, hatchCross, hatch } from 'pattapatta'
+import { hatchParallel, hatchCross, hatch, type ParallelHatchOptions } from 'pattapatta'
 // or from 'pattapatta/hatch'
 ```
 
-## `hatchParallel(path, options?) → Segment[]`
+## `hatchParallel(path, options?: ParallelHatchOptions) → Segment[]`
 
 | Option | Default | Meaning |
 |--------|---------|---------|

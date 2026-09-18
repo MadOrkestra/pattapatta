@@ -3,13 +3,15 @@
 	import LivePackDemo from '$lib/components/docs/live-pack-demo.svelte';
 	import LiveHatchDemo from '$lib/components/docs/live-hatch-demo.svelte';
 	import LiveMeshingDemo from '$lib/components/docs/live-meshing-demo.svelte';
+	import LiveTriangulationDemo from '$lib/components/docs/live-triangulation-demo.svelte';
 </script>
 
 <h1>Live demos</h1>
 
 <p>
-	Interactive previews of core <strong>pattapatta</strong> ops. Geometry is computed in the
-	browser (and during prerender) — no server round-trip.
+	Interactive previews of core <strong>pattapatta</strong> ops — packing, hatch, pipelines,
+	triangulation, and meshing. Geometry is computed in the browser (and during prerender) — no
+	server round-trip.
 </p>
 
 <h2>Pipelines</h2>
@@ -29,6 +31,14 @@
 </p>
 
 <LivePackDemo />
+
+<h2>Triangulation</h2>
+
+<p>
+	Star polygon via earcut, Delaunay, Poisson Steiner points, or Ruppert-inspired refine.
+</p>
+
+<LiveTriangulationDemo />
 
 <h2>Meshing</h2>
 

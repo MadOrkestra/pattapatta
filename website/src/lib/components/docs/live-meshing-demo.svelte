@@ -3,6 +3,7 @@
 		createStar,
 		densify,
 		poissonTriangulation,
+		poissonTriangulationPoints,
 		urquhartFaces,
 		gabrielFaces,
 		relativeNeighborFaces,
@@ -12,6 +13,7 @@
 		edgeCollapseQuadrangulation,
 		splitQuadrangulation,
 		matchingQuadrangulation,
+		spiralQuadrangulation,
 		smoothMesh,
 		subdivideMesh,
 		simplifyMesh,
@@ -32,6 +34,7 @@
 		| 'edge-collapse-quad'
 		| 'split-quad'
 		| 'matching-quad'
+		| 'spiral-quad'
 		| 'smooth'
 		| 'subdivide'
 		| 'simplify'
@@ -52,6 +55,7 @@
 		{ value: 'edge-collapse-quad', label: 'Edge-collapse quad' },
 		{ value: 'split-quad', label: 'Split quad' },
 		{ value: 'matching-quad', label: 'Matching quad' },
+		{ value: 'spiral-quad', label: 'Spiral quad' },
 		{ value: 'smooth', label: 'Smooth' },
 		{ value: 'subdivide', label: 'Subdivide' },
 		{ value: 'simplify', label: 'Simplify' },
@@ -106,6 +110,10 @@
 				return asFaces(splitQuadrangulation(base));
 			case 'matching-quad':
 				return asFaces(matchingQuadrangulation(base));
+			case 'spiral-quad': {
+				const points = poissonTriangulationPoints(outline, dist, rng);
+				return asFaces(spiralQuadrangulation(points));
+			}
 			case 'smooth': {
 				const iterations = Math.max(
 					1,

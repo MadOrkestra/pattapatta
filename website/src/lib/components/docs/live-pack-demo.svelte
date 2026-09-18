@@ -4,6 +4,7 @@
 		frontChainPack,
 		hexLatticePack,
 		maximumInscribedPack,
+		maximumInscribedPackUntil,
 		obstaclePack,
 		repulsionPack,
 		serializePathData,
@@ -16,7 +17,9 @@
 		| 'square-overlap'
 		| 'square-contained'
 		| 'hex-contained'
+		| 'hex-overlap'
 		| 'maximum-inscribed'
+		| 'maximum-inscribed-until'
 		| 'stochastic'
 		| 'front-chain'
 		| 'repulsion'
@@ -30,7 +33,9 @@
 		{ value: 'square-overlap', label: 'Square lattice (overlap)' },
 		{ value: 'square-contained', label: 'Square lattice (contained)' },
 		{ value: 'hex-contained', label: 'Hex lattice (contained)' },
+		{ value: 'hex-overlap', label: 'Hex lattice (overlap)' },
 		{ value: 'maximum-inscribed', label: 'Maximum inscribed' },
+		{ value: 'maximum-inscribed-until', label: 'Inscribed until' },
 		{ value: 'stochastic', label: 'Stochastic' },
 		{ value: 'front-chain', label: 'Front chain' },
 		{ value: 'repulsion', label: 'Repulsion' },
@@ -45,12 +50,18 @@
 	let seed = $state(1);
 
 	const showDiameter = $derived(
-		mode === 'square-overlap' || mode === 'square-contained' || mode === 'hex-contained',
+		mode === 'square-overlap' ||
+			mode === 'square-contained' ||
+			mode === 'hex-contained' ||
+			mode === 'hex-overlap',
 	);
 	const showN = $derived(mode === 'maximum-inscribed' || mode === 'obstacle');
 	const showPoints = $derived(mode === 'stochastic');
 	const showMinR = $derived(
-		mode === 'stochastic' || mode === 'front-chain' || mode === 'repulsion',
+		mode === 'stochastic' ||
+			mode === 'front-chain' ||
+			mode === 'repulsion' ||
+			mode === 'maximum-inscribed-until',
 	);
 	const showSeed = $derived(
 		mode === 'stochastic' || mode === 'front-chain' || mode === 'repulsion',
@@ -71,8 +82,12 @@
 				return squareLatticePack(shape, d, 'contained');
 			case 'hex-contained':
 				return hexLatticePack(shape, d, 'contained');
+			case 'hex-overlap':
+				return hexLatticePack(shape, d, 'overlap');
 			case 'maximum-inscribed':
 				return maximumInscribedPack(shape, count, 0.5);
+			case 'maximum-inscribed-until':
+				return maximumInscribedPackUntil(shape, radius, 0.5);
 			case 'stochastic':
 				return stochasticPack(shape, samples, radius, rng);
 			case 'front-chain':

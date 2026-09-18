@@ -1,6 +1,6 @@
 # pattapatta
 
-Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
+Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, triangulation / meshing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
 
 **Stroke marks only** — solid area fills are not the goal.
 
@@ -52,6 +52,7 @@ pnpm docs:examples   # regenerate SVG figures
 | `pattapatta/shapeBoolean` | Union / intersect / subtract / occlusion |
 | `pattapatta/hatch` | Parallel / cross hatch fills |
 | `pattapatta/circlePacking` | Lattices (`overlap` \| `contained`), LEC, stochastic |
+| `pattapatta/triangulation` | Earcut, Delaunay, Poisson Steiner, refine |
 | `pattapatta/morphology` | Buffer, simplify, warps |
 | `pattapatta/meshing` | Graph faces, quadrangulation, mesh process / repair |
 | `pattapatta/voronoi` | Voronoi cells |

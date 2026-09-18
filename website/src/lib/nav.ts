@@ -46,6 +46,7 @@ export const navGroups: NavGroup[] = [
 			{ title: 'morphology', href: '/api/morphology' },
 			{ title: 'processing', href: '/api/processing' },
 			{ title: 'predicates', href: '/api/predicates' },
+			{ title: 'compare', href: '/api/compare' },
 		],
 	},
 	{

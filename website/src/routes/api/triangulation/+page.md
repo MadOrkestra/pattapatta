@@ -28,7 +28,9 @@ import {
 | `poissonTriangulationPoints(path, minDist, seed?)` | Boundary + Steiner point set only |
 | `refine(path, opts?)` | Ruppert-inspired angle refinement (approximate) |
 
-`refine` options: `minAngle` (radians, default ≈20°), `maxIterations` (default 200).
+`refine` options (`RefineOptions`): `minAngle` (radians, default ≈20°), `maxIterations` (default 200).
+
+Try interactive controls on [Live demos](/demos).
 
 ## Examples
 

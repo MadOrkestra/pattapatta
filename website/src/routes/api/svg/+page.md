@@ -5,7 +5,10 @@ Parse and serialize plotter-oriented SVG.
 ## Imports
 
 ```ts
-import { parseSvg, toSvg, parsePathData, serializePathData } from 'pattapatta'
+import {
+  parseSvg, toSvg, parsePathData, serializePathData,
+  type ToSvgOptions,
+} from 'pattapatta'
 // or: import { parseSvg, toSvg } from 'pattapatta/svg'
 ```
 
@@ -13,7 +16,7 @@ import { parseSvg, toSvg, parsePathData, serializePathData } from 'pattapatta'
 
 Reads `path`, `rect`, `circle`, `line`, `polyline`, `polygon` in document order. Circles become polygonal approximations when needed for path ops.
 
-## `toSvg(group, options?): string`
+## `toSvg(group, options?: ToSvgOptions): string`
 
 Always emits `fill="none"` stroked paths.
 

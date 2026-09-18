@@ -9,14 +9,21 @@ import {
   buffer, erosionDilation, dilationErosion,
   simplify, reducePrecision, chaikinCut, smooth,
   radialWarp, sineWarp, minkSum, minkDifference, morphology,
+  type BufferOptions,
 } from 'pattapatta'
 ```
+
+## `BufferOptions`
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `join` | `'round'` | Offset join: `'round'` \| `'miter'` \| `'square'` |
 
 ## Functions
 
 | Function | Description |
 |----------|-------------|
-| `buffer(path, delta, opts?)` | Clipper offset (+ expand / − erode) |
+| `buffer(path, delta, opts?: BufferOptions)` | Clipper offset (+ expand / − erode) |
 | `erosionDilation` / `dilationErosion` | Opening / closing |
 | `simplify(path, epsilon)` | RDP simplify |
 | `reducePrecision(path, decimals)` | Round vertices |
