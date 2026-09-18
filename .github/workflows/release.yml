@@ -1,11 +1,14 @@
-# Publish via npm trusted publishing (OIDC).
-# Pattern from: https://docs.npmjs.com/trusted-publishers#supported-cicd-providers
+# npm trusted publishing (OIDC)
+# Docs: https://docs.npmjs.com/trusted-publishers#supported-cicd-providers
 #
-# npmjs.com Trusted Publisher must be:
-#   Organization/user: MadOrkestra
-#   Repository:        pattapatta
-#   Workflow filename: release.yml
-#   Allowed actions:   npm publish
+# On npmjs.com → pattapatta → Settings → Trusted Publisher:
+#   Organization or user: MadOrkestra
+#   Repository:           pattapatta
+#   Workflow filename:    release.yml
+#   Allowed actions:      include "npm publish" (not stage-only)
+#
+# Note: setup-node + registry-url writes an empty _authToken that prevents
+# OIDC (ENEEDAUTH / E404). Strip it before publish — see npm/documentation#1960.
 
 name: Release
 
@@ -24,7 +27,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Changesets: open/update Version Packages PR when .changeset/* exists
   version:
     runs-on: ubuntu-latest
     outputs:
@@ -80,7 +82,6 @@ jobs:
           echo "Will publish ${TAG}"
           echo "publish=true" >> "$GITHUB_OUTPUT"
 
-  # Exact trusted-publishing publish shape from npm docs
   publish:
     needs: version
     if: needs.version.outputs.publish == 'true'
@@ -93,14 +94,37 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
+      # Same shape as npm docs example:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-          package-manager-cache: false # never use caching in release builds
+          package-manager-cache: false
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+
+      # Required workaround: empty _authToken blocks OIDC → E404/ENEEDAUTH
+      # https://github.com/npm/documentation/issues/1960
+      - name: Strip empty _authToken so OIDC can run
+        run: |
+          set -euo pipefail
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}"
+          test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}"
+          unset NODE_AUTH_TOKEN NPM_TOKEN || true
+          npmrc="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
+          echo "Using npmrc: ${npmrc}"
+          if [ -f "${npmrc}" ]; then
+            echo "--- before ---"
+            cat "${npmrc}"
+            sed -i '/_authToken/d' "${npmrc}"
+            echo "--- after ---"
+            cat "${npmrc}"
+          else
+            echo "No npmrc at ${npmrc}"
+          fi
+          node --version
+          npm --version
 
       - run: npm publish --access public
 
