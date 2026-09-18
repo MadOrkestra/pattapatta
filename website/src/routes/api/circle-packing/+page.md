@@ -17,7 +17,7 @@ import {
 
 ## Lattice modes
 
-`LatticePackMode`: `'overlap'` (default — full-path fill, centered cutoffs; clip in SVG) | `'contained'` (fully inside disks only — special case when you must stroke complete circles).
+`LatticePackMode`: `'overlap'` (default — full-path fill, centered cutoffs; **clip in SVG**) | `'contained'` (fully inside disks only — when you must stroke complete circles).
 
 ```ts
 squareLatticePack(path, 0.25)              // overlap
@@ -40,7 +40,9 @@ hexLatticePack(path, 0.25, 'contained')
 | `circleOverlapsPath(c, path)` | Disk overlaps filled path |
 | `circleContainedInPath(c, path)` | Disk fully inside path |
 
-**Deferred:** `tangencyPack`, `trinscribedPack` — see ADR 0003.
+### Not implemented
+
+`tangencyPack` and `trinscribedPack` are **deferred** (Apollonius / true tangency graphs). See ADR `docs/decisions/0003-deferred-circle-packing.md`.
 
 Try interactive controls on [Live demos](/demos).
 
@@ -65,3 +67,13 @@ Try interactive controls on [Live demos](/demos).
 ### Front chain
 
 ![Front chain](/assets/packing-frontchain.svg)
+
+### Repulsion
+
+![Repulsion](/assets/packing-repulsion.svg)
+
+### Obstacle pack
+
+Seed disk (muted) plus LEC packs that avoid it:
+
+![Obstacle pack](/assets/packing-obstacle.svg)

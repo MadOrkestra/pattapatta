@@ -2,6 +2,7 @@
 	import LivePipelineDemo from '$lib/components/docs/live-pipeline-demo.svelte';
 	import LivePackDemo from '$lib/components/docs/live-pack-demo.svelte';
 	import LiveHatchDemo from '$lib/components/docs/live-hatch-demo.svelte';
+	import LiveMeshingDemo from '$lib/components/docs/live-meshing-demo.svelte';
 </script>
 
 <h1>Live demos</h1>
@@ -28,6 +29,15 @@
 </p>
 
 <LivePackDemo />
+
+<h2>Meshing</h2>
+
+<p>
+	<code>createStar</code> → densify → Poisson triangulation, then graph filters, quadrangulation,
+	or mesh processing. The star outline stays visible under the faces.
+</p>
+
+<LiveMeshingDemo />
 
 <h2>Parallel hatch</h2>
 

@@ -1,9 +1,11 @@
 <script lang="ts">
 	import {
 		createRect,
+		frontChainPack,
 		hexLatticePack,
 		maximumInscribedPack,
 		obstaclePack,
+		repulsionPack,
 		serializePathData,
 		squareLatticePack,
 		stochasticPack,
@@ -16,6 +18,8 @@
 		| 'hex-contained'
 		| 'maximum-inscribed'
 		| 'stochastic'
+		| 'front-chain'
+		| 'repulsion'
 		| 'obstacle';
 
 	const shape = createRect(10, 10, 80, 80);
@@ -28,6 +32,8 @@
 		{ value: 'hex-contained', label: 'Hex lattice (contained)' },
 		{ value: 'maximum-inscribed', label: 'Maximum inscribed' },
 		{ value: 'stochastic', label: 'Stochastic' },
+		{ value: 'front-chain', label: 'Front chain' },
+		{ value: 'repulsion', label: 'Repulsion' },
 		{ value: 'obstacle', label: 'Obstacle pack' },
 	];
 
@@ -43,14 +49,19 @@
 	);
 	const showN = $derived(mode === 'maximum-inscribed' || mode === 'obstacle');
 	const showPoints = $derived(mode === 'stochastic');
-	const showMinR = $derived(mode === 'stochastic');
-	const showSeed = $derived(mode === 'stochastic');
+	const showMinR = $derived(
+		mode === 'stochastic' || mode === 'front-chain' || mode === 'repulsion',
+	);
+	const showSeed = $derived(
+		mode === 'stochastic' || mode === 'front-chain' || mode === 'repulsion',
+	);
 
 	const packed = $derived.by((): Circle[] => {
 		const d = Math.max(1, Number(diameter) || 1);
 		const count = Math.max(1, Math.floor(Number(n) || 1));
 		const samples = Math.max(1, Math.floor(Number(points) || 1));
 		const radius = Math.max(0.5, Number(minR) || 0.5);
+		const maxR = Math.max(radius * 1.6, radius + 1);
 		const rng = Math.floor(Number(seed) || 1);
 
 		switch (mode) {
@@ -64,6 +75,10 @@
 				return maximumInscribedPack(shape, count, 0.5);
 			case 'stochastic':
 				return stochasticPack(shape, samples, radius, rng);
+			case 'front-chain':
+				return frontChainPack(shape, radius, maxR, rng);
+			case 'repulsion':
+				return repulsionPack(shape, radius, maxR, rng);
 			case 'obstacle':
 				return obstaclePack(shape, [seedObstacle], count, 0.5);
 		}

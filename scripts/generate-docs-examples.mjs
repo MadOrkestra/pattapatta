@@ -34,7 +34,9 @@ import {
   gabrielFaces,
   group,
   matchingQuadrangulation,
+  obstaclePack,
   relativeNeighborFaces,
+  repulsionPack,
   simplifyMesh,
   smoothMesh,
   spannerFaces,
@@ -270,6 +272,27 @@ function vb(minX, minY, w, h) {
   ${circlesTags(frontChainPack(cell, 5, 10, 11), ACCENT, 1.2)}`,
     }),
   )
+  write(
+    'packing-repulsion.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${clippedCirclesTags(cell, repulsionPack(cell, 5, 9, 5, 80), ACCENT, 1.2, 'pack-repulsion-clip')}
+  ${pathTag(cell, MUTED, 1)}`,
+    }),
+  )
+  {
+    const seed = { x: 50, y: 50, r: 12 }
+    const packed = obstaclePack(cell, [seed], 8, 0.5)
+    write(
+      'packing-obstacle.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(cell, MUTED, 1)}
+  ${circlesTags([seed], MUTED, 1.4)}
+  ${circlesTags(packed, ACCENT, 1.2)}`,
+      }),
+    )
+  }
 }
 
 {
