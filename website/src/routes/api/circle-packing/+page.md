@@ -1,6 +1,6 @@
 # circlePacking
 
-Lattice, stochastic, and inscribed circle packings.
+**Fill** — lattice, stochastic, and inscribed circle packings. See [Fills](/concepts/fills).
 
 ## Imports
 
@@ -17,7 +17,7 @@ import {
 
 ## Lattice modes
 
-`LatticePackMode`: `'overlap'` (default, PGS-compatible) | `'contained'` (fully inside — better for plotter fills).
+`LatticePackMode`: `'overlap'` (default — full-fill lattice, centered cutoffs; clip in SVG) | `'contained'` (fully inside disks, centered margins — better for plotter strokes of complete circles).
 
 ```ts
 squareLatticePack(path, 0.25)              // overlap

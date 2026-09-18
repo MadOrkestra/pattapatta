@@ -21,7 +21,8 @@ Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), 
 | [Getting started](/getting-started) | Mental model, imports, a full mini pipeline |
 | [Examples](/examples) | Chained recipes: union → hatch, frame → pack, … |
 | [Live demos](/demos) | Interactive packing, hatch, and pipelines |
-| [API reference](/api/shape-boolean) | Every module with pictured examples |
+| [Operations](/concepts/operations) | Transforms and region ops (e.g. rotate, boolean) |
+| [Fills](/concepts/fills) | Stroke marks (hatch, packing, tiling, …) |
 
 ## Design notes
 

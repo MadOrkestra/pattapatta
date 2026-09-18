@@ -1,6 +1,6 @@
 # transformation
 
-Affine helpers on paths.
+**Operation** — affine helpers on paths (rotate, scale, translate, …). See [Operations](/concepts/operations).
 
 ## Imports
 

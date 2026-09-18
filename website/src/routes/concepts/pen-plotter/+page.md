@@ -5,8 +5,8 @@
 ## Rules of thumb
 
 - Prefer `fill="none"` and a visible `stroke`
-- “Fills” are **hatches**, **packings**, **tilings**, or **offset contours**
-- Boolean / morphology still build **regions**, but you plot their **boundaries**
+- “Fills” are **hatches**, **packings**, **tilings**, or **offset contours** — overview: [Fills](/concepts/fills)
+- Boolean / morphology still build **regions**, but you plot their **boundaries** — see [Operations](/concepts/operations)
 
 ## In scope
 

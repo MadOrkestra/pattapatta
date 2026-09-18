@@ -1,6 +1,6 @@
 # hatch
 
-Plotter fills via clipped parallel / cross hatch strokes.
+**Fill** — plotter marks via clipped parallel / cross hatch strokes. See [Fills](/concepts/fills).
 
 ## Imports
 

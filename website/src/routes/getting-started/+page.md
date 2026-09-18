@@ -5,8 +5,9 @@ This page covers how to think in **pattapatta**, how imports work, and a small e
 ## Mental model
 
 1. Build or load geometry as `Path` / `Group` values.
-2. Transform with boolean, hatch, pack, offset, tile, …
-3. Emit SVG with `toSvg` (`fill="none"`, stroked marks).
+2. **Operate** on regions (boolean, transform, buffer, …) — see [Operations](/concepts/operations).
+3. **Fill** with stroke marks (hatch, pack, tile, …) — see [Fills](/concepts/fills).
+4. Emit SVG with `toSvg` (`fill="none"`, stroked marks).
 
 Solid area fills are **out of scope**. See [Pen-plotter output](/concepts/pen-plotter).
 
