@@ -88,7 +88,7 @@ Current package version is in `package.json` (e.g. `0.2.0`). If publish failed a
 If CI fails with **`ENEEDAUTH`** or **`E404 Not Found - PUT …/pattapatta`**, treat it as auth failure (npm hides 401 as 404). Check:
 
 1. Trusted Publisher on npmjs.com matches exactly: `MadOrkestra` / `pattapatta` / `release.yml`, and **`npm publish` is allowed** (new configs default to stage-only).
-2. Release uses `scripts/publish-oidc.sh` → `npm publish` (Changesets would otherwise pick `pnpm publish`, which cannot OIDC).
+2. Release uses `npm publish --access public` directly in the workflow (not `pnpm release` — pnpm strips OIDC env vars).
 3. Job has `id-token: write` and runs on a **GitHub-hosted** runner.
 4. `package.json` `repository.url` matches `https://github.com/MadOrkestra/pattapatta.git`.
 
