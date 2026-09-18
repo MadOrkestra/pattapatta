@@ -33,6 +33,8 @@ pnpm dlx pattapatta svg:roundtrip in.svg -o out.svg
 
 ## Docs site
 
+Live: [pattapatta.madorkestra.com](https://pattapatta.madorkestra.com) (GitHub Pages; deploys on push to `main`).
+
 Local documentation PWA (SvelteKit + shadcn):
 
 ```bash

@@ -2,6 +2,10 @@
 
 SvelteKit + shadcn-svelte documentation PWA for the **pattapatta** library.
 
+**Live:** [https://pattapatta.madorkestra.com](https://pattapatta.madorkestra.com)
+
+Deployed via GitHub Pages (`.github/workflows/deploy-docs.yml` on `main`). Custom domain DNS: `CNAME` `pattapatta` → `MadOrkestra.github.io`. In repo Settings → Pages, set source to GitHub Actions and custom domain `pattapatta.madorkestra.com`, then Enforce HTTPS.
+
 ## Develop
 
 From the repo root:

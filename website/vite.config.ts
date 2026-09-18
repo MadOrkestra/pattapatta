@@ -14,7 +14,7 @@ export default defineConfig({
 			},
 			adapter: adapter({
 				fallback: undefined,
-				precompress: true
+				precompress: false
 			}),
 			prerender: {
 				entries: ['*']
