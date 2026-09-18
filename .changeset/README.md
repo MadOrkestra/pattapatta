@@ -10,6 +10,6 @@ When your PR changes the published library, run:
 pnpm changeset
 ```
 
-Commit the new file under `.changeset/`. Merging to `main` opens or updates a **Version Packages** PR; merging that PR publishes to npm and creates a GitHub Release.
+Commit the new file under `.changeset/`. Merging to `main` opens or updates a **Version Packages** PR; merging that PR publishes to npm via **trusted publishing (OIDC)** from `.github/workflows/release.yml` and creates a GitHub Release. See the README **Releasing** section for one-time npm trusted-publisher setup.
 
 The `website` package is ignored and is not published.

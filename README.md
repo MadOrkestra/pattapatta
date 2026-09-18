@@ -60,13 +60,29 @@ pnpm docs:examples   # regenerate SVG figures
 
 ## Releasing
 
-This repo uses [Changesets](https://github.com/changesets/changesets). Only the root `pattapatta` package is published; `website` is ignored.
+This repo uses [Changesets](https://github.com/changesets/changesets). Only the root `pattapatta` package is published; `website` is ignored. CI publishes via [npm trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers) — no long-lived `NPM_TOKEN` (2FA-bypass tokens are being deprecated for direct publish; see [npm changelog](https://github.blog/changelog/2026-07-08-npm-install-time-security-and-gat-bypass2fa-deprecation/)).
+
+### One-time npm setup
+
+1. If the package is not on npm yet, publish once locally (trusted publishers can only be configured on an existing package):
+   ```bash
+   pnpm build && npm publish --access public --otp=<code>
+   ```
+2. On [npmjs.com](https://www.npmjs.com/) → **pattapatta** → **Settings** → **Trusted Publisher** → **GitHub Actions**:
+   - **Organization or user:** `MadOrkestra`
+   - **Repository:** `pattapatta`
+   - **Workflow filename:** `release.yml` (filename only)
+   - **Allowed actions:** include **`npm publish`** (not stage-only — Changesets publishes directly)
+3. Optionally under **Publishing access**, require 2FA and disallow tokens once OIDC works.
+4. Remove any repo `NPM_TOKEN` secret if it was only used for publish.
+
+### Routine releases
 
 1. In a PR that changes the library, run `pnpm changeset`, commit the file under `.changeset/`, and merge to `main`.
 2. The **Release** workflow opens or updates a **Version Packages** PR (bumps version, updates `CHANGELOG.md`).
-3. Merging that PR publishes to npm and creates a GitHub Release (needs repo secret `NPM_TOKEN`).
+3. Merging that PR publishes to npm (OIDC + provenance) and creates a GitHub Release.
 
-Current package version is in `package.json` (e.g. `0.2.0`). If publish failed after a version bump, fix `NPM_TOKEN` and re-run the **Release** workflow — Changesets will publish any version not yet on npm.
+Current package version is in `package.json` (e.g. `0.2.0`). If publish failed after a version bump, fix the trusted-publisher config (workflow name must be exactly `release.yml`) and re-run **Release** — Changesets will publish any version not yet on npm.
 
 Local checks used by CI:
 

@@ -70,7 +70,7 @@ Suggested checkpoint rhythm within a phase:
 
 ## Next steps
 
-- Ship via Changesets: add a changeset (`pnpm changeset`), merge to `main`, then merge the **Version Packages** PR (publishes to npm + GitHub Releases). Requires repo secret `NPM_TOKEN`. First automated bump will be past the current `0.1.0` unless you publish that version once manually with `pnpm release`.
+- Ship via Changesets: add a changeset (`pnpm changeset`), merge to `main`, then merge the **Version Packages** PR (publishes to npm via OIDC trusted publishing + GitHub Releases). Configure the GitHub Actions trusted publisher on npmjs.com for `release.yml` (no long-lived `NPM_TOKEN`).
 - Docs site deploys to [pattapatta.madorkestra.com](https://pattapatta.madorkestra.com) via GitHub Pages (`deploy-docs.yml` on `main`). Keep regenerating figures with `pnpm docs:examples`.
 
 ## Document history
