@@ -44,18 +44,17 @@ describe('circlePacking lattices vs oracle', () => {
     }
   })
 
-  it('hexLatticePack matches oracle', () => {
+  it('hexLatticePack is centered with equal edge cutoffs', () => {
     const got = hexLatticePack(unitSquare(), 0.25)
-    const oracle = loadOracle('packing', 'hex-lattice-unit-square')
-    const expected: Circle[] = oracle.outputs.circles
-    expect(got.length).toBe(expected.length)
-    const g = sortCircles(got)
-    const e = sortCircles(expected)
-    for (let i = 0; i < e.length; i++) {
-      expect(g[i]!.x).toBeCloseTo(e[i]!.x, 4)
-      expect(g[i]!.y).toBeCloseTo(e[i]!.y, 4)
-      expect(g[i]!.r).toBeCloseTo(e[i]!.r, 4)
-    }
+    expect(got.length).toBeGreaterThan(0)
+    const xs = [...new Set(got.map((c) => +c.x.toFixed(8)))].sort(
+      (a, b) => a - b,
+    )
+    const ys = [...new Set(got.map((c) => +c.y.toFixed(8)))].sort(
+      (a, b) => a - b,
+    )
+    expect(xs[0]! - 0).toBeCloseTo(1 - xs.at(-1)!, 5)
+    expect(ys[0]! - 0).toBeCloseTo(1 - ys.at(-1)!, 5)
   })
 })
 
@@ -72,6 +71,37 @@ describe('contained lattice + obstaclePack', () => {
       expect(c.x + c.r).toBeLessThanOrEqual(1 + 1e-6)
       expect(c.y + c.r).toBeLessThanOrEqual(1 + 1e-6)
     }
+  })
+
+  it('contained square lattice centers leftover margins', () => {
+    // width 80, d 14 → inner 66, 5 centers, 5px margin each side
+    const rect = polygon([
+      vec2(10, 10),
+      vec2(90, 10),
+      vec2(90, 90),
+      vec2(10, 90),
+    ])
+    const got = squareLatticePack(rect, 14, 'contained')
+    expect(got.length).toBe(25)
+    const xs = [...new Set(got.map((c) => c.x))].sort((a, b) => a - b)
+    const ys = [...new Set(got.map((c) => c.y))].sort((a, b) => a - b)
+    const r = 7
+    expect(xs[0]! - r - 10).toBeCloseTo(90 - (xs.at(-1)! + r), 6)
+    expect(ys[0]! - r - 10).toBeCloseTo(90 - (ys.at(-1)! + r), 6)
+  })
+
+  it('overlap square lattice centers opposite-edge cutoffs', () => {
+    const rect = polygon([
+      vec2(10, 10),
+      vec2(90, 10),
+      vec2(90, 90),
+      vec2(10, 90),
+    ])
+    const got = squareLatticePack(rect, 14, 'overlap')
+    const xs = [...new Set(got.map((c) => c.x))].sort((a, b) => a - b)
+    const ys = [...new Set(got.map((c) => c.y))].sort((a, b) => a - b)
+    expect(xs[0]! - 10).toBeCloseTo(90 - xs.at(-1)!, 6)
+    expect(ys[0]! - 10).toBeCloseTo(90 - ys.at(-1)!, 6)
   })
 
   it('obstaclePack avoids seed obstacles', () => {

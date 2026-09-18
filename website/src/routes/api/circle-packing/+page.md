@@ -17,7 +17,7 @@ import {
 
 ## Lattice modes
 
-`LatticePackMode`: `'overlap'` (default — full-fill lattice, centered cutoffs; clip in SVG) | `'contained'` (fully inside disks, centered margins — better for plotter strokes of complete circles).
+`LatticePackMode`: `'overlap'` (default — full-path fill, centered cutoffs; clip in SVG) | `'contained'` (fully inside disks only — special case when you must stroke complete circles).
 
 ```ts
 squareLatticePack(path, 0.25)              // overlap

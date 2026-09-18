@@ -171,17 +171,24 @@
 		fill="none"
 		aria-label="Circle packing preview"
 	>
+		<defs>
+			<clipPath id="pack-demo-clip">
+				<path d={outlineD} clip-rule="evenodd" />
+			</clipPath>
+		</defs>
+		<g clip-path="url(#pack-demo-clip)">
+			{#each circles as c, i (i)}
+				<circle
+					cx={c.x}
+					cy={c.y}
+					r={c.r}
+					class={mode === 'obstacle' && i === 0
+						? 'stroke-stone-500 dark:stroke-stone-400'
+						: 'stroke-foreground'}
+					stroke-width="1"
+				/>
+			{/each}
+		</g>
 		<path d={outlineD} class="stroke-foreground" stroke-width="1.25" />
-		{#each circles as c, i (i)}
-			<circle
-				cx={c.x}
-				cy={c.y}
-				r={c.r}
-				class={mode === 'obstacle' && i === 0
-					? 'stroke-stone-500 dark:stroke-stone-400'
-					: 'stroke-foreground'}
-				stroke-width="1"
-			/>
-		{/each}
 	</svg>
 </div>

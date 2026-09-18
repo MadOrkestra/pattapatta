@@ -4,8 +4,11 @@ import { bounds, containsPoint } from '../predicates/index.js'
 
 /**
  * Lattice inclusion mode.
- * - `overlap` (default): PGS-compatible — keep disks that overlap the path.
- * - `contained`: keep only disks fully inside the path (plotter-friendly fill).
+ * - `overlap` (default): full-path fill — keep disks that overlap the path;
+ *   center the lattice so opposite-edge cutoffs match. Clip in SVG to cut at
+ *   the boundary (including holes).
+ * - `contained`: keep only disks fully inside the path (when you must stroke
+ *   complete circles); lattice centered with equal leftover margins.
  */
 export type LatticePackMode = 'overlap' | 'contained'
 
@@ -22,14 +25,15 @@ export function squareLatticePack(
   const r = d / 2
   const b = bounds(path)
   const out: Circle[] = []
-  const w = b.maxX - b.minX + d + b.minX
-  const h = b.maxY - b.minY + d + b.minY
   const accept =
     mode === 'contained' ? circleContainedInPath : circleOverlapsPath
+  const inset = mode === 'contained' ? r : 0
+  const { ox, oy, nX, nY } = centeredLatticeGrid(b, d, d, inset, d)
+  if (nX < 1 || nY < 1) return out
 
-  for (let x = b.minX; x < w; x += d) {
-    for (let y = b.minY; y < h; y += d) {
-      const c = circle(x, y, r)
+  for (let i = 0; i < nX; i++) {
+    for (let j = 0; j < nY; j++) {
+      const c = circle(ox + i * d, oy + j * d, r)
       if (accept(c, path)) out.push(c)
     }
   }
@@ -47,22 +51,65 @@ export function hexLatticePack(
   const d = Math.max(diameter, 0.1)
   const r = d / 2
   const b = bounds(path)
-  const w = b.maxX - b.minX + d + b.minX
-  const h = b.maxY - b.minY + d + b.minY
   const z = r * Math.sqrt(3)
   const out: Circle[] = []
-  let offset = 0
   const accept =
     mode === 'contained' ? circleContainedInPath : circleOverlapsPath
+  const inset = mode === 'contained' ? r : 0
+  const { ox, nX, nY } = centeredLatticeGrid(b, z, d, inset, d)
+  if (nX < 1 || nY < 1) return out
 
-  for (let x = b.minX; x < w; x += z) {
+  // First column uses offset `r`, so Y centers span [oy - r, oy + (nY-1)*d].
+  // Re-center that full extent so top/bottom cutoffs match.
+  const innerH = b.maxY - b.minY - 2 * inset
+  const extentY = (nY - 1) * d + r
+  const oy = b.minY + inset + (innerH - extentY) / 2 + r
+
+  let offset = 0
+  for (let i = 0; i < nX; i++) {
     offset = offset === r ? 0 : r
-    for (let y = b.minY - offset; y < h; y += d) {
-      const c = circle(x, y, r)
+    for (let j = 0; j < nY; j++) {
+      const c = circle(ox + i * z, oy + j * d - offset, r)
       if (accept(c, path)) out.push(c)
     }
   }
   return out
+}
+
+/**
+ * Centered lattice grid. `inset` > 0 (contained) keeps disk edges inside the AABB;
+ * `inset` 0 (overlap) matches PGS coverage count, shifted so opposite cutoffs match.
+ * `endPad` mirrors the historical loop bound `max + diameter`.
+ */
+function centeredLatticeGrid(
+  b: { minX: number; minY: number; maxX: number; maxY: number },
+  stepX: number,
+  stepY: number,
+  inset: number,
+  endPad: number,
+): { ox: number; oy: number; nX: number; nY: number } {
+  const innerW = b.maxX - b.minX - 2 * inset
+  const innerH = b.maxY - b.minY - 2 * inset
+  if (innerW < -1e-9 || innerH < -1e-9) {
+    return { ox: 0, oy: 0, nX: 0, nY: 0 }
+  }
+
+  let nX: number
+  let nY: number
+  if (inset > 0) {
+    nX = Math.floor(innerW / stepX + 1e-9) + 1
+    nY = Math.floor(innerH / stepY + 1e-9) + 1
+  } else {
+    // Same count as `for (x = min; x < max + endPad; x += step)`
+    nX = Math.floor((innerW + endPad) / stepX - 1e-12) + 1
+    nY = Math.floor((innerH + endPad) / stepY - 1e-12) + 1
+  }
+
+  const spanX = (nX - 1) * stepX
+  const spanY = (nY - 1) * stepY
+  const ox = b.minX + inset + (innerW - spanX) / 2
+  const oy = b.minY + inset + (innerH - spanY) / 2
+  return { ox, oy, nX, nY }
 }
 
 /**
