@@ -101,7 +101,7 @@ The package ships `.d.ts` next to ESM. No extra `@types` package is required for
 Example SVGs in this book are produced by:
 
 ```bash
-npm run docs:examples
+pnpm docs:examples
 ```
 
 That writes into `website/static/assets/`.

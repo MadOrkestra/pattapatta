@@ -2,7 +2,7 @@
 
 Project research, design notes, decisions, and other written docs live here.
 
-**User-facing docs** (SvelteKit PWA): see [`../website/`](../website/). Run `npm run docs:dev` from the repo root.
+**User-facing docs** (SvelteKit PWA): see [`../website/`](../website/). Run `pnpm docs:dev` from the repo root.
 
 ## Layout
 

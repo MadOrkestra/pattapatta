@@ -5,7 +5,7 @@ Get a stroked SVG out of **pattapatta** in a few lines.
 ## Install
 
 ```bash
-npm install pattapatta
+pnpm add pattapatta
 ```
 
 Requires **Node ≥ 18** (ESM). Works in modern browsers via bundlers.

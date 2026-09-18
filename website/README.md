@@ -7,20 +7,20 @@ SvelteKit + shadcn-svelte documentation PWA for the **pattapatta** library.
 From the repo root:
 
 ```bash
-npm run docs:dev
+pnpm docs:dev
 ```
 
 Or inside this folder:
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ## Build
 
 ```bash
-npm run docs:build   # from repo root
+pnpm docs:build   # from repo root
 # → website/build (static, prerendered, with service worker)
 ```
 
@@ -28,7 +28,7 @@ npm run docs:build   # from repo root
 
 - Pages are Markdown (`+page.md`) under `src/routes/`
 - Nav: `src/lib/nav.ts`
-- Example SVGs: `static/assets/` (regenerate with `npm run docs:examples` from repo root)
+- Example SVGs: `static/assets/` (regenerate with `pnpm docs:examples` from repo root)
 - UI chrome: shadcn-svelte sidebar under `src/lib/components/`
 
 ## PWA

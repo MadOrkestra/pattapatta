@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Generate SVG example assets for the docs site.
- * Run: npm run docs:examples
+ * Run: pnpm docs:examples
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'

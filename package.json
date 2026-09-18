@@ -125,19 +125,24 @@
     "README.md",
     "LICENSE"
   ],
+  "packageManager": "pnpm@10.22.0",
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "docs:examples": "npm run build && node scripts/generate-docs-examples.mjs",
-    "docs:dev": "npm run --prefix website dev",
-    "docs:build": "npm run --prefix website build",
-    "prepack": "npm run build",
-    "prepublishOnly": "npm test && npm run build"
+    "docs:examples": "pnpm run build && node scripts/generate-docs-examples.mjs",
+    "docs:dev": "pnpm --filter website dev",
+    "docs:build": "pnpm --filter website build",
+    "prepack": "pnpm run build",
+    "prepublishOnly": "pnpm test && pnpm run build"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=18",
+    "pnpm": ">=10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   },
   "devDependencies": {
     "@types/d3-delaunay": "^6.0.4",

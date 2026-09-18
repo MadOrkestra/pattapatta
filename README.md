@@ -9,7 +9,7 @@ Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)
 ## Install
 
 ```bash
-npm install pattapatta
+pnpm add pattapatta
 ```
 
 Requires **Node ≥ 18** (ESM). Works in modern browsers via bundlers.
@@ -27,8 +27,8 @@ console.log(toSvg(group(segmentsToOpenPaths(strokes))))
 ```
 
 ```bash
-npx pattapatta --help
-npx pattapatta svg:roundtrip in.svg -o out.svg
+pnpm dlx pattapatta --help
+pnpm dlx pattapatta svg:roundtrip in.svg -o out.svg
 ```
 
 ## Docs site
@@ -36,9 +36,10 @@ npx pattapatta svg:roundtrip in.svg -o out.svg
 Local documentation PWA (SvelteKit + shadcn):
 
 ```bash
-npm run docs:dev
-npm run docs:build
-npm run docs:examples   # regenerate SVG figures
+pnpm install
+pnpm docs:dev
+pnpm docs:build
+pnpm docs:examples   # regenerate SVG figures
 ```
 
 ## Modules
