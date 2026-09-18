@@ -100,7 +100,7 @@ jobs:
           package-manager-cache: false # never use caching in release builds
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build --if-present
+      - run: pnpm build
 
       - run: npm publish --access public
 
