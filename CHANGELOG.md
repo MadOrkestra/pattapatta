@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- 1c203c2: Add contour skeletons and fields: medialAxis (with pruning), chordalAxis, straightSkeleton, centerLine, distanceField, contrastField, distanceTree, and isoline helpers.
+
 ## 0.2.2
 
 ### Patch Changes
