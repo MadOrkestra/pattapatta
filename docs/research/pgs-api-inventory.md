@@ -109,12 +109,14 @@ Inventory every public facade method from PGS javadoc (2.3-SNAPSHOT index) and t
 - Interchange: `fromWKT`, `toWKT`, `fromWKB`, `toWKB`, `fromHexWKB`, `toHexWKB`, `fromEncodedPolyline`, `toEncodedPolyline`, `fromJava2D`, `toJava2D`, `fromCubicBezier`, `fromQuadraticBezier`, `fromGraph`, `toGraph`, `toDualGraph`, `toCentroidDualGraph`
 - Flags: `FLOAT_SAFE_MESH_CONVERSION`, `HANDLE_MULTICONTOUR`
 
-### PGS_Contour — P2 (offset useful earlier if needed for stroke fills)
+### PGS_Contour — P2 (implemented)
 
-- `offsetCurvesInward`, `offsetCurvesOutward`
-- `straightSkeleton`, `medialAxis`, `chordalAxis`, `centerLine`
-- `isolines`, `isolinesFromFunction`, `isolineZeroFromFunction`
-- `distanceField`, `distanceTree`, `contrastField`
+- `offsetCurvesInward`, `offsetCurvesOutward` — done
+- `straightSkeleton`, `medialAxis`, `chordalAxis`, `centerLine` — done
+- `isolines`, `isolinesFromFunction`, `isolineZeroFromFunction` — done
+- `distanceField`, `distanceTree`, `contrastField` — done
+
+`straightSkeleton` is an offset-trace approximation (faces / branches / bones); exact kinetic SS may replace it later.
 
 ### PGS_Hull — P2
 

@@ -142,7 +142,21 @@ export {
   contour,
   offsetCurvesOutward,
   offsetCurvesInward,
+  medialAxis,
+  chordalAxis,
+  straightSkeleton,
+  straightSkeletonParts,
+  centerLine,
+  distanceField,
+  contrastField,
+  distanceTree,
+  isolines,
+  isolinesFromFunction,
+  isolineZeroFromFunction,
+  isolinesFromPoints,
+  dissolveSegments,
 } from './contour/index.js'
+export type { StraightSkeletonParts, ScalarField } from './contour/index.js'
 
 export { hull, convexHull, convexHullPath, boundingBox } from './hull/index.js'
 

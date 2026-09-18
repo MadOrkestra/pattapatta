@@ -56,6 +56,14 @@ import {
   onionLayers,
   offsetCurvesInward,
   offsetCurvesOutward,
+  medialAxis,
+  chordalAxis,
+  straightSkeletonParts,
+  centerLine,
+  distanceField,
+  contrastField,
+  distanceTree,
+  isolines,
   parallelSegments,
   clipSegmentsToPath,
   poisson,
@@ -387,6 +395,88 @@ function vb(minX, minY, w, h) {
   ${groupTags(offsetCurvesInward(sq, 8), '#2a6f97', 1.4)}`,
     }),
   )
+
+  const blob = densify(createStar(50, 50, 36, 14, 5), 4)
+  write(
+    'contour-medial.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(blob, MUTED, 1)}
+  ${groupTags(medialAxis(blob, 0, 0, 0), ACCENT, 1.2)}`,
+    }),
+  )
+  write(
+    'contour-medial-pruned.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(blob, MUTED, 1)}
+  ${groupTags(medialAxis(blob, 0.4, 0.35, 0.35), ACCENT, 1.2)}`,
+    }),
+  )
+  write(
+    'contour-chordal.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(blob, MUTED, 1)}
+  ${groupTags(chordalAxis(blob), ACCENT, 1.2)}`,
+    }),
+  )
+  {
+    const parts = straightSkeletonParts(createRect(20, 25, 60, 50))
+    write(
+      'contour-straight-skeleton.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(createRect(20, 25, 60, 50), MUTED, 1)}
+  ${groupTags(parts.faces, '#c4a26a', 1)}
+  ${groupTags(parts.branches, '#2a6f97', 1.2)}
+  ${groupTags(parts.bones, ACCENT, 1.5)}`,
+      }),
+    )
+  }
+  write(
+    'contour-centerline.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(densify(createRect(10, 35, 80, 30), 3), MUTED, 1)}
+  ${pathTag(centerLine(densify(createRect(10, 35, 80, 30), 3), 0.7, 40), ACCENT, 2)}`,
+    }),
+  )
+  write(
+    'contour-distance-field.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(distanceField(sq, 10), ACCENT, 1.2)}`,
+    }),
+  )
+  write(
+    'contour-contrast-field.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(contrastField(sq, 8, vec2(30, 30)), ACCENT, 1.2)}`,
+    }),
+  )
+  write(
+    'contour-isolines.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(isolines(sq, vec2(50, 50), 12), ACCENT, 1.2)}`,
+    }),
+  )
+  {
+    const mesh = group(poissonTriangulation(sq, 12, 1))
+    write(
+      'contour-distance-tree.svg',
+      wrap({
+        viewBox: vb(0, 0, 100, 100),
+        body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(distanceTree(mesh, vec2(50, 50), true), ACCENT, 1.2)}`,
+      }),
+    )
+  }
 }
 
 {

@@ -35,8 +35,8 @@ Map PGS Java dependencies to TypeScript/browser-capable alternatives for the `pa
 | `org.locationtech.jts:jts-core` | Boolean, buffer, predicates, many algorithms | **`clipper2-ts`** for boolean/offset; custom or port for remaining JTS-specific ops |
 | `org.jgrapht:jgrapht-core` | Graphs (coloring, duals, matching) | `graphology` or small custom graphs |
 | `com.github.gwlucastrig:Tinfour` | Incremental TIN / triangulation | `d3-delaunay` + constrained CDT (e.g. `cdt2d` / custom) |
-| `com.github.micycle1:JMedialAxis` | Medial axis | Reimplement / port algorithm later (P2) |
-| `com.github.micycle1:grassfire4j` | Straight skeleton / grassfire | Reimplement later (P2) |
+| `com.github.micycle1:JMedialAxis` | Medial axis | Clean-room Voronoi MAT in `src/contour/medialAxis.ts` |
+| `com.github.micycle1:grassfire4j` | Straight skeleton / grassfire | Offset-trace approximation in `src/contour/straightSkeleton.ts` |
 | `org.apache.commons:commons-math3` | Numerics | Built-in Math + small helpers |
 | `org.tinspin:tinspin-indexes` | Spatial indexes | `rbush` / `flatbush` |
 | `com.github.micycle1:UniformNoise` | Noise | `simplex-noise` or omit where unused |
@@ -67,7 +67,7 @@ Map PGS Java dependencies to TypeScript/browser-capable alternatives for the `pa
 | Delaunay | `d3-delaunay` first; constrained later |
 | Voronoi | From Delaunay dual or dedicated port |
 | Graph coloring | Small graph + greedy / DSATUR in TS |
-| Medial axis / skeleton | Defer (P2); large specialized ports |
+| Medial axis / skeleton | Clean-room in `contour/` (Voronoi MAT, CAT, offset-trace SS) |
 
 ### Constraints for npm / browser
 
