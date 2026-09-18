@@ -18,6 +18,7 @@ import {
   createRegularPolygon,
   createRing,
   createStar,
+  delaunayTriangulation,
   delaunayTriangulationPoints,
   densify,
   earCutTriangulation,
@@ -38,10 +39,12 @@ import {
   offsetCurvesInward,
   offsetCurvesOutward,
   poisson,
+  poissonTriangulation,
   polygon,
   polyline,
   radialWarp,
   rectSubdivision,
+  refine,
   rotateAroundCenter,
   scale,
   segmentsToOpenPaths,
@@ -116,6 +119,20 @@ function circlesTags(circles, stroke = STROKE, sw = 1.2) {
     .join('\n  ')
 }
 
+/** Circles clipped to path so edge disks are cut at the boundary (holes use even-odd). */
+function clippedCirclesTags(path, circles, stroke = STROKE, sw = 1.2, clipId = 'pack-clip') {
+  const d = serializeRings(path.rings, path.closed)
+  if (!d) return circlesTags(circles, stroke, sw)
+  return `<defs>
+    <clipPath id="${clipId}" clipPathUnits="userSpaceOnUse">
+      <path d="${d}" clip-rule="evenodd"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#${clipId})">
+  ${circlesTags(circles, stroke, sw)}
+  </g>`
+}
+
 function pointsTags(pts, r = 1.5, fill = ACCENT) {
   return pts
     .map((p) => `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="none"/>`)
@@ -157,7 +174,7 @@ function vb(minX, minY, w, h) {
 
 {
   const sq = createRect(15, 15, 70, 70)
-  const hatched = segsToGroup(hatchParallel(sq, { spacing: 6, count: 24, angle: Math.PI / 4 }))
+  const hatched = segsToGroup(hatchParallel(sq, { spacing: 6, angle: Math.PI / 4 }))
   write(
     'hatch-parallel.svg',
     wrap({
@@ -166,7 +183,7 @@ function vb(minX, minY, w, h) {
   ${groupTags(hatched, STROKE, 1)}`,
     }),
   )
-  const cross = segsToGroup(hatchCross(sq, { spacing: 8, count: 18 }))
+  const cross = segsToGroup(hatchCross(sq, { spacing: 8 }))
   write(
     'hatch-cross.svg',
     wrap({
@@ -183,16 +200,16 @@ function vb(minX, minY, w, h) {
     'packing-square.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(cell, MUTED, 1)}
-  ${circlesTags(squareLatticePack(cell, 16), ACCENT, 1.2)}`,
+      body: `${clippedCirclesTags(cell, squareLatticePack(cell, 16, 'overlap'), ACCENT, 1.2, 'pack-square-clip')}
+  ${pathTag(cell, MUTED, 1)}`,
     }),
   )
   write(
     'packing-hex.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(cell, MUTED, 1)}
-  ${circlesTags(hexLatticePack(cell, 16), ACCENT, 1.2)}`,
+      body: `${clippedCirclesTags(cell, hexLatticePack(cell, 16, 'overlap'), ACCENT, 1.2, 'pack-hex-clip')}
+  ${pathTag(cell, MUTED, 1)}`,
     }),
   )
   write(
@@ -344,22 +361,41 @@ function vb(minX, minY, w, h) {
 }
 
 {
-  const sq = createRect(10, 10, 80, 80)
-  const tris = earCutTriangulation(sq)
-  write(
-    'triangulation-earcut.svg',
-    wrap({
-      viewBox: vb(0, 0, 100, 100),
-      body: groupTags(group(tris), STROKE, 1),
-    }),
-  )
-  const sites = poisson(12, 15, 15, 85, 85, 2)
+  const star = createStar(50, 50, 38, 16, 5)
   write(
     'triangulation-delaunay.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${groupTags(group(delaunayTriangulationPoints(sites)), STROKE, 1)}
-  ${pointsTags(sites, 2)}`,
+      body: `${pathTag(star, MUTED, 1)}
+  ${groupTags(group(delaunayTriangulation(star)), ACCENT, 1)}`,
+    }),
+  )
+  write(
+    'triangulation-earcut.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(star, MUTED, 1)}
+  ${groupTags(group(earCutTriangulation(star)), ACCENT, 1)}`,
+    }),
+  )
+  write(
+    'triangulation-poisson.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(star, MUTED, 1)}
+  ${groupTags(group(poissonTriangulation(star, 6, 4)), ACCENT, 1)}`,
+    }),
+  )
+  write(
+    'triangulation-refine.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(star, MUTED, 1)}
+  ${groupTags(
+    group(refine(star, { minAngle: Math.PI / 4, maxIterations: 200 })),
+    ACCENT,
+    1,
+  )}`,
     }),
   )
 }
@@ -547,7 +583,7 @@ function vb(minX, minY, w, h) {
     const target = merged.paths[0]
     const fill = target
       ? segsToGroup(
-          hatchParallel(target, { spacing: 6, count: 40, angle: Math.PI / 4 }),
+          hatchParallel(target, { spacing: 6, angle: Math.PI / 4 }),
         )
       : group([])
     write(
@@ -567,15 +603,15 @@ function vb(minX, minY, w, h) {
     const inner = createRect(30, 30, 40, 40)
     const frame = subtract(outer, inner)
     const target = frame.paths[0]
-    const packs = target ? hexLatticePack(target, 10, 'contained') : []
+    const packs = target ? hexLatticePack(target, 10, 'overlap') : []
     write(
       'pipeline-frame-pack.svg',
       wrap({
         viewBox: vb(0, 0, 100, 100),
         body: `${pathTag(outer, MUTED, 1)}
   ${pathTag(inner, MUTED, 1)}
-  ${groupTags(frame, ACCENT, 1.5)}
-  ${circlesTags(packs, STROKE, 1)}`,
+  ${target ? clippedCirclesTags(target, packs, STROKE, 1, 'frame-pack-clip') : ''}
+  ${groupTags(frame, ACCENT, 1.5)}`,
       }),
     )
   }
@@ -586,7 +622,7 @@ function vb(minX, minY, w, h) {
     const cut = subtract(star, hole)
     const target = cut.paths[0]
     const fill = target
-      ? segsToGroup(hatchCross(target, { spacing: 6, count: 40, angle: Math.PI / 4 }))
+      ? segsToGroup(hatchCross(target, { spacing: 6, angle: Math.PI / 4 }))
       : group([])
     write(
       'pipeline-star-cut-hatch.svg',
@@ -609,7 +645,7 @@ function vb(minX, minY, w, h) {
     const target = ring.paths[0]
     const fill = target
       ? segsToGroup(
-          hatchParallel(target, { spacing: 5, count: 40, angle: Math.PI / 5 }),
+          hatchParallel(target, { spacing: 5, angle: Math.PI / 5 }),
         )
       : group([])
     write(
@@ -630,7 +666,7 @@ function vb(minX, minY, w, h) {
   const frame = createRect(8, 8, 84, 84)
   const packs = maximumInscribedPack(frame, 8, 0.45)
   const hatched = segsToGroup(
-    hatchParallel(frame, { spacing: 5, count: 28, angle: Math.PI / 5 }),
+    hatchParallel(frame, { spacing: 5, angle: Math.PI / 5 }),
   )
   write(
     'hero.svg',

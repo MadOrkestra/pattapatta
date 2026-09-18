@@ -151,7 +151,12 @@ export {
   earCutTriangulation,
   delaunayTriangulation,
   delaunayTriangulationPoints,
+  poissonTriangulation,
+  poissonTriangulationPoints,
+  refine,
 } from './triangulation/index.js'
+
+export type { RefineOptions } from './triangulation/index.js'
 
 export {
   pointSet,

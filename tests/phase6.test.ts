@@ -3,18 +3,23 @@ import {
   area,
   closestPoint,
   compoundVoronoi,
+  containsPoint,
   createCircle,
   createKochSnowflake,
   createRect,
   createStar,
+  delaunayTriangulation,
   delaunayTriangulationPoints,
+  earCutTriangulation,
   envelope,
   innerVoronoi,
   maximumInscribedAARectangle,
   maximumInscribedCircle,
   minimumBoundingCircle,
   poisson,
+  poissonTriangulation,
   polygon,
+  refine,
   vec2,
 } from '../src/index.js'
 
@@ -75,6 +80,41 @@ describe('voronoi / triangulation points', () => {
       vec2(0.5, 0.3),
     ])
     expect(tris.length).toBeGreaterThanOrEqual(2)
+  })
+})
+
+describe('poisson / refine triangulation', () => {
+  it('poissonTriangulation fills the path with interior centroids', () => {
+    const cell = unitSquare()
+    const ear = earCutTriangulation(cell)
+    const tris = poissonTriangulation(cell, 0.2, 3)
+    expect(tris.length).toBeGreaterThan(ear.length)
+    for (const t of tris) {
+      const r = t.rings[0]!
+      const c = {
+        x: (r[0]!.x + r[1]!.x + r[2]!.x) / 3,
+        y: (r[0]!.y + r[1]!.y + r[2]!.y) / 3,
+      }
+      expect(containsPoint(cell, c)).toBe(true)
+    }
+  })
+
+  it('refine increases mesh density vs plain delaunay on a star', () => {
+    const star = createStar(0, 0, 1, 0.4, 5)
+    const base = delaunayTriangulation(star)
+    const refined = refine(star, {
+      minAngle: Math.PI / 3,
+      maxIterations: 80,
+    })
+    expect(refined.length).toBeGreaterThan(base.length)
+    for (const t of refined) {
+      const r = t.rings[0]!
+      const c = {
+        x: (r[0]!.x + r[1]!.x + r[2]!.x) / 3,
+        y: (r[0]!.y + r[1]!.y + r[2]!.y) / 3,
+      }
+      expect(containsPoint(star, c)).toBe(true)
+    }
   })
 })
 

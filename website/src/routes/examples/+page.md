@@ -23,7 +23,7 @@ const b = createRect(40, 35, 50, 40)
 const merged = union(a, b)
 const target = merged.paths[0]!
 const strokes = segmentsToOpenPaths(
-  hatchParallel(target, { spacing: 6, count: 40, angle: Math.PI / 4 }),
+  hatchParallel(target, { spacing: 6, angle: Math.PI / 4 }),
 )
 
 console.log(
@@ -38,7 +38,7 @@ console.log(
 
 ## Frame → pack
 
-Outer rectangle minus an inset hole, then a contained hex lattice inside the frame.
+Outer rectangle minus an inset hole, then a hex lattice fill clipped to the frame.
 
 ```ts
 import {
@@ -50,8 +50,8 @@ import {
 const outer = createRect(10, 10, 80, 80)
 const hole = createRect(30, 30, 40, 40)
 const frame = subtract(outer, hole)
-const circles = hexLatticePack(frame.paths[0]!, 10, 'contained')
-// circles: { x, y, r }[] — emit <circle fill="none"> or approximate with polygons
+const circles = hexLatticePack(frame.paths[0]!, 10) // overlap fill — clip in SVG
+// circles: { x, y, r }[] — emit <circle> inside a clipPath of the frame
 ```
 
 ![Frame then hex pack](/assets/pipeline-frame-pack.svg)
@@ -76,7 +76,7 @@ const hole = createCircle(50, 50, 14)
 const cut = subtract(star, hole)
 const target = cut.paths[0]!
 const strokes = segmentsToOpenPaths(
-  hatchCross(target, { spacing: 6, count: 40, angle: Math.PI / 4 }),
+  hatchCross(target, { spacing: 6, angle: Math.PI / 4 }),
 )
 
 console.log(
@@ -110,7 +110,7 @@ const inner = createCircle(50, 50, 18)
 const ring = subtract(outer, inner)
 const target = ring.paths[0]!
 const strokes = segmentsToOpenPaths(
-  hatchParallel(target, { spacing: 5, count: 40, angle: Math.PI / 5 }),
+  hatchParallel(target, { spacing: 5, angle: Math.PI / 5 }),
 )
 
 console.log(
@@ -122,6 +122,42 @@ console.log(
 ```
 
 ![Ring then hatch](/assets/pipeline-ring-hatch.svg)
+
+## Triangulation
+
+Delaunay, earcut, Poisson Steiner Delaunay, and Ruppert-inspired refine on a star.
+
+```ts
+import {
+  createStar,
+  delaunayTriangulation,
+  earCutTriangulation,
+  poissonTriangulation,
+  refine,
+} from 'pattapatta'
+
+const star = createStar(50, 50, 38, 16, 5)
+const delaunay = delaunayTriangulation(star)
+const earcut = earCutTriangulation(star)
+const poisson = poissonTriangulation(star, 6, 4)
+const refined = refine(star, { minAngle: Math.PI / 4, maxIterations: 200 })
+```
+
+### Delaunay
+
+![Delaunay star](/assets/triangulation-delaunay.svg)
+
+### Earcut
+
+![Earcut star](/assets/triangulation-earcut.svg)
+
+### Poisson Delaunay
+
+![Poisson Delaunay star](/assets/triangulation-poisson.svg)
+
+### Refine
+
+![Refine star](/assets/triangulation-refine.svg)
 
 ## Next
 
