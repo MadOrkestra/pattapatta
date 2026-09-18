@@ -1,3 +1,12 @@
+# Publish via npm trusted publishing (OIDC).
+# Pattern from: https://docs.npmjs.com/trusted-publishers#supported-cicd-providers
+#
+# npmjs.com Trusted Publisher must be:
+#   Organization/user: MadOrkestra
+#   Repository:        pattapatta
+#   Workflow filename: release.yml
+#   Allowed actions:   npm publish
+
 name: Release
 
 on:
@@ -9,35 +18,28 @@ concurrency:
   group: release-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-# https://docs.npmjs.com/trusted-publishers
+permissions:
+  id-token: write # Required for OIDC
+  contents: write
+  pull-requests: write
+
 jobs:
-  release:
+  # Changesets: open/update Version Packages PR when .changeset/* exists
+  version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write # required for npm OIDC
+    outputs:
+      publish: ${{ steps.decide.outputs.publish }}
+      version: ${{ steps.decide.outputs.version }}
+      tag: ${{ steps.decide.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v4
 
-      # Do NOT set registry-url here.
-      # setup-node writes //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-      # which makes npm skip OIDC and fail with ENEEDAUTH when the token is empty.
-      # https://github.com/npm/documentation/issues/1960
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: '24'
           cache: pnpm
-
-      - name: Use npm with trusted-publishing support
-        run: |
-          npm install -g npm@latest
-          node --version
-          npm --version
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
@@ -53,56 +55,60 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to npm via OIDC
-        id: publish
-        if: steps.changesets.outputs.has-changesets != 'true'
+      - name: Decide whether to publish
+        id: decide
         run: |
           set -euo pipefail
-
-          # Prove GitHub issued an OIDC token for this job
-          test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}"
-          test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}"
-
           VERSION="$(node -p "require('./package.json').version")"
           NAME="$(node -p "require('./package.json').name")"
           TAG="${NAME}@${VERSION}"
-          {
-            echo "version=${VERSION}"
-            echo "tag=${TAG}"
-          } >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
-            echo "${TAG} already on npm — skip"
-            echo "published=false" >> "$GITHUB_OUTPUT"
+          if [ "${{ steps.changesets.outputs.has-changesets }}" = "true" ]; then
+            echo "Pending changesets — Version Packages PR only"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Ensure no classic-token auth is configured (blocks OIDC)
-          unset NODE_AUTH_TOKEN NPM_TOKEN || true
-          npm config delete "//registry.npmjs.org/:_authToken" >/dev/null 2>&1 || true
-          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "${NPM_CONFIG_USERCONFIG}" ]; then
-            sed -i '/_authToken/d' "${NPM_CONFIG_USERCONFIG}"
-            echo "--- ${NPM_CONFIG_USERCONFIG} ---"
-            cat "${NPM_CONFIG_USERCONFIG}" || true
-          fi
-          if [ -f "$HOME/.npmrc" ]; then
-            sed -i '/_authToken/d' "$HOME/.npmrc"
-          fi
-          if [ -f .npmrc ]; then
-            sed -i '/_authToken/d' .npmrc
+          if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
+            echo "${TAG} already on npm"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
-          npm config set registry https://registry.npmjs.org/
-          echo "Publishing ${TAG}"
-          npm publish --access public
-          echo "published=true" >> "$GITHUB_OUTPUT"
+          echo "Will publish ${TAG}"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+
+  # Exact trusted-publishing publish shape from npm docs
+  publish:
+    needs: version
+    if: needs.version.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false # never use caching in release builds
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build --if-present
+
+      - run: npm publish --access public
 
       - name: Create GitHub Release
-        if: steps.publish.outputs.published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.publish.outputs.tag }}
-          VERSION: ${{ steps.publish.outputs.version }}
+          TAG: ${{ needs.version.outputs.tag }}
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
