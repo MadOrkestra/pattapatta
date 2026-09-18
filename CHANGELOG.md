@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- e828df4: Add `createSponge`, `hilbertSort`, `findShortestTour`, and `arcDivision`, plus plotter hatch fills (`weave` / `stochastic` / `perpendicular` / `concentric`). Refresh contour docs examples with shapes that show skeletons and fields clearly.
+
 ## 0.3.0
 
 ### Minor Changes
