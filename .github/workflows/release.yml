@@ -29,7 +29,9 @@ jobs:
           # Trusted publishing needs Node ≥ 22.14 and npm ≥ 11.5.1
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+          # Do not set registry-url here — it writes an empty
+          # //registry.npmjs.org/:_authToken= which blocks OIDC and
+          # surfaces as a misleading E404 on publish.
 
       - name: Ensure npm supports trusted publishing
         run: npm install -g npm@latest
@@ -39,6 +41,17 @@ jobs:
       - run: pnpm test
 
       - run: pnpm build
+
+      - name: Clear token auth so npm uses OIDC
+        run: |
+          # Empty _authToken lines make npm skip OIDC and fail with E404.
+          for f in "$HOME/.npmrc" .npmrc; do
+            if [ -f "$f" ]; then
+              sed -i '/_authToken/d' "$f"
+              sed -i '/^always-auth/d' "$f"
+            fi
+          done
+          npm config set registry https://registry.npmjs.org/
 
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1

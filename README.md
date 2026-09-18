@@ -84,6 +84,12 @@ This repo uses [Changesets](https://github.com/changesets/changesets). Only the 
 
 Current package version is in `package.json` (e.g. `0.2.0`). If publish failed after a version bump, fix the trusted-publisher config (workflow name must be exactly `release.yml`) and re-run **Release** — Changesets will publish any version not yet on npm.
 
+If CI fails with **`E404 Not Found - PUT https://registry.npmjs.org/pattapatta`**, that usually means auth failed (npm hides 401 as 404), not a missing package. Check:
+
+1. Trusted Publisher fields match exactly (`MadOrkestra` / `pattapatta` / `release.yml`) and **`npm publish`** is allowed.
+2. No empty `_authToken` in CI `.npmrc` (this workflow strips those; don’t re-add `registry-url` + `NODE_AUTH_TOKEN`).
+3. Repo is public (provenance/OIDC expectations) and `package.json` `repository.url` matches GitHub.
+
 Local checks used by CI:
 
 ```bash
