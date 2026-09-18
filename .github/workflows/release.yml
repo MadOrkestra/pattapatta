@@ -9,45 +9,41 @@ concurrency:
   group: release-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+# https://docs.npmjs.com/trusted-publishers
 jobs:
   release:
-    # GitHub-hosted runner required for npm trusted publishing (OIDC).
-    # https://docs.npmjs.com/trusted-publishers#supported-cicd-providers
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-      id-token: write # Required for OIDC
+      id-token: write # required for npm OIDC
     steps:
       - uses: actions/checkout@v4
         with:
-          # Need history/tags + token so we can push release tags
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: pnpm/action-setup@v4
 
+      # Do NOT set registry-url here.
+      # setup-node writes //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+      # which makes npm skip OIDC and fail with ENEEDAUTH when the token is empty.
+      # https://github.com/npm/documentation/issues/1960
       - uses: actions/setup-node@v4
         with:
-          # Trusted publishing: Node ≥ 22.14, npm ≥ 11.5.1
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
 
-      - name: Ensure npm supports trusted publishing
+      - name: Use npm with trusted-publishing support
         run: |
-          npm install -g npm@^11.5.1
+          npm install -g npm@latest
+          node --version
           npm --version
 
       - run: pnpm install --frozen-lockfile
-
       - run: pnpm test
-
       - run: pnpm build
 
-      # Opens/updates the Version Packages PR when .changeset/* exists.
-      # Do not publish from this action — it does not forward OIDC env.
-      - name: Create Release Pull Request
+      - name: Create Version Packages PR
         id: changesets
         uses: changesets/action@v1
         with:
@@ -57,36 +53,47 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Publish when there is no pending changeset (version already on main).
-      # Use != 'true' so a missing/empty output still attempts publish.
-      - name: Publish to npm (OIDC)
+      - name: Publish to npm via OIDC
         id: publish
         if: steps.changesets.outputs.has-changesets != 'true'
         run: |
           set -euo pipefail
+
+          # Prove GitHub issued an OIDC token for this job
           test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}"
           test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}"
 
           VERSION="$(node -p "require('./package.json').version")"
           NAME="$(node -p "require('./package.json').name")"
           TAG="${NAME}@${VERSION}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          {
+            echo "version=${VERSION}"
+            echo "tag=${TAG}"
+          } >> "$GITHUB_OUTPUT"
 
           if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
-            echo "${TAG} already on npm — skip publish"
+            echo "${TAG} already on npm — skip"
             echo "published=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Drop dummy //registry…:_authToken from setup-node so OIDC can run.
+          # Ensure no classic-token auth is configured (blocks OIDC)
           unset NODE_AUTH_TOKEN NPM_TOKEN || true
-          for f in "${NPM_CONFIG_USERCONFIG:-}" "$HOME/.npmrc" .npmrc; do
-            [ -n "${f}" ] && [ -f "${f}" ] || continue
-            sed -i '/_authToken/d' "${f}" || true
-          done
+          npm config delete "//registry.npmjs.org/:_authToken" >/dev/null 2>&1 || true
+          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "${NPM_CONFIG_USERCONFIG}" ]; then
+            sed -i '/_authToken/d' "${NPM_CONFIG_USERCONFIG}"
+            echo "--- ${NPM_CONFIG_USERCONFIG} ---"
+            cat "${NPM_CONFIG_USERCONFIG}" || true
+          fi
+          if [ -f "$HOME/.npmrc" ]; then
+            sed -i '/_authToken/d' "$HOME/.npmrc"
+          fi
+          if [ -f .npmrc ]; then
+            sed -i '/_authToken/d' .npmrc
+          fi
 
-          echo "Publishing ${TAG} via OIDC"
+          npm config set registry https://registry.npmjs.org/
+          echo "Publishing ${TAG}"
           npm publish --access public
           echo "published=true" >> "$GITHUB_OUTPUT"
 
@@ -103,7 +110,6 @@ jobs:
           git tag -f "$TAG"
           git push origin "refs/tags/${TAG}" --force
 
-          # Notes: section for this version from CHANGELOG.md
           NOTES="$(awk -v ver="## ${VERSION}" '
             $0 == ver {grab=1; next}
             grab && /^## / {exit}
@@ -113,6 +119,4 @@ jobs:
             NOTES="Release ${TAG}"
           fi
 
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --notes "$NOTES"
+          gh release create "$TAG" --title "$TAG" --notes "$NOTES"
