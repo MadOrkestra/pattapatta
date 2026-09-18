@@ -81,14 +81,16 @@ This repo uses [Changesets](https://github.com/changesets/changesets). Only the 
 1. In a PR that changes the library, run `pnpm changeset`, commit the file under `.changeset/`, and merge to `main`.
 2. The **Release** workflow opens or updates a **Version Packages** PR (bumps version, updates `CHANGELOG.md`).
 3. Merging that PR publishes to npm (OIDC + provenance) and creates a GitHub Release.
+   Publish must use **`npm publish`** (not `pnpm publish`) — OIDC only works with the npm CLI ([docs](https://docs.npmjs.com/trusted-publishers)).
 
 Current package version is in `package.json` (e.g. `0.2.0`). If publish failed after a version bump, fix the trusted-publisher config (workflow name must be exactly `release.yml`) and re-run **Release** — Changesets will publish any version not yet on npm.
 
-If CI fails with **`E404 Not Found - PUT https://registry.npmjs.org/pattapatta`**, that usually means auth failed (npm hides 401 as 404), not a missing package. Check:
+If CI fails with **`ENEEDAUTH`** or **`E404 Not Found - PUT …/pattapatta`**, treat it as auth failure (npm hides 401 as 404). Check:
 
-1. Trusted Publisher fields match exactly (`MadOrkestra` / `pattapatta` / `release.yml`) and **`npm publish`** is allowed.
-2. No empty `_authToken` in CI `.npmrc` (this workflow strips those; don’t re-add `registry-url` + `NODE_AUTH_TOKEN`).
-3. Repo is public (provenance/OIDC expectations) and `package.json` `repository.url` matches GitHub.
+1. Trusted Publisher on npmjs.com matches exactly: `MadOrkestra` / `pattapatta` / `release.yml`, and **`npm publish` is allowed** (new configs default to stage-only).
+2. Release uses `scripts/publish-oidc.sh` → `npm publish` (Changesets would otherwise pick `pnpm publish`, which cannot OIDC).
+3. Job has `id-token: write` and runs on a **GitHub-hosted** runner.
+4. `package.json` `repository.url` matches `https://github.com/MadOrkestra/pattapatta.git`.
 
 Local checks used by CI:
 

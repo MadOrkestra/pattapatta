@@ -137,7 +137,7 @@
     "docs:build": "pnpm --filter website build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish",
+    "release": "bash scripts/publish-oidc.sh",
     "prepack": "pnpm run build",
     "prepublishOnly": "pnpm test && pnpm run build"
   },
