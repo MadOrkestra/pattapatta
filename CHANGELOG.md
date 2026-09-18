@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- d7fa7dc: Point the npm package homepage at the docs site.
+
 ## 0.2.0
 
 ### Minor Changes
