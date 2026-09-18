@@ -66,6 +66,17 @@ describe('frontChainPack / repulsionPack', () => {
     expect(a.length).toBeGreaterThan(3)
   })
 
+  it('frontChainPack fills past a fixed circle cap until stall', () => {
+    const big = polygon([
+      vec2(0, 0),
+      vec2(10, 0),
+      vec2(10, 10),
+      vec2(0, 10),
+    ])
+    const got = frontChainPack(big, 0.15, 0.2, 1)
+    expect(got.length).toBeGreaterThan(400)
+  })
+
   it('repulsionPack returns some overlapping circles', () => {
     const got = repulsionPack(unitSquare(), 0.08, 0.08, 3, 40)
     expect(got.length).toBeGreaterThan(3)

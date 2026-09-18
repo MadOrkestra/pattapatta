@@ -199,6 +199,7 @@ export function obstaclePack(
 /**
  * Front-chain-inspired packing of (possibly varying) radii in the path envelope,
  * then keep circles that overlap the path. Seeded for determinism.
+ * Grows until placement stalls (region effectively full); no fixed circle count.
  * Not a line-by-line port of PGS FrontChainPacker — same role, approximate layout.
  */
 export function frontChainPack(
@@ -212,22 +213,46 @@ export function frontChainPack(
   const rng = mulberry32(seed >>> 0)
   const b = bounds(path)
   const packing: Circle[] = []
+  const area = Math.max(1e-6, (b.maxX - b.minX) * (b.maxY - b.minY))
+  // Safety ceiling only — real stop is consecutive placement failures.
+  const capacity = Math.max(
+    4,
+    Math.ceil((area / (Math.PI * rMin * rMin)) * 2),
+  )
 
-  // Seed a few circles near the envelope, then grow a frontier of tangent candidates.
-  const seeds = 8
-  for (let i = 0; i < seeds; i++) {
+  const trySeed = (): boolean => {
     const p = vecInBounds(b, rng)
     const r = rMin + rng() * (rMax - rMin)
     const c = circle(p.x, p.y, r)
     if (!overlapsAny(c, packing) && circleOverlapsPath(c, path)) {
       packing.push(c)
+      return true
     }
+    return false
   }
 
-  const maxCircles = 400
-  let guard = 0
-  while (packing.length < maxCircles && guard++ < maxCircles * 8) {
-    if (packing.length === 0) break
+  // Seed a few circles, then grow a frontier of tangent candidates.
+  for (let i = 0; i < 8; i++) trySeed()
+
+  let fails = 0
+  while (packing.length < capacity) {
+    const stallLimit = Math.max(500, packing.length * 12)
+    if (fails >= stallLimit) break
+
+    if (packing.length === 0) {
+      if (trySeed()) fails = 0
+      else fails++
+      continue
+    }
+
+    // Reseed empty pockets so growth is not stuck on one cluster.
+    if (fails > 0 && fails % 50 === 0) {
+      if (trySeed()) {
+        fails = 0
+        continue
+      }
+    }
+
     const base = packing[Math.floor(rng() * packing.length)]!
     const ang = rng() * Math.PI * 2
     const r = rMin + rng() * (rMax - rMin)
@@ -243,10 +268,14 @@ export function frontChainPack(
       c.y < b.minY - rMax ||
       c.y > b.maxY + rMax
     ) {
+      fails++
       continue
     }
     if (!overlapsAny(c, packing) && circleOverlapsPath(c, path)) {
       packing.push(c)
+      fails = 0
+    } else {
+      fails++
     }
   }
 
