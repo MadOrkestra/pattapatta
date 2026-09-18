@@ -7,7 +7,10 @@ import {
   parallelSegments,
   polygon,
   segmentLength,
+  stochasticSegments,
   vec2,
+  weaveSegments,
+  perpendicularPathSegments,
   type OracleCase,
   type Segment,
 } from '../src/index.js'
@@ -46,6 +49,61 @@ describe('segmentSet.parallelSegments', () => {
     const segs = parallelSegments(0.5, 0.5, 2, 0.15, Math.PI / 4, 30)
     expect(segs).toHaveLength(30)
     expect(segmentLength(segs[0]!)).toBeGreaterThan(1)
+  })
+})
+
+describe('segmentSet.weaveSegments', () => {
+  it('plain weave 1-1-1 emits H and V runs', () => {
+    const segs = weaveSegments(10, 10, 2, 1, 1, 1)
+    expect(segs.length).toBeGreaterThan(0)
+    const horiz = segs.filter((s) => Math.abs(s.a.y - s.b.y) < 1e-9)
+    const vert = segs.filter((s) => Math.abs(s.a.x - s.b.x) < 1e-9)
+    expect(horiz.length).toBeGreaterThan(0)
+    expect(vert.length).toBeGreaterThan(0)
+  })
+
+  it('rejects non-positive cellSize', () => {
+    expect(() => weaveSegments(10, 10, 0, 1, 1, 1)).toThrow(/cellSize/)
+  })
+})
+
+describe('segmentSet.stochasticSegments', () => {
+  it('is deterministic for a fixed seed', () => {
+    const a = stochasticSegments(20, 20, 12, 2, 2, 42)
+    const b = stochasticSegments(20, 20, 12, 2, 2, 42)
+    expect(a).toHaveLength(12)
+    expect(sortSegs(a)).toEqual(sortSegs(b))
+  })
+
+  it('segments do not intersect', () => {
+    const segs = stochasticSegments(30, 30, 20, 3, 3, 7)
+    for (let i = 0; i < segs.length; i++) {
+      for (let j = i + 1; j < segs.length; j++) {
+        const u = segs[i]!
+        const v = segs[j]!
+        const hits =
+          ccw(u.a, v.a, v.b) !== ccw(u.b, v.a, v.b) &&
+          ccw(u.a, u.b, v.a) !== ccw(u.a, u.b, v.b)
+        expect(hits).toBe(false)
+      }
+    }
+  })
+})
+
+describe('segmentSet.perpendicularPathSegments', () => {
+  it('places ticks along a unit square perimeter', () => {
+    const cell = polygon([
+      vec2(0, 0),
+      vec2(1, 0),
+      vec2(1, 1),
+      vec2(0, 1),
+    ])
+    const ticks = perpendicularPathSegments(cell, 0.25, 0.2, 0)
+    // Perimeter length 4 → round(4/0.25)=16
+    expect(ticks).toHaveLength(16)
+    for (const t of ticks) {
+      expect(segmentLength(t)).toBeCloseTo(0.2, 5)
+    }
   })
 })
 
@@ -116,3 +174,54 @@ describe('hatch vs oracle', () => {
     expect(near(85, 15)).toBe(true)
   })
 })
+
+describe('hatch.weave / stochastic / perpendicular / concentric', () => {
+  const cell = polygon([
+    vec2(10, 10),
+    vec2(90, 10),
+    vec2(90, 90),
+    vec2(10, 90),
+  ])
+
+  it('weave clips fabric segments to the path', () => {
+    const segs = hatch.weave(cell, { cellSize: 10, A: 1, B: 1, C: 1 })
+    expect(segs.length).toBeGreaterThan(0)
+    for (const s of segs) {
+      expect(s.a.x).toBeGreaterThanOrEqual(10 - 1e-6)
+      expect(s.a.x).toBeLessThanOrEqual(90 + 1e-6)
+      expect(s.a.y).toBeGreaterThanOrEqual(10 - 1e-6)
+      expect(s.a.y).toBeLessThanOrEqual(90 + 1e-6)
+    }
+  })
+
+  it('stochastic is seeded and clipped', () => {
+    const a = hatch.stochastic(cell, { count: 25, length: 12, seed: 9 })
+    const b = hatch.stochastic(cell, { count: 25, length: 12, seed: 9 })
+    expect(a.length).toBeGreaterThan(0)
+    expect(sortSegs(a)).toEqual(sortSegs(b))
+  })
+
+  it('perpendicular ticks along the boundary', () => {
+    const ticks = hatch.perpendicular(cell, { spacing: 20, length: 8 })
+    expect(ticks.length).toBeGreaterThan(0)
+    expect(segmentLength(ticks[0]!)).toBeCloseTo(8, 5)
+  })
+
+  it('concentric returns nested closed shells', () => {
+    const shells = hatch.concentric(cell, { spacing: 8, count: 4 })
+    expect(shells.length).toBeGreaterThan(0)
+    expect(shells.length).toBeLessThanOrEqual(4)
+    for (const p of shells) {
+      expect(p.closed).toBe(true)
+      expect(p.rings[0]!.length).toBeGreaterThanOrEqual(3)
+    }
+  })
+})
+
+function ccw(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  c: { x: number; y: number },
+): boolean {
+  return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x)
+}

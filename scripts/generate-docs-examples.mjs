@@ -47,6 +47,10 @@ import {
   urquhartFaces,
   hatchCross,
   hatchParallel,
+  hatchWeave,
+  hatchStochastic,
+  hatchConcentric,
+  hatchPerpendicular,
   hexLatticePack,
   hexTiling,
   hilbertPolygonise,
@@ -218,6 +222,48 @@ function vb(minX, minY, w, h) {
       viewBox: vb(0, 0, 100, 100),
       body: `${pathTag(sq, MUTED, 1)}
   ${groupTags(cross, STROKE, 1)}`,
+    }),
+  )
+  const weave = segsToGroup(
+    hatchWeave(sq, { cellSize: 8, A: 2, B: 2, C: 1 }),
+  )
+  write(
+    'hatch-weave.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(weave, STROKE, 1)}`,
+    }),
+  )
+  const stoch = segsToGroup(
+    hatchStochastic(sq, { count: 50, length: 18, seed: 3 }),
+  )
+  write(
+    'hatch-stochastic.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(stoch, STROKE, 1)}`,
+    }),
+  )
+  const shells = group(hatchConcentric(sq, { spacing: 6, count: 5 }))
+  write(
+    'hatch-concentric.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(shells, STROKE, 1)}`,
+    }),
+  )
+  const ticks = segsToGroup(
+    hatchPerpendicular(sq, { spacing: 8, length: 6 }),
+  )
+  write(
+    'hatch-perpendicular.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(sq, MUTED, 1)}
+  ${groupTags(ticks, STROKE, 1)}`,
     }),
   )
 }

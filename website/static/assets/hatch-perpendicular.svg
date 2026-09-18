@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect x="0" y="0" width="100%" height="100%" fill="#faf8f5"/>
+  <path d="M 15 15 L 85 15 L 85 85 L 15 85 Z" stroke="#888" stroke-width="1" fill="none"/>
+  <path d="M 17.121320343559645 82.87867965644037 L 12.878679656440355 87.12132034355963" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 23 82 L 23 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 31 82 L 31 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 39 82 L 39 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 47 82 L 47 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 55 82 L 55 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 63 82 L 63 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 71 82 L 71 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 79 82 L 79 88" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82.04081822850357 82.50680303808393 L 87.95918177149643 83.49319696191607" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 75 L 88 75" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 67 L 88 67" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 59 L 88 59" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 51 L 88 51" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 43.000000000000014 L 88 43.000000000000014" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 35 L 88 35" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 26.999999999999993 L 88 26.999999999999993" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 82 19 L 88 19" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 81 18 L 81 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 73 18 L 73 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 65 18 L 65 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 57 18 L 57 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 49 18 L 49 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 41 18 L 41 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 33 18 L 33 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 25 18 L 25 12" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 17.493196961916077 17.959181771496432 L 16.506803038083923 12.04081822850357" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 20.99999999999997 L 12 20.99999999999997" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 28.99999999999997 L 12 28.99999999999997" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 36.99999999999997 L 12 36.99999999999997" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 45 L 12 45" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 53 L 12 53" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 61 L 12 61" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 69 L 12 69" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+  <path d="M 18 77 L 12 77" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+</svg>

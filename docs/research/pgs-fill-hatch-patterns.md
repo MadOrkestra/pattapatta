@@ -86,6 +86,9 @@ This is the primary pattern `pattapatta` should productize as a convenience help
 | `hatch.parallel(path, opts)` | parallelSegments → intersect path |
 | `hatch.cross(path, opts)` | two parallel passes |
 | `hatch.weave(path, opts)` | weaveSegments → interior/intersect |
+| `hatch.stochastic(path, opts)` | stochasticSegments → clip |
+| `hatch.perpendicular(path, opts)` | perpendicularPathSegments (outline ticks) |
+| `hatch.concentric(path, opts)` | repeated inward buffer shells |
 | `fill.circles(path, algorithm, opts)` | circlePacking + optional SVG emit |
 
 Low-level modules remain the source of truth; helpers are thin.

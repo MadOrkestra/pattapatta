@@ -65,15 +65,36 @@ export type { OracleCase } from './compare/index.js'
 export {
   segmentSet,
   parallelSegments,
+  stochasticSegments,
+  weaveSegments,
+  perpendicularPathSegments,
   filterByMinLength,
   filterAxisAligned,
   segmentLength,
   segmentsToOpenPaths,
 } from './segmentSet/index.js'
+export type {
+  WeaveSegmentsOptions,
+  SegmentLengthFn,
+} from './segmentSet/index.js'
 export { clipSegmentToPath, clipSegmentsToPath } from './segmentSet/clip.js'
 
-export { hatch, parallel as hatchParallel, cross as hatchCross } from './hatch/index.js'
-export type { ParallelHatchOptions } from './hatch/index.js'
+export {
+  hatch,
+  parallel as hatchParallel,
+  cross as hatchCross,
+  weave as hatchWeave,
+  stochastic as hatchStochastic,
+  perpendicular as hatchPerpendicular,
+  concentric as hatchConcentric,
+} from './hatch/index.js'
+export type {
+  ParallelHatchOptions,
+  WeaveHatchOptions,
+  StochasticHatchOptions,
+  PerpendicularHatchOptions,
+  ConcentricHatchOptions,
+} from './hatch/index.js'
 
 export {
   circlePacking,

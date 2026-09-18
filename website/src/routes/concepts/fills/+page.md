@@ -8,7 +8,7 @@ Typical pipeline: **construct → [operate](/concepts/operations) → fill → S
 
 | Module | Marks |
 |--------|-------|
-| [hatch](/api/hatch) | Parallel or cross hatch strokes |
+| [hatch](/api/hatch) | Parallel, cross, weave, stochastic, perpendicular ticks, concentric shells |
 | [circlePacking](/api/circle-packing) | Circles packed in a region |
 | [segmentSet](/api/segment-set) | Low-level hatch building blocks |
 
@@ -20,6 +20,18 @@ const strokes = segmentsToOpenPaths(
   hatchParallel(region, { spacing: 6, angle: Math.PI / 4 }),
 )
 ```
+
+### Hatch pattern map
+
+| Helper | Marks |
+|--------|-------|
+| `hatchParallel` / `hatchCross` | Straight hatch / crosshatch |
+| `hatchWeave` | Fabric-like H/V runs (ABC weave) |
+| `hatchStochastic` | Random non-intersecting segments |
+| `hatchPerpendicular` | Perimeter ticks (outline texture) |
+| `hatchConcentric` | Nested inward offset shells (`Path[]`) |
+
+Do **not** use SVG `<pattern>` / CSS fills for plotter output — expand geometry to real stroked paths instead.
 
 ## Also fill-like
 

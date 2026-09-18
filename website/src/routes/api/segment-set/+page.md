@@ -6,7 +6,9 @@ Generate and filter infinite-style segment fields (PGS hatching building blocks)
 
 ```ts
 import {
-  parallelSegments, filterByMinLength, filterAxisAligned,
+  parallelSegments, weaveSegments, stochasticSegments,
+  perpendicularPathSegments,
+  filterByMinLength, filterAxisAligned,
   segmentLength, segmentsToOpenPaths, clipSegmentsToPath,
   segmentSet,
 } from 'pattapatta'
@@ -17,8 +19,11 @@ import {
 | Function | Description |
 |----------|-------------|
 | `parallelSegments(…)` | Parallel line field (float32-compatible spacing) |
+| `weaveSegments(w, h, cellSize, A, B, C, opts?)` | ABC fabric H/V runs in a box |
+| `stochasticSegments(w, h, n, minLen?, maxLen?, seed?, ox?, oy?)` | Random non-intersecting segments |
+| `perpendicularPathSegments(path, spacing, length, startOffset?)` | Perimeter-normal ticks |
 | `filterByMinLength(segs, min)` | Drop short segments |
-| `filterAxisAligned(segs)` | Keep H/V only |
+| `filterAxisAligned(segs)` | Drop near-axis-aligned segments |
 | `segmentLength(seg)` | Length |
 | `segmentsToOpenPaths(segs)` | Convert to open `Path`s for `toSvg` |
 | `clipSegmentToPath` / `clipSegmentsToPath` | Clip lines to a polygon |
