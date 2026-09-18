@@ -7,7 +7,7 @@ Primitive shape constructors.
 ```ts
 import {
   createCircle, createRect, createRegularPolygon, createRing,
-  createArc, createStar, createKochSnowflake, construction,
+  createArc, createStar, createKochSnowflake, createSponge, construction,
 } from 'pattapatta'
 ```
 
@@ -22,6 +22,7 @@ import {
 | `createArc(…)` | Open arc polyline |
 | `createStar(cx, cy, outer, inner, points?, rotation?)` | Star |
 | `createKochSnowflake(cx, cy, r, iterations?)` | Koch flake |
+| `createSponge(w, h, generators, thickness, smoothing, classes, seed?)` | Porous Voronoi sponge (`Group`) |
 
 ## Examples
 
@@ -32,3 +33,14 @@ import {
 ### Ring / arc
 
 ![Ring and arc](/assets/construction-ring-arc.svg)
+
+### Sponge
+
+Merged Voronoi cells, Chaikin-smoothed, subtracted from a rectangle. Stroke the result as a fill. Lower `classes` → coarser blobs; higher `thickness` → thicker walls.
+
+![Sponge](/assets/construction-sponge.svg)
+
+```ts
+const sponge = createSponge(100, 100, 40, 1.5, 2, 8, 19)
+// stroke sponge.paths
+```

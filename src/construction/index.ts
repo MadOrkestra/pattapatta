@@ -1,5 +1,9 @@
-import type { Path, Vec2 } from '../types/index.js'
-import { path, polygon, polyline } from '../types/index.js'
+import type { Group, Path, Vec2 } from '../types/index.js'
+import { group, path, polygon, polyline } from '../types/index.js'
+import { compoundVoronoi } from '../voronoi/index.js'
+import { stochasticMerge } from '../meshing/index.js'
+import { buffer, smooth } from '../morphology/index.js'
+import { subtractAll } from '../shapeBoolean/index.js'
 
 /** Regular n-gon approximating a circle. */
 export function createCircle(
@@ -109,6 +113,78 @@ export function createKochSnowflake(
   return polygon(ring)
 }
 
+/**
+ * Sponge-like porous structure (PGS `createSponge`).
+ * Voronoi cells are randomly class-merged, smoothed (Chaikin), optionally
+ * eroded for wall thickness, then subtracted from the bounding rectangle.
+ * Returns a group (may be multi-component).
+ */
+export function createSponge(
+  width: number,
+  height: number,
+  generators: number,
+  thickness: number,
+  smoothing: number,
+  classes: number,
+  seed = 1,
+): Group {
+  const w = Math.max(width, 1e-9)
+  const h = Math.max(height, 1e-9)
+  const nGen = Math.max(6, Math.floor(generators))
+  const nClasses = Math.max(1, Math.floor(classes))
+  const smoothIters = Math.max(0, Math.floor(smoothing))
+  const wall = Math.max(0, thickness)
+
+  const sites = randomInBox(nGen, 0, 0, w, h, seed)
+  const cells = compoundVoronoi(sites, {
+    bounds: { minX: 0, minY: 0, maxX: w, maxY: h },
+  })
+  const merged = stochasticMerge(cells.paths, nClasses, seed + 1)
+
+  const pores: Path[] = []
+  for (let p of merged.paths) {
+    if (smoothIters > 0) p = smooth(p, smoothIters)
+    if (wall > 1e-12) {
+      // Erode pore blobs so remaining walls are thicker
+      pores.push(...buffer(p, -wall * 0.5).paths)
+    } else {
+      pores.push(p)
+    }
+  }
+
+  const frame = createRect(0, 0, w, h)
+  if (pores.length === 0) return group([frame])
+  return subtractAll(frame, pores)
+}
+
+function randomInBox(
+  count: number,
+  minX: number,
+  minY: number,
+  maxX: number,
+  maxY: number,
+  seed: number,
+): Vec2[] {
+  const rng = mulberry32(seed >>> 0)
+  const out: Vec2[] = []
+  for (let i = 0; i < count; i++) {
+    out.push({
+      x: minX + rng() * (maxX - minX),
+      y: minY + rng() * (maxY - minY),
+    })
+  }
+  return out
+}
+
+function mulberry32(a: number): () => number {
+  return function () {
+    let t = (a += 0x6d2b79f5)
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 function kochRefine(ring: Vec2[]): Vec2[] {
   const out: Vec2[] = []
   const n = ring.length
@@ -135,4 +211,5 @@ export const construction = {
   createArc,
   createStar,
   createKochSnowflake,
+  createSponge,
 }

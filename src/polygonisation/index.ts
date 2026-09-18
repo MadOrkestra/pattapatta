@@ -2,6 +2,7 @@ import type { Path, Vec2 } from '../types/index.js'
 import { polygon } from '../types/index.js'
 import { convexHull } from '../hull/index.js'
 import { area } from '../predicates/index.js'
+import { hilbertSort } from '../pointSet/hilbert.js'
 
 /** Convex hull (largest-area simple polygonisation for a point cloud). */
 export function maxArea(points: Vec2[]): Path {
@@ -121,33 +122,7 @@ export function onionLayers(points: Vec2[]): Path[] {
 
 /** Connect points ordered by 2D Hilbert curve index. */
 export function hilbert(points: Vec2[]): Path {
-  if (points.length === 0) return polygon([])
-  let minX = Infinity
-  let minY = Infinity
-  let maxX = -Infinity
-  let maxY = -Infinity
-  for (const p of points) {
-    minX = Math.min(minX, p.x)
-    minY = Math.min(minY, p.y)
-    maxX = Math.max(maxX, p.x)
-    maxY = Math.max(maxY, p.y)
-  }
-  const span = Math.max(maxX - minX, maxY - minY, 1e-9)
-  const order = 10
-  const n = 1 << order
-  const scored = points.map((p) => {
-    const x = Math.min(
-      n - 1,
-      Math.max(0, Math.floor(((p.x - minX) / span) * (n - 1))),
-    )
-    const y = Math.min(
-      n - 1,
-      Math.max(0, Math.floor(((p.y - minY) / span) * (n - 1))),
-    )
-    return { p, h: xy2d(order, x, y) }
-  })
-  scored.sort((a, b) => a.h - b.h)
-  return polygon(scored.map((s) => s.p))
+  return polygon(hilbertSort(points))
 }
 
 function coversPoints(poly: Path, points: Vec2[]): boolean {
@@ -189,38 +164,6 @@ function centroidOf(points: Vec2[]): Vec2 {
     sy += p.y
   }
   return { x: sx / points.length, y: sy / points.length }
-}
-
-/** Hilbert index for (x,y) in [0, 2^order). */
-function xy2d(order: number, x: number, y: number): number {
-  let rx
-  let ry
-  let s
-  let d = 0
-  for (s = 1 << (order - 1); s > 0; s >>= 1) {
-    rx = (x & s) > 0 ? 1 : 0
-    ry = (y & s) > 0 ? 1 : 0
-    d += s * s * ((3 * rx) ^ ry)
-    ;({ x, y } = rot(s, x, y, rx, ry))
-  }
-  return d
-}
-
-function rot(
-  n: number,
-  x: number,
-  y: number,
-  rx: number,
-  ry: number,
-): { x: number; y: number } {
-  if (ry === 0) {
-    if (rx === 1) {
-      x = n - 1 - x
-      y = n - 1 - y
-    }
-    return { x: y, y: x }
-  }
-  return { x, y }
 }
 
 export const polygonisation = {

@@ -159,6 +159,20 @@ const refined = refine(star, { minAngle: Math.PI / 4, maxIterations: 200 })
 
 ![Refine star](/assets/triangulation-refine.svg)
 
+## Points → shortest tour
+
+Poisson samples connected by an approximate TSP tour — a stroke fill through the point set.
+
+```ts
+import { poisson, findShortestTour, toSvg } from 'pattapatta'
+
+const pts = poisson(14, 10, 10, 90, 90, 8)
+const tour = findShortestTour(pts)
+console.log(toSvg(tour, { viewBox: '0 0 100 100', strokeWidth: 1.2 }))
+```
+
+![Points then shortest tour](/assets/pointset-shortest-tour.svg)
+
 ## Next
 
 - [Live demos](/demos) — tweak spacing, angle, and diameter

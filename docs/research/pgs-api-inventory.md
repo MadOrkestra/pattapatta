@@ -140,7 +140,7 @@ Inventory every public facade method from PGS javadoc (2.3-SNAPSHOT index) and t
 
 - Distributions: `random`, `gaussian`, `squareGrid`, `hexGrid`, `hexagon`, `ring`, `phyllotaxis`, `poisson`, `poissonN`, `thomasClusters`
 - LDS: `haltonLDS`, `hammersleyLDS`, `plasticLDS`, `plasticJitteredLDS`, `sobolLDS`, `nRooksLDS`
-- Ops: `hilbertSort`, `cluster`, `kCenters`, `weightedMedian`, `minimumSpanningTree`, `findShortestTour`, `applyRandomWeights`
+- Ops: `hilbertSort` ✓, `cluster`, `kCenters`, `weightedMedian`, `minimumSpanningTree`, `findShortestTour` ✓, `applyRandomWeights`
 - Prune: `prunePointsWithinDistance`, `pruneSparsePoints`, `pruneRandomRemoveN`, `pruneRandomToN`
 
 ### PGS_Polygonisation — P2
@@ -149,7 +149,7 @@ Inventory every public facade method from PGS javadoc (2.3-SNAPSHOT index) and t
 
 ### PGS_Tiling — P2 (`hatchSubdivision` related to fills but not path hatching)
 
-- Subdivisions: `quadSubdivision`, `rectSubdivision`, `triangleSubdivision`, `hatchSubdivision`, `sliceDivision`, `arcDivision`
+- Subdivisions: `quadSubdivision`, `rectSubdivision`, `triangleSubdivision`, `hatchSubdivision`, `sliceDivision`, `arcDivision` ✓
 - Tilings: `squareGrid`, `hexTiling`, `doyleSpiral`, `islamicTiling`, `penroseTiling`, `squareTriangleTiling`, `annularBricks`, `aztecDiamond`, `auxeticTiling`, `softCells`
 
 ### PGS_Transformation — P1
@@ -180,7 +180,7 @@ Inventory every public facade method from PGS javadoc (2.3-SNAPSHOT index) and t
 ### PGS_Construction — P2
 
 - Circles / polys: `createCircle`, `createRect`, `createRegularPolygon`, `createRing`, `createArc`, `createStar`, `createHeart`, `createTeardrop`, `createArbelos`, `createTaijitu`, `createGear`
-- Superforms: `createSupercircle`, `createSuperShape`, `createBlobbie`, `createSponge`
+- Superforms: `createSupercircle`, `createSuperShape`, `createBlobbie`, `createSponge` ✓
 - Spirals / curves: `createLinearSpiral`, `createFermatSpiral`, `createRectangularSpiral`, `createHobbyCurve`, `createHilbertCurve`
 - Fractals: `createKochSnowflake`, `createSierpinskiCarpet`, `createSierpinskiCurve`, `createSierpinskiTriCurve`, `createRandomSFCurve`
 - Random polys: `createRandomPolygon`, `createRandomPolygonExact`, `createRandomBezierPolygon`, `createSuperRandomPolygon`

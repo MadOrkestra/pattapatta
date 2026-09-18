@@ -46,9 +46,9 @@ import {
 ![Offset curves](/assets/contour-offset.svg)
 
 ```ts
-const sq = createRect(15, 15, 70, 70)
-offsetCurvesOutward(sq, 8)
-offsetCurvesInward(sq, 8)
+const cross = polygon([/* …cross outline… */])
+offsetCurvesOutward(cross, 5)
+offsetCurvesInward(cross, 5)
 ```
 
 ## Skeletons
@@ -59,10 +59,19 @@ offsetCurvesInward(sq, 8)
 ![Straight skeleton](/assets/contour-straight-skeleton.svg)
 
 ```ts
+const shape = densify(cross, 2.5)
 medialAxis(shape, 0, 0, 0)           // full
-medialAxis(shape, 0.4, 0.35, 0.35)   // pruned
+medialAxis(shape, 0.15, 0.1, 0.1)    // pruned
 chordalAxis(shape)
-straightSkeletonParts(shape)         // faces, branches, bones
+
+// Straight skeleton ≈ successive inward offsets (wavefronts above)
+let cur = cross
+for (let i = 0; i < 5; i++) {
+  const next = offsetCurvesInward(cur, 4)
+  if (!next.paths.length) break
+  cur = next.paths[0]!
+}
+straightSkeletonParts(cross)         // faces, branches, bones from the same process
 ```
 
 ## Center line
@@ -70,7 +79,12 @@ straightSkeletonParts(shape)         // faces, branches, bones
 ![Center line](/assets/contour-centerline.svg)
 
 ```ts
-centerLine(densify(createRect(10, 35, 80, 30), 3), 0.7, 40)
+let capsule = union(createRect(22, 40, 56, 20), createCircle(22, 50, 10))
+capsule = densify(
+  union(capsule.paths[0]!, createCircle(78, 50, 10)).paths[0]!,
+  2.5,
+)
+centerLine(capsule, 0.65, 30)
 ```
 
 ## Fields
@@ -81,10 +95,11 @@ centerLine(densify(createRect(10, 35, 80, 30), 3), 0.7, 40)
 ![Distance tree](/assets/contour-distance-tree.svg)
 
 ```ts
-distanceField(sq, 10)
-contrastField(sq, 8, vec2(30, 30))
-isolines(sq, vec2(50, 50), 12)
-distanceTree(meshGroup, vec2(50, 50), true)
+const L = polygon([/* …L outline… */])
+distanceField(L, 7)
+contrastField(L, 5, vec2(35, 65))
+isolines(L, vec2(35, 65), 8)
+distanceTree(meshGroup, vec2(35, 65), true)
 ```
 
 ## Notes

@@ -1,4 +1,8 @@
-import type { Vec2 } from '../types/index.js'
+import type { Path, Vec2 } from '../types/index.js'
+import { polygon, polyline } from '../types/index.js'
+import { hilbertSort } from './hilbert.js'
+
+export { hilbertSort } from './hilbert.js'
 
 /** Seeded uniform random points in an axis-aligned box. */
 export function random(
@@ -182,6 +186,91 @@ export function prunePointsWithinDistance(
   return out
 }
 
+/**
+ * Approximate shortest tour (TSP): nearest-neighbor constructive heuristic
+ * followed by 2-opt improvement. Returns a closed path visiting each point once.
+ */
+export function findShortestTour(points: Vec2[]): Path {
+  if (points.length === 0) return polygon([])
+  if (points.length === 1) return polygon([{ ...points[0]! }])
+  if (points.length === 2) {
+    return polyline([
+      { ...points[0]! },
+      { ...points[1]! },
+      { ...points[0]! },
+    ])
+  }
+
+  const tour = nearestNeighborTour(points)
+  twoOpt(tour)
+  return polygon(tour)
+}
+
+function nearestNeighborTour(points: Vec2[]): Vec2[] {
+  const remaining = points.map((p) => ({ ...p }))
+  // Start at lexicographically smallest point for determinism
+  let startI = 0
+  for (let i = 1; i < remaining.length; i++) {
+    const a = remaining[i]!
+    const b = remaining[startI]!
+    if (a.x < b.x || (a.x === b.x && a.y < b.y)) startI = i
+  }
+  const ordered: Vec2[] = [remaining.splice(startI, 1)[0]!]
+  while (remaining.length) {
+    const last = ordered[ordered.length - 1]!
+    let bestI = 0
+    let bestD = Infinity
+    for (let i = 0; i < remaining.length; i++) {
+      const d = Math.hypot(
+        remaining[i]!.x - last.x,
+        remaining[i]!.y - last.y,
+      )
+      if (d < bestD) {
+        bestD = d
+        bestI = i
+      }
+    }
+    ordered.push(remaining.splice(bestI, 1)[0]!)
+  }
+  return ordered
+}
+
+/** In-place 2-opt until no improving swap remains. */
+function twoOpt(tour: Vec2[]): void {
+  const n = tour.length
+  if (n < 4) return
+  let improved = true
+  while (improved) {
+    improved = false
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = i + 2; j < n; j++) {
+        if (i === 0 && j === n - 1) continue
+        const a = tour[i]!
+        const b = tour[(i + 1) % n]!
+        const c = tour[j]!
+        const d = tour[(j + 1) % n]!
+        const before =
+          Math.hypot(a.x - b.x, a.y - b.y) + Math.hypot(c.x - d.x, c.y - d.y)
+        const after =
+          Math.hypot(a.x - c.x, a.y - c.y) + Math.hypot(b.x - d.x, b.y - d.y)
+        if (after + 1e-12 < before) {
+          // Reverse segment (i+1 .. j)
+          let lo = i + 1
+          let hi = j
+          while (lo < hi) {
+            const tmp = tour[lo]!
+            tour[lo] = tour[hi]!
+            tour[hi] = tmp
+            lo++
+            hi--
+          }
+          improved = true
+        }
+      }
+    }
+  }
+}
+
 export const pointSet = {
   random,
   squareGrid,
@@ -189,4 +278,6 @@ export const pointSet = {
   ring,
   poisson,
   prunePointsWithinDistance,
+  hilbertSort,
+  findShortestTour,
 }

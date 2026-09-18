@@ -1,8 +1,8 @@
 import type { Group, Path, Vec2 } from '../types/index.js'
 import { group, polygon } from '../types/index.js'
-import { bounds } from '../predicates/index.js'
-import { createRect } from '../construction/index.js'
-import { intersect } from '../shapeBoolean/index.js'
+import { area, bounds } from '../predicates/index.js'
+import { createCircle, createRect } from '../construction/index.js'
+import { intersect, subtract } from '../shapeBoolean/index.js'
 import { slice } from '../processing/index.js'
 
 /** Axis-aligned square cells covering a box. */
@@ -185,6 +185,107 @@ export function hatchSubdivision(
   return sliceDivision(p, spacing, angle)
 }
 
+/**
+ * Cellular partition of a rectangle using arcs from circles seeded on the
+ * boundary (PGS `arcDivision`). Each circle radius is large enough to hit at
+ * least two distinct sides.
+ */
+export function arcDivision(
+  width: number,
+  height: number,
+  arcs: number,
+  seed = 1,
+  circlePoints = 64,
+): Group {
+  const w = Math.max(width, 1e-9)
+  const h = Math.max(height, 1e-9)
+  const n = Math.max(0, Math.floor(arcs))
+  const segs = Math.max(8, Math.floor(circlePoints))
+  const rect = createRect(0, 0, w, h)
+  if (n === 0) return group([rect])
+
+  const rng = mulberry32(seed >>> 0)
+  let faces: Path[] = [rect]
+  const minArea = w * h * 1e-8
+
+  for (let i = 0; i < n; i++) {
+    const { cx, cy, r } = sampleBoundaryCircle(w, h, rng)
+    const disk = createCircle(cx, cy, r, segs)
+    const next: Path[] = []
+    for (const face of faces) {
+      for (const piece of intersect(face, disk).paths) {
+        if (area(piece) > minArea) next.push(piece)
+      }
+      for (const piece of subtract(face, disk).paths) {
+        if (area(piece) > minArea) next.push(piece)
+      }
+    }
+    if (next.length > 0) faces = next
+  }
+  return group(faces)
+}
+
+/** Place a circle center on the AABB perimeter with radius ≥ dist to a second side. */
+function sampleBoundaryCircle(
+  w: number,
+  h: number,
+  rng: () => number,
+): { cx: number; cy: number; r: number } {
+  const peri = 2 * (w + h)
+  let t = rng() * peri
+  let cx: number
+  let cy: number
+  let side: 0 | 1 | 2 | 3
+  if (t < w) {
+    side = 0 // top y=0
+    cx = t
+    cy = 0
+  } else {
+    t -= w
+    if (t < h) {
+      side = 1 // right x=w
+      cx = w
+      cy = t
+    } else {
+      t -= h
+      if (t < w) {
+        side = 2 // bottom y=h
+        cx = w - t
+        cy = h
+      } else {
+        side = 3 // left x=0
+        cx = 0
+        cy = h - (t - w)
+      }
+    }
+  }
+
+  const distOther = [
+    cy, // to top
+    w - cx, // to right
+    h - cy, // to bottom
+    cx, // to left
+  ]
+  // Min distance to a side other than the one we sit on
+  let minSecond = Infinity
+  for (let s = 0; s < 4; s++) {
+    if (s === side) continue
+    minSecond = Math.min(minSecond, distOther[s]!)
+  }
+  const maxR = Math.hypot(w, h)
+  const r = minSecond + rng() * Math.max(0, maxR - minSecond)
+  return { cx, cy, r: Math.max(r, minSecond + 1e-6) }
+}
+
+function mulberry32(a: number): () => number {
+  return function () {
+    let t = (a += 0x6d2b79f5)
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 function mid(a: Vec2, b: Vec2): Vec2 {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
 }
@@ -197,4 +298,5 @@ export const tiling = {
   triangleSubdivision,
   sliceDivision,
   hatchSubdivision,
+  arcDivision,
 }

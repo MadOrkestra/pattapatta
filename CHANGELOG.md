@@ -1,11 +1,5 @@
 # Changelog
 
-## Unreleased
-
-### Minor Changes
-
-- Add plotter hatch fills from PGS SegmentSet: `weave` / `stochastic` / `perpendicular` / `concentric`, plus low-level `weaveSegments`, `stochasticSegments`, and `perpendicularPathSegments`.
-
 ## 0.3.0
 
 ### Minor Changes

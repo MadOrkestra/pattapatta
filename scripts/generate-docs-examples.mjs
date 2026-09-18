@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
   angular,
+  arcDivision,
   buffer,
   chaikinCut,
   compoundVoronoi,
@@ -17,6 +18,7 @@ import {
   createRect,
   createRegularPolygon,
   createRing,
+  createSponge,
   createStar,
   delaunayTriangulation,
   delaunayTriangulationPoints,
@@ -29,6 +31,7 @@ import {
   edgeCollapseQuadrangulation,
   extractInnerEdges,
   extractInnerVertices,
+  findShortestTour,
   fixBreaks,
   frontChainPack,
   gabrielFaces,
@@ -54,6 +57,7 @@ import {
   hexLatticePack,
   hexTiling,
   hilbertPolygonise,
+  hilbertSort,
   innerVoronoi,
   maximumInscribedCircle,
   maximumInscribedPack,
@@ -424,102 +428,142 @@ function vb(minX, minY, w, h) {
 }
 
 {
-  const sq = createRect(15, 15, 70, 70)
   write(
     'processing-slice.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: groupTags(slice(sq, vec2(10, 20), vec2(90, 80)), ACCENT, 1.4),
+      body: groupTags(
+        slice(createRect(15, 15, 70, 70), vec2(10, 20), vec2(90, 80)),
+        ACCENT,
+        1.4,
+      ),
     }),
   )
+
+  // Contour demos: branched shapes read better than squares/stars.
+  const cross = polygon([
+    vec2(38, 12),
+    vec2(62, 12),
+    vec2(62, 38),
+    vec2(88, 38),
+    vec2(88, 62),
+    vec2(62, 62),
+    vec2(62, 88),
+    vec2(38, 88),
+    vec2(38, 62),
+    vec2(12, 62),
+    vec2(12, 38),
+    vec2(38, 38),
+  ])
+  const L = polygon([
+    vec2(18, 18),
+    vec2(48, 18),
+    vec2(48, 52),
+    vec2(82, 52),
+    vec2(82, 82),
+    vec2(18, 82),
+  ])
+  const crossDense = densify(cross, 2.5)
+  let capsule = union(createRect(22, 40, 56, 20), createCircle(22, 50, 10))
+  capsule = densify(
+    union(capsule.paths[0], createCircle(78, 50, 10)).paths[0],
+    2.5,
+  )
+
   write(
     'contour-offset.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(sq, MUTED, 1)}
-  ${groupTags(offsetCurvesOutward(sq, 8), ACCENT, 1.4)}
-  ${groupTags(offsetCurvesInward(sq, 8), '#2a6f97', 1.4)}`,
+      body: `${pathTag(cross, MUTED, 1)}
+  ${groupTags(offsetCurvesOutward(cross, 5), ACCENT, 1.4)}
+  ${groupTags(offsetCurvesInward(cross, 5), '#2a6f97', 1.4)}`,
     }),
   )
-
-  const blob = densify(createStar(50, 50, 36, 14, 5), 4)
   write(
     'contour-medial.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(blob, MUTED, 1)}
-  ${groupTags(medialAxis(blob, 0, 0, 0), ACCENT, 1.2)}`,
+      body: `${pathTag(crossDense, MUTED, 1)}
+  ${groupTags(medialAxis(crossDense, 0, 0, 0), ACCENT, 1.2)}`,
     }),
   )
   write(
     'contour-medial-pruned.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(blob, MUTED, 1)}
-  ${groupTags(medialAxis(blob, 0.4, 0.35, 0.35), ACCENT, 1.2)}`,
+      body: `${pathTag(crossDense, MUTED, 1)}
+  ${groupTags(medialAxis(crossDense, 0.15, 0.1, 0.1), ACCENT, 1.2)}`,
     }),
   )
   write(
     'contour-chordal.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(blob, MUTED, 1)}
-  ${groupTags(chordalAxis(blob), ACCENT, 1.2)}`,
+      body: `${pathTag(crossDense, MUTED, 1)}
+  ${groupTags(chordalAxis(crossDense), ACCENT, 1.2)}`,
     }),
   )
   {
-    const parts = straightSkeletonParts(createRect(20, 25, 60, 50))
+    // Straight skeleton here is an offset-trace approx — show the wavefronts.
+    const colors = [ACCENT, '#2a6f97', ACCENT, '#2a6f97', ACCENT]
+    let levels = ''
+    let cur = cross
+    for (let i = 0; i < 5; i++) {
+      const next = offsetCurvesInward(cur, 4)
+      if (!next.paths.length) break
+      levels += `\n  ${groupTags(next, colors[i % colors.length], 1.15)}`
+      cur = next.paths[0]
+    }
     write(
       'contour-straight-skeleton.svg',
       wrap({
         viewBox: vb(0, 0, 100, 100),
-        body: `${pathTag(createRect(20, 25, 60, 50), MUTED, 1)}
-  ${groupTags(parts.faces, '#c4a26a', 1)}
-  ${groupTags(parts.branches, '#2a6f97', 1.2)}
-  ${groupTags(parts.bones, ACCENT, 1.5)}`,
+        body: `${pathTag(cross, MUTED, 1)}${levels}`,
       }),
     )
+    // Keep API warm so the build fails if straightSkeletonParts regresses.
+    void straightSkeletonParts(cross)
   }
   write(
     'contour-centerline.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(densify(createRect(10, 35, 80, 30), 3), MUTED, 1)}
-  ${pathTag(centerLine(densify(createRect(10, 35, 80, 30), 3), 0.7, 40), ACCENT, 2)}`,
+      body: `${pathTag(capsule, MUTED, 1)}
+  ${pathTag(centerLine(capsule, 0.65, 30), ACCENT, 2.2)}`,
     }),
   )
   write(
     'contour-distance-field.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(sq, MUTED, 1)}
-  ${groupTags(distanceField(sq, 10), ACCENT, 1.2)}`,
+      body: `${pathTag(L, MUTED, 1)}
+  ${groupTags(distanceField(L, 7), ACCENT, 1.15)}`,
     }),
   )
   write(
     'contour-contrast-field.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(sq, MUTED, 1)}
-  ${groupTags(contrastField(sq, 8, vec2(30, 30)), ACCENT, 1.2)}`,
+      body: `${pathTag(L, MUTED, 1)}
+  ${groupTags(contrastField(L, 5, vec2(35, 65)), ACCENT, 1.15)}`,
     }),
   )
   write(
     'contour-isolines.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${pathTag(sq, MUTED, 1)}
-  ${groupTags(isolines(sq, vec2(50, 50), 12), ACCENT, 1.2)}`,
+      body: `${pathTag(L, MUTED, 1)}
+  ${groupTags(isolines(L, vec2(35, 65), 8), ACCENT, 1.15)}`,
     }),
   )
   {
-    const mesh = group(poissonTriangulation(sq, 12, 1))
+    const mesh = group(poissonTriangulation(L, 8, 1))
     write(
       'contour-distance-tree.svg',
       wrap({
         viewBox: vb(0, 0, 100, 100),
-        body: `${pathTag(sq, MUTED, 1)}
-  ${groupTags(distanceTree(mesh, vec2(50, 50), true), ACCENT, 1.2)}`,
+        body: `${pathTag(L, MUTED, 1)}
+  ${groupTags(distanceTree(mesh, vec2(35, 65), true), ACCENT, 1.1)}`,
       }),
     )
   }
@@ -639,6 +683,13 @@ function vb(minX, minY, w, h) {
   ${pathTag(createArc(75, 50, 22, -Math.PI * 0.8, Math.PI * 0.8, 40), ACCENT, 1.5)}`,
     }),
   )
+  write(
+    'construction-sponge.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: groupTags(createSponge(100, 100, 40, 1.5, 2, 8, 19), ACCENT, 1.1),
+    }),
+  )
 }
 
 {
@@ -670,6 +721,13 @@ function vb(minX, minY, w, h) {
     wrap({
       viewBox: vb(0, 0, 100, 100),
       body: groupTags(triangleSubdivision([tri], 2), STROKE, 1),
+    }),
+  )
+  write(
+    'tiling-arc-division.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: groupTags(arcDivision(100, 100, 8, 7, 48), ACCENT, 1.1),
     }),
   )
 }
@@ -905,6 +963,23 @@ function vb(minX, minY, w, h) {
     wrap({
       viewBox: vb(0, 0, 100, 100),
       body: pointsTags(pts, 2.5),
+    }),
+  )
+  const sorted = hilbertSort(pts)
+  write(
+    'pointset-hilbert-sort.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(polyline(sorted), ACCENT, 1.2)}
+  ${pointsTags(sorted, 2)}`,
+    }),
+  )
+  write(
+    'pointset-shortest-tour.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(findShortestTour(pts), ACCENT, 1.2)}
+  ${pointsTags(pts, 2)}`,
     }),
   )
 }

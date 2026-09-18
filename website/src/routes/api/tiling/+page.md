@@ -8,7 +8,7 @@ Grids and subdivisions as stroked cell boundaries.
 import {
   squareTiling, hexTiling, rectSubdivision,
   quadSubdivision, triangleSubdivision,
-  sliceDivision, hatchSubdivision, tiling,
+  sliceDivision, hatchSubdivision, arcDivision, tiling,
 } from 'pattapatta'
 ```
 
@@ -22,6 +22,7 @@ import {
 | `quadSubdivision(faces, depth?)` | Midpoint quad split |
 | `triangleSubdivision(faces, depth?)` | Midpoint tri split |
 | `sliceDivision` / `hatchSubdivision` | Parallel strip cuts |
+| `arcDivision(width, height, arcs, seed?, circlePoints?)` | Arc-based cellular partition |
 
 ## Examples
 
@@ -40,3 +41,14 @@ import {
 ### Triangle subdivision
 
 ![Triangle subdivision](/assets/tiling-tri-subdiv.svg)
+
+### Arc division
+
+Circles seeded on the boundary carve arc cells — stroke the faces as a fill.
+
+![Arc division](/assets/tiling-arc-division.svg)
+
+```ts
+const cells = arcDivision(100, 100, 8, 7)
+// stroke cells.paths
+```

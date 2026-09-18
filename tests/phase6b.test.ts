@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   angular,
+  arcDivision,
   area,
   areaGroup,
   delaunayTriangulationPoints,
@@ -42,6 +43,17 @@ describe('tiling', () => {
     const tri = polygon([vec2(0, 0), vec2(1, 0), vec2(0.5, 1)])
     const g = triangleSubdivision([tri], 1)
     expect(g.paths.length).toBe(4)
+  })
+
+  it('arcDivision partitions the rectangle deterministically', () => {
+    const a = arcDivision(1, 1, 4, 42, 32)
+    const b = arcDivision(1, 1, 4, 42, 32)
+    expect(a.paths.length).toBeGreaterThanOrEqual(1)
+    expect(a.paths.length).toBe(b.paths.length)
+    expect(areaGroup(a)).toBeCloseTo(1, 1)
+    for (const p of a.paths) {
+      expect(area(p)).toBeGreaterThan(0)
+    }
   })
 })
 

@@ -201,6 +201,8 @@ export {
   ring as pointRing,
   poisson,
   prunePointsWithinDistance,
+  hilbertSort,
+  findShortestTour,
 } from './pointSet/index.js'
 
 export {
@@ -234,6 +236,7 @@ export {
   createArc,
   createStar,
   createKochSnowflake,
+  createSponge,
 } from './construction/index.js'
 
 export {
@@ -245,6 +248,7 @@ export {
   triangleSubdivision,
   sliceDivision,
   hatchSubdivision,
+  arcDivision,
 } from './tiling/index.js'
 
 export {

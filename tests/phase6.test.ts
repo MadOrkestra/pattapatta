@@ -7,6 +7,7 @@ import {
   createCircle,
   createKochSnowflake,
   createRect,
+  createSponge,
   createStar,
   delaunayTriangulation,
   delaunayTriangulationPoints,
@@ -143,5 +144,30 @@ describe('construction / poisson', () => {
         )
       }
     }
+  })
+
+  it('createSponge is porous, seeded, and smaller than the frame', () => {
+    const a = createSponge(100, 100, 24, 2, 1, 6, 11)
+    const b = createSponge(100, 100, 24, 2, 1, 6, 11)
+    expect(a.paths.length).toBeGreaterThanOrEqual(1)
+    expect(a.paths.length).toBe(b.paths.length)
+    // Porous: at least one path with holes (or multiple pieces)
+    const hasHoles = a.paths.some((p) => p.rings.length > 1)
+    expect(hasHoles || a.paths.length > 1).toBe(true)
+    // Net shoelace area (Clipper pathsArea can mis-count holes)
+    let net = 0
+    for (const p of a.paths) {
+      for (let i = 0; i < p.rings.length; i++) {
+        const ra = Math.abs(
+          p.rings[i]!.reduce((s, v, j, r) => {
+            const n = r[(j + 1) % r.length]!
+            return s + v.x * n.y - n.x * v.y
+          }, 0) / 2,
+        )
+        net += i === 0 ? ra : -ra
+      }
+    }
+    expect(net).toBeGreaterThan(0)
+    expect(net).toBeLessThan(100 * 100)
   })
 })

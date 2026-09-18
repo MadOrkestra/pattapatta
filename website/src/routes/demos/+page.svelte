@@ -4,14 +4,15 @@
 	import LiveHatchDemo from '$lib/components/docs/live-hatch-demo.svelte';
 	import LiveMeshingDemo from '$lib/components/docs/live-meshing-demo.svelte';
 	import LiveTriangulationDemo from '$lib/components/docs/live-triangulation-demo.svelte';
+	import LiveTilingDemo from '$lib/components/docs/live-tiling-demo.svelte';
 </script>
 
 <h1>Live demos</h1>
 
 <p>
-	Interactive previews of core <strong>pattapatta</strong> ops — packing, hatch, pipelines,
-	triangulation, and meshing. Geometry is computed in the browser (and during prerender) — no
-	server round-trip.
+	Interactive previews of core <strong>pattapatta</strong> ops — packing, hatch, tiling,
+	pipelines, triangulation, and meshing. Geometry is computed in the browser (and during
+	prerender) — no server round-trip.
 </p>
 
 <h2>Pipelines</h2>
@@ -56,3 +57,12 @@
 </p>
 
 <LiveHatchDemo />
+
+<h2>Arc division</h2>
+
+<p>
+	<code>arcDivision</code> partitions a rectangle with boundary-seeded circle arcs — stroke the
+	cell boundaries as a fill pattern.
+</p>
+
+<LiveTilingDemo />

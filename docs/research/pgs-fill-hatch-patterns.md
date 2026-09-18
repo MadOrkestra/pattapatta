@@ -78,6 +78,16 @@ This is the primary pattern `pattapatta` should productize as a convenience help
 ### Recipe F — Hatch subdivision (tiling)
 
 - `PGS_Tiling.hatchSubdivision` partitions a **plane rectangle** into strip cells — useful for composition, distinct from cropping hatch lines to an arbitrary path.
+- `arcDivision` partitions with boundary-seeded circle arcs; stroke cell boundaries as a fill.
+
+### Recipe G — Point-order / tour fills
+
+- `hilbertSort` then polyline — locality-preserving open stroke through a point set.
+- `findShortestTour` — closed TSP stroke (NN + 2-opt).
+
+### Recipe H — Sponge
+
+- `createSponge` builds a porous region (Voronoi merge → Chaikin smooth → subtract from rect). Stroke pore/wall boundaries. (PGS uses gaussian smooth; pattapatta uses Chaikin.)
 
 ### Convenience API proposal for `pattapatta`
 
