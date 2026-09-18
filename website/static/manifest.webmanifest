@@ -1,13 +1,19 @@
 {
 	"name": "pattapatta",
 	"short_name": "pattapatta",
-	"description": "Pen-plotter geometry docs — hatching, packing, boolean paths",
+	"description": "Pen-plotter geometry library — hatching, circle packing, triangulation, meshing, boolean paths, and SVG I/O.",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#fafaf9",
 	"theme_color": "#1c1917",
 	"lang": "en",
 	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		},
 		{
 			"src": "/icons/icon-192.png",
 			"sizes": "192x192",

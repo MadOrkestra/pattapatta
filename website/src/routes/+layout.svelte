@@ -14,18 +14,55 @@
 	import DocsPager from '$lib/components/docs/docs-pager.svelte';
 	import ModeToggle from '$lib/components/docs/mode-toggle.svelte';
 
+	const siteUrl = 'https://pattapatta.madorkestra.com';
+	const siteName = 'pattapatta';
+	const defaultDescription =
+		'Pen-plotter geometry library — hatching, circle packing, triangulation, meshing, boolean paths, and SVG I/O for Node and the browser.';
+
 	let { children } = $props();
 
 	const pager = $derived(findPager(page.url.pathname));
-	const title = $derived(pager.current?.title ?? 'pattapatta');
+	const title = $derived(pager.current?.title ?? siteName);
+	const pageTitle = $derived(
+		pager.current ? `${pager.current.title} · ${siteName}` : `${siteName} — pen-plotter geometry`,
+	);
+	const description = $derived(defaultDescription);
+	const canonical = $derived(
+		page.url.pathname === '/' ? siteUrl : `${siteUrl}${page.url.pathname}`,
+	);
+	const ogImage = `${siteUrl}/og.png`;
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={favicon} type="image/svg+xml" />
+	<link rel="icon" href="/icons/icon-32.png" type="image/png" sizes="32x32" />
+	<link rel="icon" href="/icons/icon-16.png" type="image/png" sizes="16x16" />
+	<link rel="apple-touch-icon" href="/icons/icon-192.png" />
 	<link rel="manifest" href="/manifest.webmanifest" />
+	<link rel="canonical" href={canonical} />
+
 	<meta name="theme-color" content="#1c1917" />
-	<meta name="description" content="Pen-plotter geometry docs — hatching, packing, boolean paths" />
-	<title>{title} · pattapatta</title>
+	<meta name="description" content={description} />
+	<meta name="author" content="MadOrkestra" />
+	<title>{pageTitle}</title>
+
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content={siteName} />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:url" content={canonical} />
+	<meta property="og:title" content={pageTitle} />
+	<meta property="og:description" content={description} />
+	<meta property="og:image" content={ogImage} />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="pattapatta — circle with 45° hatch fill" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={pageTitle} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={ogImage} />
+	<meta name="twitter:image:alt" content="pattapatta — circle with 45° hatch fill" />
 </svelte:head>
 
 <ModeWatcher />

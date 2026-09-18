@@ -13,11 +13,10 @@
 		SidebarMenu,
 		SidebarMenuButton,
 		SidebarMenuItem,
-		SidebarRail,
 	} from '$lib/components/ui/sidebar/index.js';
 </script>
 
-<Sidebar>
+<Sidebar collapsible="none">
 	<SidebarHeader>
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -55,5 +54,4 @@
 			{/each}
 		</ScrollArea>
 	</SidebarContent>
-	<SidebarRail />
 </Sidebar>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+### Patch Changes
+
+- Add docs site favicon, OG/Twitter preview image, and social meta tags.
+
 ## 0.2.1
 
 ### Patch Changes
