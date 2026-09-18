@@ -97,48 +97,57 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
+      # Do NOT set registry-url — it writes empty _authToken and blocks OIDC.
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
-      - name: Prepare npmrc for OIDC
+      - name: Probe npm OIDC token exchange
+        env:
+          # setup-node may still inject a dummy; clear for OIDC
+          NODE_AUTH_TOKEN: ''
+          NPM_TOKEN: ''
         run: |
           set -euo pipefail
           unset NODE_AUTH_TOKEN NPM_TOKEN || true
           test -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}"
           test -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}"
-          npmrc="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
-          echo "npmrc=${npmrc}"
-          if [ -f "${npmrc}" ]; then
-            echo "--- before ---"
-            cat "${npmrc}"
-            sed -i '/_authToken/d' "${npmrc}"
-            echo "--- after ---"
-            cat "${npmrc}"
-          fi
           echo "node=$(node --version) npm=$(npm --version)"
 
-      - name: Probe npm OIDC token exchange
-        run: |
-          set -euo pipefail
-          unset NODE_AUTH_TOKEN NPM_TOKEN || true
           # npm exchange: POST, no body, Authorization: Bearer <oidc id_token>
-          # https://api-docs.npmjs.com/ + npm/cli lib/utils/oidc.js
           ID_JSON="$(curl -fsS \
             -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
             -H "Accept: application/json; api-version=2.0" \
             -H "Content-Type: application/json" \
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org")"
           ID_TOKEN="$(printf '%s' "${ID_JSON}" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).value))")"
+
+          echo "=== GitHub OIDC claims (must match npm Trusted Publisher) ==="
+          node -e "
+            const t=process.argv[1].split('.')[1];
+            const json=Buffer.from(t.replace(/-/g,'+').replace(/_/g,'/'),'base64').toString();
+            const c=JSON.parse(json);
+            const pick={
+              repository:c.repository,
+              repository_owner:c.repository_owner,
+              repository_visibility:c.repository_visibility,
+              workflow:c.workflow,
+              workflow_ref:c.workflow_ref,
+              job_workflow_ref:c.job_workflow_ref,
+              ref:c.ref,
+              environment:c.environment||'(none)',
+              sub:c.sub,
+            };
+            console.log(JSON.stringify(pick,null,2));
+          " "${ID_TOKEN}"
+
           HTTP="$(curl -sS -o /tmp/oidc-exchange.json -w '%{http_code}' \
             -X POST "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/pattapatta" \
             -H "Authorization: Bearer ${ID_TOKEN}" \
-            -H "Content-Type: application/json" \
             -H "Accept: application/json")"
           echo "OIDC exchange HTTP ${HTTP}"
           node -e "
@@ -147,12 +156,18 @@ jobs:
             delete j.token; delete j.access_token; delete j.refresh_token;
             console.log(JSON.stringify(j,null,2));
           "
-          if [ "${HTTP}" != "200" ]; then
-            echo "::error::OIDC exchange failed. On npmjs.com Trusted Publisher must be exactly: MadOrkestra / pattapatta / release.yml / empty Environment / allow npm publish. Org name is case-sensitive. Delete and recreate the trust config if it was created wrong (it cannot be edited)."
+          if [ "${HTTP}" != "200" ] && [ "${HTTP}" != "201" ]; then
+            echo "::error::OIDC 'package not found' means no Trusted Publisher matches these claims (package DOES exist on npm). On npmjs.com → pattapatta → Settings → Trusted Publisher: delete the connection and recreate with Organization=MadOrkestra (case-sensitive), Repository=pattapatta (bare name, not owner/repo), Workflow filename=release.yml, Environment=empty, allow npm publish."
             exit 1
           fi
 
-      - run: npm publish --access public
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ''
+          NPM_TOKEN: ''
+        run: |
+          unset NODE_AUTH_TOKEN NPM_TOKEN || true
+          npm publish --access public --loglevel verbose
 
       - name: Create GitHub Release
         env:
