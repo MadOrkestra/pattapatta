@@ -123,6 +123,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "packageManager": "pnpm@10.22.0",

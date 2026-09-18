@@ -53,6 +53,7 @@ pnpm docs:examples   # regenerate SVG figures
 | `pattapatta/hatch` | Parallel / cross hatch fills |
 | `pattapatta/circlePacking` | Lattices (`overlap` \| `contained`), LEC, stochastic |
 | `pattapatta/morphology` | Buffer, simplify, warps |
+| `pattapatta/meshing` | Graph faces, quadrangulation, mesh process / repair |
 | `pattapatta/voronoi` | Voronoi cells |
 | … | See `website/` API pages |
 
@@ -62,11 +63,9 @@ This repo uses [Changesets](https://github.com/changesets/changesets). Only the 
 
 1. In a PR that changes the library, run `pnpm changeset`, commit the file under `.changeset/`, and merge to `main`.
 2. The **Release** workflow opens or updates a **Version Packages** PR (bumps version, updates `CHANGELOG.md`).
-3. Merging that PR publishes to npm and creates a GitHub Release.
+3. Merging that PR publishes to npm and creates a GitHub Release (needs repo secret `NPM_TOKEN`).
 
-Repo secret required for publish: `NPM_TOKEN` (npm automation token with publish access).
-
-The first automated release will bump from the current `0.1.0` (e.g. to `0.1.1` or higher) when you add a changeset. To put exactly `0.1.0` on npm once, run `pnpm release` locally after setting an npm token.
+Current package version is in `package.json` (e.g. `0.2.0`). If publish failed after a version bump, fix `NPM_TOKEN` and re-run the **Release** workflow — Changesets will publish any version not yet on npm.
 
 Local checks used by CI:
 
