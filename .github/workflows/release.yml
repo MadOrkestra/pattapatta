@@ -127,6 +127,8 @@ jobs:
         run: |
           set -euo pipefail
           unset NODE_AUTH_TOKEN NPM_TOKEN || true
+          # npm exchange: POST, no body, Authorization: Bearer <oidc id_token>
+          # https://api-docs.npmjs.com/ + npm/cli lib/utils/oidc.js
           ID_JSON="$(curl -fsS \
             -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
             -H "Accept: application/json; api-version=2.0" \
@@ -135,8 +137,9 @@ jobs:
           ID_TOKEN="$(printf '%s' "${ID_JSON}" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).value))")"
           HTTP="$(curl -sS -o /tmp/oidc-exchange.json -w '%{http_code}' \
             -X POST "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/pattapatta" \
+            -H "Authorization: Bearer ${ID_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "$(node -e "console.log(JSON.stringify({token:process.argv[1]}))" "${ID_TOKEN}")")"
+            -H "Accept: application/json")"
           echo "OIDC exchange HTTP ${HTTP}"
           node -e "
             const fs=require('fs');
