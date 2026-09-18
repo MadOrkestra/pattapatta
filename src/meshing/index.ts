@@ -298,30 +298,9 @@ export function findContainingFace(
   return null
 }
 
-/**
- * Densify face edges longer than `maxLen`, or split each edge into `parts`
- * equal segments when `parts` is an integer ≥ 1 and maxLen is omitted via overload.
- */
-export function splitEdges(faces: Path[], maxLenOrParts: number): Group {
-  // Heuristic: values < 32 and integer → parts mode (PGS splitEdges(parts))
-  if (
-    Number.isInteger(maxLenOrParts) &&
-    maxLenOrParts >= 1 &&
-    maxLenOrParts <= 64
-  ) {
-    const parts = Math.max(1, maxLenOrParts)
-    const out: Path[] = []
-    for (const f of faces) {
-      out.push(
-        polygon(
-          splitRingParts(ringOf(f), parts),
-          f.rings.slice(1).map((r) => splitRingParts(r, parts)),
-        ),
-      )
-    }
-    return group(out)
-  }
-  const lim = Math.max(maxLenOrParts, 1e-9)
+/** Split every face edge longer than `maxLen` by inserting subdivision points. */
+export function splitEdges(faces: Path[], maxLen: number): Group {
+  const lim = Math.max(maxLen, 1e-9)
   const out: Path[] = []
   for (const f of faces) {
     out.push(
@@ -345,19 +324,6 @@ function densifyRing(ring: Vec2[], maxLen: number): Vec2[] {
     const d = dist(a, b)
     const steps = Math.floor(d / maxLen)
     for (let s = 1; s < steps; s++) out.push(lerp(a, b, s / steps))
-  }
-  return out
-}
-
-function splitRingParts(ring: Vec2[], parts: number): Vec2[] {
-  if (ring.length < 2) return ring.map((v) => ({ ...v }))
-  const out: Vec2[] = []
-  const n = ring.length
-  for (let i = 0; i < n; i++) {
-    const a = ring[i]!
-    const b = ring[(i + 1) % n]!
-    out.push({ ...a })
-    for (let s = 1; s < parts; s++) out.push(lerp(a, b, s / parts))
   }
   return out
 }
@@ -505,8 +471,7 @@ export function spannerFaces(
 
   const kept = new Set<string>()
   for (const e of edges) {
-    if (e.peri) {
-      // Perimeter always retained so the tessellation stays bounded.
+    if (e.peri && preservePerimeter) {
       kept.add(e.key)
       link(e.a, e.b, e.len)
       continue
@@ -515,9 +480,12 @@ export function spannerFaces(
     if (pathLen > stretch * e.len + 1e-9) {
       kept.add(e.key)
       link(e.a, e.b, e.len)
+    } else if (e.peri) {
+      // Keep perimeter even when stretch would drop it, so faces stay bounded.
+      kept.add(e.key)
+      link(e.a, e.b, e.len)
     }
   }
-  void preservePerimeter
   return group(facesFromKeptEdges(tris, kept))
 }
 
@@ -593,7 +561,7 @@ export function centroidQuadrangulation(
   preservePerimeter = true,
 ): Group {
   const tris = asTriFaces(input)
-  const edgeMap = buildEdgeMap(facesOrTris(tris))
+  const edgeMap = buildEdgeMap(tris)
   const centers = tris.map((t) => centroid(t))
   const out: Path[] = []
   const peri = perimeterKeys(edgeMap)
@@ -612,10 +580,6 @@ export function centroidQuadrangulation(
     }
   }
   return group(out)
-}
-
-function facesOrTris(tris: Path[]): Path[] {
-  return tris
 }
 
 /**

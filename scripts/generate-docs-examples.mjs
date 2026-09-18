@@ -23,10 +23,26 @@ import {
   densify,
   earCutTriangulation,
   envelope,
+  areaMerge,
+  centroidQuadrangulation,
+  dualFaces,
+  edgeCollapseQuadrangulation,
   extractInnerEdges,
+  extractInnerVertices,
+  fixBreaks,
   frontChainPack,
   gabrielFaces,
   group,
+  matchingQuadrangulation,
+  relativeNeighborFaces,
+  simplifyMesh,
+  smoothMesh,
+  spannerFaces,
+  spiralQuadrangulation,
+  splitQuadrangulation,
+  stochasticMerge,
+  subdivideMesh,
+  urquhartFaces,
   hatchCross,
   hatchParallel,
   hexLatticePack,
@@ -38,6 +54,8 @@ import {
   onionLayers,
   offsetCurvesInward,
   offsetCurvesOutward,
+  parallelSegments,
+  clipSegmentsToPath,
   poisson,
   poissonTriangulation,
   polygon,
@@ -190,6 +208,22 @@ function vb(minX, minY, w, h) {
       viewBox: vb(0, 0, 100, 100),
       body: `${pathTag(sq, MUTED, 1)}
   ${groupTags(cross, STROKE, 1)}`,
+    }),
+  )
+}
+
+{
+  // Raw parallel field + clip — segmentSet building blocks (vs hatch helpers)
+  const cell = createCircle(50, 50, 32, 64)
+  const raw = parallelSegments(50, 50, 55, 7, Math.PI / 5, 18)
+  const clipped = clipSegmentsToPath(raw, cell)
+  write(
+    'segment-set-parallel.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${groupTags(segsToGroup(raw), MUTED, 0.9)}
+  ${groupTags(segsToGroup(clipped), ACCENT, 1.3)}
+  ${pathTag(cell, STROKE, 1.4)}`,
     }),
   )
 }
@@ -512,30 +546,172 @@ function vb(minX, minY, w, h) {
 }
 
 {
-  const sites = poisson(14, 12, 12, 88, 88, 4)
-  const faces = delaunayTriangulationPoints(sites)
+  // Dense conforming mesh (same density as triangulation-poisson docs).
+  const outline = densify(createStar(50, 50, 40, 16, 5), 4)
+  const clipped = poissonTriangulation(outline, 5.5, 4)
+
+  const meshBody = (g) =>
+    `${pathTag(outline, MUTED, 0.7)}
+  ${groupTags(g, STROKE, 0.85)}`
+
   write(
     'meshing-edges.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${groupTags(
+      body: meshBody(
         group(
-          extractInnerEdges(faces).map((e) =>
-            polyline([e.a, e.b]),
-          ),
+          extractInnerEdges(clipped).map((e) => polyline([e.a, e.b])),
         ),
-        STROKE,
-        1,
-      )}
-  ${pointsTags(sites, 2)}`,
+      ),
+    }),
+  )
+  write(
+    'meshing-inner-vertices.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${pathTag(outline, MUTED, 0.7)}
+  ${groupTags(group(clipped), MUTED, 0.45)}
+  ${pointsTags(extractInnerVertices(clipped), 1.4)}`,
+    }),
+  )
+  write(
+    'meshing-urquhart.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(urquhartFaces(clipped, true)),
     }),
   )
   write(
     'meshing-gabriel.svg',
     wrap({
       viewBox: vb(0, 0, 100, 100),
-      body: `${groupTags(gabrielFaces(sites), STROKE, 1)}
-  ${pointsTags(sites, 2)}`,
+      body: meshBody(gabrielFaces(clipped, true)),
+    }),
+  )
+  write(
+    'meshing-rng.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(relativeNeighborFaces(clipped, true)),
+    }),
+  )
+  write(
+    'meshing-spanner.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(spannerFaces(clipped, 2, true)),
+    }),
+  )
+  write(
+    'meshing-dual.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(dualFaces(clipped)),
+    }),
+  )
+  write(
+    'meshing-centroid-quad.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(centroidQuadrangulation(clipped, true)),
+    }),
+  )
+  write(
+    'meshing-edge-collapse.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(edgeCollapseQuadrangulation(clipped, true)),
+    }),
+  )
+  write(
+    'meshing-split-quad.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(splitQuadrangulation(clipped)),
+    }),
+  )
+  write(
+    'meshing-matching-quad.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(matchingQuadrangulation(clipped)),
+    }),
+  )
+  write(
+    'meshing-smooth.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(smoothMesh(clipped, 60, true)),
+    }),
+  )
+  write(
+    'meshing-subdivide.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(subdivideMesh(clipped, 0.5)),
+    }),
+  )
+  write(
+    'meshing-simplify.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(
+        simplifyMesh(subdivideMesh(clipped, 0.5).paths, 0.8, true),
+      ),
+    }),
+  )
+  write(
+    'meshing-stochastic-merge.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(stochasticMerge(clipped, 4, 7)),
+    }),
+  )
+  write(
+    'meshing-area-merge.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: meshBody(areaMerge(clipped, { remainingFaces: 28 })),
+    }),
+  )
+
+  // Spiral: open point field (as in the reference sheet)
+  const spiralPts = poisson(7, 15, 15, 85, 85, 5)
+  write(
+    'meshing-spiral-quad.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${groupTags(spiralQuadrangulation(spiralPts), STROKE, 0.85)}
+  ${pointsTags(spiralPts, 1.2)}`,
+    }),
+  )
+
+  // Fix breaks: dense mesh with a small intentional gap
+  const box = createRect(18, 18, 64, 64)
+  const mesh = poissonTriangulation(box, 8, 2)
+  const left = mesh.filter((f) => {
+    const c = f.rings[0]
+    const cx = c.reduce((s, v) => s + v.x, 0) / c.length
+    return cx < 49
+  })
+  const right = mesh
+    .filter((f) => {
+      const c = f.rings[0]
+      const cx = c.reduce((s, v) => s + v.x, 0) / c.length
+      return cx > 51
+    })
+    .map((f) =>
+      polygon(
+        f.rings[0].map((v) => vec2(v.x + 2.5, v.y)),
+        f.rings.slice(1),
+      ),
+    )
+  write(
+    'meshing-fix-breaks.svg',
+    wrap({
+      viewBox: vb(0, 0, 100, 100),
+      body: `${groupTags(group([...left, ...right]), MUTED, 0.7)}
+  ${groupTags(fixBreaks([...left, ...right], 4), STROKE, 0.9)}`,
     }),
   )
 }
