@@ -6,6 +6,7 @@
 	import {
 		Sidebar,
 		SidebarContent,
+		SidebarFooter,
 		SidebarGroup,
 		SidebarGroupContent,
 		SidebarGroupLabel,
@@ -54,4 +55,22 @@
 			{/each}
 		</ScrollArea>
 	</SidebarContent>
+	<SidebarFooter>
+		<p class="text-muted-foreground px-2 text-xs leading-relaxed">
+			AI-built experiment — not for production yet.
+			<a
+				class="text-foreground underline-offset-2 hover:underline"
+				href="https://github.com/MadOrkestra/pattapatta"
+				target="_blank"
+				rel="noopener noreferrer"
+			>GitHub</a>
+			·
+			<a
+				class="text-foreground underline-offset-2 hover:underline"
+				href="https://github.com/MadOrkestra/pattapatta/issues"
+				target="_blank"
+				rel="noopener noreferrer"
+			>Issues</a>
+		</p>
+	</SidebarFooter>
 </Sidebar>

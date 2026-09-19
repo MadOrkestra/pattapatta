@@ -4,6 +4,8 @@ Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)
 
 **Stroke marks only** — solid area fills are not the goal.
 
+> **Status:** Built entirely with AI as an experiment. **Not meant for public / production use yet.** Feedback welcome via [GitHub issues](https://github.com/MadOrkestra/pattapatta/issues) on the [repository](https://github.com/MadOrkestra/pattapatta).
+
 [![npm](https://img.shields.io/npm/v/pattapatta.svg)](https://www.npmjs.com/package/pattapatta)
 
 ## Install
@@ -61,3 +63,5 @@ pnpm docs:examples   # regenerate SVG figures
 ## License
 
 MIT — clean-room implementation (not a GPL line-port of PGS). See `docs/decisions/`.
+
+Source: [github.com/MadOrkestra/pattapatta](https://github.com/MadOrkestra/pattapatta) · [Issues](https://github.com/MadOrkestra/pattapatta/issues)
