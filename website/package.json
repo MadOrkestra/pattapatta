@@ -28,6 +28,7 @@
 		"mode-watcher": "^1.1.0",
 		"remixicon-svelte": "^0.0.5",
 		"shadcn-svelte": "^1.6.1",
+		"shiki": "^4.4.3",
 		"svelte": "^5.56.1",
 		"svelte-check": "^4.6.0",
 		"svelte-sonner": "^1.2.1",

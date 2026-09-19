@@ -4,8 +4,8 @@
 	"description": "Pen-plotter geometry library — hatching, circle packing, triangulation, meshing, boolean paths, and SVG I/O.",
 	"start_url": "/",
 	"display": "standalone",
-	"background_color": "#fafaf9",
-	"theme_color": "#1c1917",
+	"background_color": "#f8fafc",
+	"theme_color": "#0f172a",
 	"lang": "en",
 	"icons": [
 		{

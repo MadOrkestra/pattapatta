@@ -213,7 +213,7 @@
 					cy={c.y}
 					r={c.r}
 					class={mode === 'obstacle' && i === 0
-						? 'stroke-stone-500 dark:stroke-stone-400'
+						? 'stroke-slate-500 dark:stroke-slate-400'
 						: 'stroke-foreground'}
 					stroke-width="1"
 				/>

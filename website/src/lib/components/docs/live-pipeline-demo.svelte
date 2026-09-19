@@ -205,7 +205,7 @@
 		aria-label="Chained pipeline preview"
 	>
 		{#each scene.inputDs as d, i (i)}
-			<path {d} class="stroke-stone-400 dark:stroke-stone-500" stroke-width="1" />
+			<path {d} class="stroke-slate-400 dark:stroke-slate-500" stroke-width="1" />
 		{/each}
 		{#if scene.circles.length}
 			<defs>

@@ -19,17 +19,46 @@
 
 <Sidebar collapsible="none">
 	<SidebarHeader>
-		<SidebarMenu>
-			<SidebarMenuItem>
-				<SidebarMenuButton size="lg" isActive={page.url.pathname === '/'}>
-					{#snippet child({ props })}
-						<a href={resolve('/')} {...props}>
-							<span class="truncate font-semibold tracking-tight">pattapatta</span>
-						</a>
-					{/snippet}
-				</SidebarMenuButton>
-			</SidebarMenuItem>
-		</SidebarMenu>
+		<a
+			href={resolve('/')}
+			class="text-sidebar-foreground flex items-center gap-2 px-2 py-1.5 outline-none"
+		>
+			<svg
+				class="size-8 shrink-0"
+				viewBox="0 0 32 32"
+				fill="none"
+				aria-hidden="true"
+			>
+				<defs>
+					<pattern
+						id="sidebar-logo-hatch"
+						patternUnits="userSpaceOnUse"
+						width="3.2"
+						height="3.2"
+						patternTransform="rotate(45 16 16)"
+					>
+						<line
+							x1="0"
+							y1="0"
+							x2="0"
+							y2="3.2"
+							stroke="currentColor"
+							stroke-width="1.2"
+						/>
+					</pattern>
+				</defs>
+				<circle cx="16" cy="16" r="12.5" fill="url(#sidebar-logo-hatch)" />
+				<circle
+					cx="16"
+					cy="16"
+					r="12.5"
+					stroke="currentColor"
+					stroke-width="1.75"
+					fill="none"
+				/>
+			</svg>
+			<span class="truncate text-base font-thin tracking-tight">pattapatta</span>
+		</a>
 	</SidebarHeader>
 	<SidebarContent>
 		<ScrollArea class="h-full">

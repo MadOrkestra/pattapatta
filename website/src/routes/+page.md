@@ -1,7 +1,21 @@
 # pattapatta
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/MadOrkestra)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/madorkestra)
+<p class="not-prose mb-6 flex flex-wrap items-center gap-2">
+	<a href="https://github.com/sponsors/MadOrkestra" target="_blank" rel="noopener noreferrer">
+		<img
+			src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white"
+			alt="Sponsor on GitHub"
+			height="20"
+		/>
+	</a>
+	<a href="https://www.buymeacoffee.com/madorkestra" target="_blank" rel="noopener noreferrer">
+		<img
+			src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black"
+			alt="Buy Me a Coffee"
+			height="20"
+		/>
+	</a>
+</p>
 
 **pattapatta** is a TypeScript geometry library for **pen plotters**: hatching, circle packing, triangulation and meshing, boolean path ops, Voronoi, tilings, and SVG I/O — for Node and the browser.
 
