@@ -1,6 +1,6 @@
 {
   "name": "pattapatta",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Pen-plotter geometry library (PGS-inspired): hatching, packing, boolean paths for SVG",
   "type": "module",
   "sideEffects": false,
