@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+### Patch Changes
+
+- 170d279: Docs polish: Shiki syntax highlighting (Catppuccin), slate theme, sidebar logo, sponsor badge layout, and remove the sidebar collapse control.
+
 ## 0.4.0
 
 ### Minor Changes
