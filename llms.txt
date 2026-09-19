@@ -30,6 +30,7 @@ Human docs: https://pattapatta.madorkestra.com/ — this file is the curated ent
 - [predicates](https://pattapatta.madorkestra.com/llms/predicates.md): area, centroid, containsPoint, bounds
 - [compare](https://pattapatta.madorkestra.com/llms/compare.md): Oracle / harness helpers
 - [hatch](https://pattapatta.madorkestra.com/llms/hatch.md): parallel, cross, weave, concentric fills
+- [halftone](https://pattapatta.madorkestra.com/llms/halftone.md): image tone → lines or circles (exclusive modes)
 - [segmentSet](https://pattapatta.madorkestra.com/llms/segment-set.md): parallelSegments, clip, filters
 - [circlePacking](https://pattapatta.madorkestra.com/llms/circle-packing.md): lattices, LEC, stochastic, obstacles
 - [tiling](https://pattapatta.madorkestra.com/llms/tiling.md): grids and subdivision tilings

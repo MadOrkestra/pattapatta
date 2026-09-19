@@ -5,7 +5,7 @@
 ## Rules of thumb
 
 - Prefer `fill="none"` and a visible `stroke`
-- “Fills” are **hatches**, **packings**, **tilings**, or **offset contours** — overview: [Fills](https://pattapatta.madorkestra.com/concepts/fills)
+- “Fills” are **hatches**, **image halftones**, **packings**, **tilings**, or **offset contours** — overview: [Fills](https://pattapatta.madorkestra.com/concepts/fills)
 - Boolean / morphology still build **regions**, but you plot their **boundaries** — see [Operations](https://pattapatta.madorkestra.com/concepts/operations)
 
 ## In scope

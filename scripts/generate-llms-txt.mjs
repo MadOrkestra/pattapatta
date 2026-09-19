@@ -151,6 +151,13 @@ const MANIFEST = [
     note: 'parallel, cross, weave, concentric fills',
   },
   {
+    source: 'website/src/routes/api/halftone/+page.md',
+    slug: 'halftone',
+    title: 'halftone',
+    section: 'API',
+    note: 'image tone → lines or circles (exclusive modes)',
+  },
+  {
     source: 'website/src/routes/api/segment-set/+page.md',
     slug: 'segment-set',
     title: 'segmentSet',

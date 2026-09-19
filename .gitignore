@@ -10,3 +10,6 @@ oracle/processing/OracleMain/code/*.jar
 website/build/
 website/.svelte-kit/
 .pnpm-store/
+tests/output/
+# Large generated plotter SVGs — regenerate with scripts/halftone-preview.mts
+examples/halftone/*.svg

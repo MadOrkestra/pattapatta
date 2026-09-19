@@ -9,6 +9,7 @@ Typical pipeline: **construct → [operate](/concepts/operations) → fill → S
 | Module | Marks |
 |--------|-------|
 | [hatch](/api/hatch) | Parallel, cross, weave, stochastic, perpendicular ticks, concentric shells |
+| [halftone](/api/halftone) | Image tone → **lines or circles** (pick one mode) |
 | [circlePacking](/api/circle-packing) | Circles packed in a region |
 | [segmentSet](/api/segment-set) | Low-level hatch building blocks |
 

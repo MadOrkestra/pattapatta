@@ -54,6 +54,7 @@ export const navGroups: NavGroup[] = [
 		title: 'Fills',
 		items: [
 			{ title: 'hatch', href: '/api/hatch' },
+			{ title: 'halftone', href: '/api/halftone' },
 			{ title: 'segmentSet', href: '/api/segment-set' },
 			{ title: 'circlePacking', href: '/api/circle-packing' },
 			{ title: 'tiling', href: '/api/tiling' },

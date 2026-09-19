@@ -1,7 +1,7 @@
 {
   "name": "pattapatta",
   "version": "0.4.2",
-  "description": "Pen-plotter geometry library (PGS-inspired): hatching, packing, boolean paths for SVG",
+  "description": "Pen-plotter geometry library (PGS-inspired): hatching, image halftone, packing, boolean paths for SVG",
   "type": "module",
   "sideEffects": false,
   "license": "MIT",
@@ -19,6 +19,7 @@
     "svg",
     "geometry",
     "hatching",
+    "halftone",
     "circle-packing",
     "boolean",
     "clipper",
@@ -54,6 +55,10 @@
     "./hatch": {
       "types": "./dist/hatch/index.d.ts",
       "import": "./dist/hatch/index.js"
+    },
+    "./halftone": {
+      "types": "./dist/halftone/index.d.ts",
+      "import": "./dist/halftone/index.js"
     },
     "./circlePacking": {
       "types": "./dist/circlePacking/index.d.ts",
@@ -156,6 +161,7 @@
     "@changesets/cli": "^3.0.3",
     "@types/d3-delaunay": "^6.0.4",
     "@types/node": "^22.13.10",
+    "sharp": "^0.35.4",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9"

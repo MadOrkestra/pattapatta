@@ -9,6 +9,7 @@ Typical pipeline: **construct → [operate](https://pattapatta.madorkestra.com/c
 | Module | Marks |
 |--------|-------|
 | [hatch](https://pattapatta.madorkestra.com/api/hatch) | Parallel, cross, weave, stochastic, perpendicular ticks, concentric shells |
+| [halftone](https://pattapatta.madorkestra.com/api/halftone) | Image tone → **lines or circles** (pick one mode) |
 | [circlePacking](https://pattapatta.madorkestra.com/api/circle-packing) | Circles packed in a region |
 | [segmentSet](https://pattapatta.madorkestra.com/api/segment-set) | Low-level hatch building blocks |
 

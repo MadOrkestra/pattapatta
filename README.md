@@ -3,7 +3,7 @@
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/MadOrkestra)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/madorkestra)
 
-Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, triangulation / meshing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
+Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, image halftone (lines or circles), circle packing, triangulation / meshing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
 
 **Stroke marks only** — solid area fills are not the goal.
 
@@ -59,6 +59,7 @@ pnpm docs:llms       # regenerate llms.txt / llms-full.txt only
 | `pattapatta` | Types, SVG, all facades |
 | `pattapatta/shapeBoolean` | Union / intersect / subtract / occlusion |
 | `pattapatta/hatch` | Parallel / cross hatch fills |
+| `pattapatta/halftone` | Image tone → lines **or** circles |
 | `pattapatta/circlePacking` | Lattices (`overlap` \| `contained`), LEC, stochastic |
 | `pattapatta/triangulation` | Earcut, Delaunay, Poisson Steiner, refine |
 | `pattapatta/morphology` | Buffer, simplify, warps |

@@ -9,6 +9,7 @@ export default defineConfig([
       'predicates/index': 'src/predicates/index.ts',
       'segmentSet/index': 'src/segmentSet/index.ts',
       'hatch/index': 'src/hatch/index.ts',
+      'halftone/index': 'src/halftone/index.ts',
       'circlePacking/index': 'src/circlePacking/index.ts',
       'morphology/index': 'src/morphology/index.ts',
       'transformation/index': 'src/transformation/index.ts',

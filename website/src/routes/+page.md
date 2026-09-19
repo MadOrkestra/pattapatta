@@ -17,7 +17,7 @@
 	</a>
 </p>
 
-**pattapatta** is a TypeScript geometry library for **pen plotters**: hatching, circle packing, triangulation and meshing, boolean path ops, Voronoi, tilings, and SVG I/O — for Node and the browser.
+**pattapatta** is a TypeScript geometry library for **pen plotters**: hatching, image halftone (lines or circles), circle packing, triangulation and meshing, boolean path ops, Voronoi, tilings, and SVG I/O — for Node and the browser.
 
 Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), implemented clean-room under **MIT** (not a line port).
 
@@ -29,7 +29,7 @@ Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), 
 
 - Stroke-first geometry (`fill="none"` SVG by default)
 - ESM + TypeScript types
-- Feature imports (`pattapatta/hatch`, `pattapatta/circlePacking`, …)
+- Feature imports (`pattapatta/hatch`, `pattapatta/halftone`, `pattapatta/circlePacking`, …)
 - CLI for SVG round-trips
 
 ## Jump in

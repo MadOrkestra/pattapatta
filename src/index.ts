@@ -97,6 +97,22 @@ export type {
 } from './hatch/index.js'
 
 export {
+  halftone,
+  fromRgba,
+  fromLuminance,
+  sample as sampleTone,
+  sampleNearest as sampleToneNearest,
+  lines as halftoneLines,
+  circles as halftoneCircles,
+} from './halftone/index.js'
+export type {
+  ToneField,
+  FromRgbaOptions,
+  HalftoneLinesOptions,
+  HalftoneCirclesOptions,
+} from './halftone/index.js'
+
+export {
   circlePacking,
   squareLatticePack,
   hexLatticePack,
