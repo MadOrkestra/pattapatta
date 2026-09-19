@@ -4,6 +4,15 @@ Project research, design notes, decisions, and other written docs live here.
 
 **User-facing docs** (SvelteKit PWA): see [`../website/`](../website/). Run `pnpm docs:dev` from the repo root.
 
+### llms.txt sync
+
+Public AI-oriented files (`llms.txt`, `llms-full.txt`, `website/static/llms/*.md`) are **generated** from website Markdown (`website/src/routes/**/+page.md`) via `pnpm docs:llms`.
+
+- After changing API, concept, quickstart, or examples pages: run `pnpm docs:llms` and commit the regenerated outputs.
+- `pnpm docs:build` and `pnpm docs:examples` regenerate them automatically.
+- `pnpm docs:llms:check` fails if committed outputs drift (also run in CI).
+- Do **not** hand-edit the generated files. See [design/llms-txt.md](design/llms-txt.md).
+
 ## Layout
 
 | Path | Purpose |
@@ -35,6 +44,7 @@ Project research, design notes, decisions, and other written docs live here.
 | [design/pgs-comparison-harness.md](design/pgs-comparison-harness.md) | Fixtures, goldens, tolerances |
 | [design/processing-oracle-cli.md](design/processing-oracle-cli.md) | Headless Processing oracle CLI |
 | [design/development-phases.md](design/development-phases.md) | Phased delivery plan |
+| [design/llms-txt.md](design/llms-txt.md) | llms.txt / llms-full.txt generation and sync |
 
 ### Decisions
 

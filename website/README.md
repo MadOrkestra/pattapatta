@@ -33,6 +33,7 @@ pnpm docs:build   # from repo root
 - Pages are Markdown (`+page.md`) under `src/routes/`
 - Nav: `src/lib/nav.ts`
 - Example SVGs: `static/assets/` (regenerate with `pnpm docs:examples` from repo root)
+- AI index: `static/llms.txt`, `static/llms-full.txt`, `static/llms/*.md` (regenerate with `pnpm docs:llms`; see `docs/design/llms-txt.md`)
 - UI chrome: shadcn-svelte sidebar under `src/lib/components/`
 
 ## PWA

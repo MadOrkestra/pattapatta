@@ -40,13 +40,16 @@ pnpm dlx pattapatta svg:roundtrip in.svg -o out.svg
 
 Live: [pattapatta.madorkestra.com](https://pattapatta.madorkestra.com) (GitHub Pages; deploys on push to `main`).
 
+For AI agents: [llms.txt](https://pattapatta.madorkestra.com/llms.txt) (index) and [llms-full.txt](https://pattapatta.madorkestra.com/llms-full.txt) (full API dump). Explainer: [/llms-txt](https://pattapatta.madorkestra.com/llms-txt).
+
 Local documentation PWA (SvelteKit + shadcn):
 
 ```bash
 pnpm install
 pnpm docs:dev
 pnpm docs:build
-pnpm docs:examples   # regenerate SVG figures
+pnpm docs:examples   # regenerate SVG figures (+ llms.txt)
+pnpm docs:llms       # regenerate llms.txt / llms-full.txt only
 ```
 
 ## Modules

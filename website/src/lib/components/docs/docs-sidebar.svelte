@@ -17,7 +17,7 @@
 	} from '$lib/components/ui/sidebar/index.js';
 </script>
 
-<Sidebar collapsible="none">
+<Sidebar collapsible="none" class="border-e border-sidebar-border">
 	<SidebarHeader>
 		<a
 			href={resolve('/')}

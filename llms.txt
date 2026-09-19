@@ -1,0 +1,49 @@
+# pattapatta
+
+> Pen-plotter geometry library (PGS-inspired): hatching, packing, boolean paths, Voronoi, tilings, and SVG I/O for Node and the browser. Stroke marks only — solid area fills are not the goal. MIT, ESM, Node ≥ 18. Experimental / not production-ready.
+
+Install with `pnpm add pattapatta` (or `npm i pattapatta`). Import from `pattapatta` or feature paths such as `pattapatta/hatch` and `pattapatta/circlePacking`. Core types are `Vec2`, `Path` (rings + closed), and `Group` (ordered paths). Prefer constructors like `createRect` / `polygon`, then boolean or buffer ops, then hatch/packing fills, then `toSvg`.
+
+Human docs: https://pattapatta.madorkestra.com/ — this file is the curated entry point for AI agents ([llmstxt.org](https://llmstxt.org)). For every function signature and option table in one file, use [llms-full.txt](https://pattapatta.madorkestra.com/llms-full.txt). Package: [npm](https://www.npmjs.com/package/pattapatta) · [GitHub](https://github.com/MadOrkestra/pattapatta).
+
+## Docs
+
+- [Full API dump](https://pattapatta.madorkestra.com/llms-full.txt): every concept + API page concatenated (all functions)
+- [Geometry model](https://pattapatta.madorkestra.com/llms/geometry-model.md): Path, Group, Vec2, and core types
+- [Pen-plotter output](https://pattapatta.madorkestra.com/llms/pen-plotter.md): Stroke marks only; no solid fills
+- [Operations](https://pattapatta.madorkestra.com/llms/operations.md): Transforms and region ops overview
+- [Fills](https://pattapatta.madorkestra.com/llms/fills.md): Hatch, packing, tiling as stroke marks
+- [Quickstart](https://pattapatta.madorkestra.com/llms/quickstart.md): Install and draw something quickly
+- [Getting started](https://pattapatta.madorkestra.com/llms/getting-started.md): Mental model, imports, mini pipeline
+- [Examples](https://pattapatta.madorkestra.com/llms/examples.md): Chained recipes: union → hatch, pack, …
+
+## API
+
+- [types](https://pattapatta.madorkestra.com/llms/types.md): Vec2, Circle, Segment, Path, Group helpers
+- [construction](https://pattapatta.madorkestra.com/llms/construction.md): createRect, createCircle, stars, sponges
+- [SVG I/O](https://pattapatta.madorkestra.com/llms/svg.md): parseSvg, toSvg, path data
+- [conversion](https://pattapatta.madorkestra.com/llms/conversion.md): flatten, toArray, contours
+- [transformation](https://pattapatta.madorkestra.com/llms/transformation.md): translate, rotate, scale, shear
+- [shapeBoolean](https://pattapatta.madorkestra.com/llms/shape-boolean.md): union, intersect, subtract, occlusion
+- [morphology](https://pattapatta.madorkestra.com/llms/morphology.md): buffer, simplify, warps, Minkowski
+- [processing](https://pattapatta.madorkestra.com/llms/processing.md): perimeter, densify, slice, dissolve
+- [predicates](https://pattapatta.madorkestra.com/llms/predicates.md): area, centroid, containsPoint, bounds
+- [compare](https://pattapatta.madorkestra.com/llms/compare.md): Oracle / harness helpers
+- [hatch](https://pattapatta.madorkestra.com/llms/hatch.md): parallel, cross, weave, concentric fills
+- [segmentSet](https://pattapatta.madorkestra.com/llms/segment-set.md): parallelSegments, clip, filters
+- [circlePacking](https://pattapatta.madorkestra.com/llms/circle-packing.md): lattices, LEC, stochastic, obstacles
+- [tiling](https://pattapatta.madorkestra.com/llms/tiling.md): grids and subdivision tilings
+- [contour](https://pattapatta.madorkestra.com/llms/contour.md): offsets, skeleton, isolines
+- [hull](https://pattapatta.madorkestra.com/llms/hull.md): convex hull, bounding box
+- [triangulation](https://pattapatta.madorkestra.com/llms/triangulation.md): earcut, Delaunay, Poisson, refine
+- [voronoi](https://pattapatta.madorkestra.com/llms/voronoi.md): compound and inner Voronoi
+- [pointSet](https://pattapatta.madorkestra.com/llms/point-set.md): grids, Poisson, Hilbert, TSP tour
+- [optimisation](https://pattapatta.madorkestra.com/llms/optimisation.md): MIC, LEC, envelope, closest pairs
+- [polygonisation](https://pattapatta.madorkestra.com/llms/polygonisation.md): point-set → polygon strategies
+- [meshing](https://pattapatta.madorkestra.com/llms/meshing.md): faces, quadrangulation, mesh repair
+
+## Optional
+
+- [CLI](https://pattapatta.madorkestra.com/llms/cli.md): pattapatta CLI overview
+- [Changelog](https://github.com/MadOrkestra/pattapatta/blob/main/CHANGELOG.md): release notes
+- [Internal research & ADRs](https://github.com/MadOrkestra/pattapatta/tree/main/docs): design notes (not user docs)

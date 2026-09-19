@@ -38,6 +38,7 @@ Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), 
 |------|---------|
 | [Quickstart](/quickstart) | Install and draw something in 2 minutes |
 | [Getting started](/getting-started) | Mental model, imports, a full mini pipeline |
+| [llms.txt](/llms-txt) | AI-oriented docs index (`/llms.txt`, `/llms-full.txt`) |
 | [Examples](/examples) | Chained recipes: union → hatch, frame → pack, … |
 | [Live demos](/demos) | Interactive packing, triangulation, meshing, hatch, and pipelines |
 | [Operations](/concepts/operations) | Transforms and region ops (e.g. rotate, boolean) |

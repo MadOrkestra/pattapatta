@@ -1,0 +1,42 @@
+# transformation
+
+**Operation** — affine helpers on paths (rotate, scale, translate, …). See [Operations](https://pattapatta.madorkestra.com/concepts/operations).
+
+## Imports
+
+```ts
+import {
+  translate, translateToOrigin, translateCentroidTo, translateCornerTo,
+  rotate, rotateAroundCenter, scale, originScale,
+  flipHorizontal, flipVertical, resizeByWidth, resizeByHeight, shear,
+  transformation,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `translate(p, dx, dy)` | Shift |
+| `translateToOrigin` / `translateCentroidTo` / `translateCornerTo` | Place by centroid / corner |
+| `rotate(p, angle, pivot?)` | Radians |
+| `rotateAroundCenter` | Pivot = centroid |
+| `scale(p, sx, sy?, pivot?)` | Scale about pivot |
+| `originScale` | Scale about `(0,0)` |
+| `flipHorizontal` / `flipVertical` | Mirror |
+| `resizeByWidth` / `resizeByHeight` | Uniform fit to AABB size |
+| `shear(p, shx, shy?, pivot?)` | Shear |
+
+## Examples
+
+### Translate
+
+![Translate](https://pattapatta.madorkestra.com/assets/transform-translate.svg)
+
+### Rotate
+
+![Rotate](https://pattapatta.madorkestra.com/assets/transform-rotate.svg)
+
+### Scale
+
+![Scale](https://pattapatta.madorkestra.com/assets/transform-scale.svg)

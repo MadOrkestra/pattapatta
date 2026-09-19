@@ -1,0 +1,1941 @@
+# pattapatta — full documentation for LLMs
+> Generated from the docs site. Prefer individual pages under https://pattapatta.madorkestra.com/llms/ when you only need one module.
+Stroke-first pen-plotter geometry library (MIT, ESM, Node ≥ 18). Install: `pnpm add pattapatta`.
+
+---
+
+<!-- geometry-model -->
+
+# Geometry model
+
+## Core types
+
+| Type | Meaning |
+|------|---------|
+| `Vec2` | `{ x, y }` |
+| `Circle` | `{ x, y, r }` |
+| `Segment` | `{ a: Vec2, b: Vec2 }` |
+| `Ring` | `Vec2[]` (vertices; closing vertex usually omitted) |
+| `Path` | `{ rings, closed }` — exterior + optional holes, or open polyline |
+| `Group` | Ordered list of paths (z-order for occlusion) |
+
+### Path
+
+- `rings[0]` — exterior (or the open polyline when `closed === false`)
+- `rings[1…]` — holes (closed paths only)
+- Prefer constructors: `polygon`, `polyline`, `path`, `createRect`, …
+
+```ts
+import { polygon, vec2, path } from 'pattapatta'
+
+const outer = [vec2(0, 0), vec2(2, 0), vec2(2, 2), vec2(0, 2)]
+const hole = [vec2(0.5, 0.5), vec2(1.5, 0.5), vec2(1.5, 1.5), vec2(0.5, 1.5)]
+const withHole = path([outer, hole], true)
+```
+
+### Group
+
+Boolean ops return a `Group` because results may split into multiple contours.
+
+```ts
+import { group, toSvg } from 'pattapatta'
+
+toSvg(group([pathA, pathB]))
+```
+
+## Helpers
+
+- `vec2`, `circle`, `segment`
+- `clonePath` / `cloneGroup`
+- `normalizeRing` — drops a duplicate closing vertex
+
+See also [Types API](https://pattapatta.madorkestra.com/api/types).
+
+---
+
+<!-- pen-plotter -->
+
+# Pen-plotter output
+
+**pattapatta** targets machines that draw **strokes**, not paint engines that flood-fill pixels.
+
+## Rules of thumb
+
+- Prefer `fill="none"` and a visible `stroke`
+- “Fills” are **hatches**, **packings**, **tilings**, or **offset contours** — overview: [Fills](https://pattapatta.madorkestra.com/concepts/fills)
+- Boolean / morphology still build **regions**, but you plot their **boundaries** — see [Operations](https://pattapatta.madorkestra.com/concepts/operations)
+
+## In scope
+
+- Union / intersect / subtract / occlusion of closed paths
+- Merged outlines (e.g. circle unions as stroked contours)
+- Hatch lines, packing circles, Voronoi edges, mesh edges
+
+## Out of scope
+
+- Solid CSS/SVG fills as the product goal
+- Animation runners
+- Faithful Processing `PShape` style bags (use portable geometry + your own stroke settings)
+
+Repo ADR: `docs/decisions/0002-pen-plotter-output.md`.
+
+---
+
+<!-- operations -->
+
+# Operations
+
+**Operations** change or query geometry. They do not draw fill marks — they prepare regions and paths you later stroke or fill.
+
+Typical pipeline: **construct → operate → fill → SVG**.
+
+## Transforms
+
+Affine helpers live in [transformation](https://pattapatta.madorkestra.com/api/transformation):
+
+- `rotate` / `rotateAroundCenter`
+- `translate`, `scale`, `shear`
+- `flipHorizontal` / `flipVertical`
+
+```ts
+import { createRect, rotateAroundCenter } from 'pattapatta'
+
+const square = createRect(20, 20, 40, 40)
+const spun = rotateAroundCenter(square, Math.PI / 6)
+```
+
+## Region ops
+
+Before a fill, you usually reshape the host region:
+
+| Module | Role |
+|--------|------|
+| [shapeBoolean](https://pattapatta.madorkestra.com/api/shape-boolean) | Union, intersect, subtract, occlusion |
+| [morphology](https://pattapatta.madorkestra.com/api/morphology) | Buffer, simplify, warp |
+| [processing](https://pattapatta.madorkestra.com/api/processing) | Slice, densify, extract boundaries |
+| [predicates](https://pattapatta.madorkestra.com/api/predicates) | Containment, area, and related queries |
+
+## Next step
+
+Once you have a path or group, add stroke marks with [Fills](https://pattapatta.madorkestra.com/concepts/fills) (hatch, packing, tiling, …).
+
+---
+
+<!-- fills -->
+
+# Fills
+
+In **pattapatta**, a **fill** is stroke mark-making inside a region — not solid CSS/SVG paint. Emit with `fill="none"` and a visible stroke. See [Pen-plotter output](https://pattapatta.madorkestra.com/concepts/pen-plotter).
+
+Typical pipeline: **construct → [operate](https://pattapatta.madorkestra.com/concepts/operations) → fill → SVG**.
+
+## Primary fills
+
+| Module | Marks |
+|--------|-------|
+| [hatch](https://pattapatta.madorkestra.com/api/hatch) | Parallel, cross, weave, stochastic, perpendicular ticks, concentric shells |
+| [circlePacking](https://pattapatta.madorkestra.com/api/circle-packing) | Circles packed in a region |
+| [segmentSet](https://pattapatta.madorkestra.com/api/segment-set) | Low-level hatch building blocks |
+
+```ts
+import { createRect, hatchParallel, segmentsToOpenPaths } from 'pattapatta'
+
+const region = createRect(15, 15, 70, 70)
+const strokes = segmentsToOpenPaths(
+  hatchParallel(region, { spacing: 6, angle: Math.PI / 4 }),
+)
+```
+
+### Hatch pattern map
+
+| Helper | Marks |
+|--------|-------|
+| `hatchParallel` / `hatchCross` | Straight hatch / crosshatch |
+| `hatchWeave` | Fabric-like H/V runs (ABC weave) |
+| `hatchStochastic` | Random non-intersecting segments |
+| `hatchPerpendicular` | Perimeter ticks (outline texture) |
+| `hatchConcentric` | Nested inward offset shells (`Path[]`) |
+
+Do **not** use SVG `<pattern>` / CSS fills for plotter output — expand geometry to real stroked paths instead.
+
+## Also fill-like
+
+| Module | Marks |
+|--------|-------|
+| [tiling](https://pattapatta.madorkestra.com/api/tiling) | Cell boundaries as stroke patterns (`arcDivision`, grids, subdivisions) |
+| [contour](https://pattapatta.madorkestra.com/api/contour) | Offset curves (inward / outward) |
+| [pointSet](https://pattapatta.madorkestra.com/api/point-set) | Hilbert-ordered polylines and TSP tours through samples |
+| [construction](https://pattapatta.madorkestra.com/api/construction) | `createSponge` pore boundaries as stroke fills |
+
+### Point-order fills
+
+Sample points, then stroke a locality-preserving or tour path:
+
+```ts
+import { poisson, hilbertSort, findShortestTour, polyline } from 'pattapatta'
+
+const pts = poisson(40, 10, 10, 90, 90, 3)
+const hilbertStroke = polyline(hilbertSort(pts))
+const tourStroke = findShortestTour(pts) // closed
+```
+
+### Arc division / sponge
+
+Stroke cell or pore outlines directly — no hatch pass required.
+
+```ts
+import { arcDivision, createSponge } from 'pattapatta'
+
+const arcs = arcDivision(100, 100, 10, 5)
+const sponge = createSponge(100, 100, 36, 2, 2, 6, 9)
+```
+
+## Try it
+
+Chained recipes on [Examples](https://pattapatta.madorkestra.com/examples); interactive hatch and packing under [Live demos](https://pattapatta.madorkestra.com/demos).
+
+---
+
+<!-- quickstart -->
+
+# Quickstart
+
+Get a stroked SVG out of **pattapatta** in a few lines.
+
+## Install
+
+```bash
+pnpm add pattapatta
+```
+
+Requires **Node ≥ 18** (ESM). Works in modern browsers via bundlers.
+
+## Union two rectangles
+
+```ts
+import { createRect, union, toSvg } from 'pattapatta'
+
+const a = createRect(10, 25, 50, 40)
+const b = createRect(40, 35, 50, 40)
+const merged = union(a, b)
+
+console.log(toSvg(merged, { viewBox: '0 0 110 100', strokeWidth: 1.5 }))
+```
+
+![Boolean union](https://pattapatta.madorkestra.com/assets/boolean-union.svg)
+
+## Union then hatch
+
+Merge two rectangles, then fill the outline with parallel hatch strokes.
+
+```ts
+import {
+  createRect,
+  union,
+  hatchParallel,
+  segmentsToOpenPaths,
+  group,
+  toSvg,
+} from 'pattapatta'
+
+const a = createRect(10, 25, 50, 40)
+const b = createRect(40, 35, 50, 40)
+const merged = union(a, b)
+const target = merged.paths[0]!
+const strokes = segmentsToOpenPaths(
+  hatchParallel(target, { spacing: 6, angle: Math.PI / 4 }),
+)
+
+console.log(
+  toSvg(group([target, ...strokes]), {
+    viewBox: '0 0 110 100',
+    strokeWidth: 1,
+  }),
+)
+```
+
+![Union then hatch](https://pattapatta.madorkestra.com/assets/pipeline-union-hatch.svg)
+
+## Hatch a shape
+
+```ts
+import {
+  createRect,
+  hatchParallel,
+  segmentsToOpenPaths,
+  group,
+  toSvg,
+} from 'pattapatta'
+
+const cell = createRect(15, 15, 70, 70)
+const strokes = hatchParallel(cell, { spacing: 6, angle: Math.PI / 4 })
+const svg = toSvg(group(segmentsToOpenPaths(strokes)), {
+  viewBox: '0 0 100 100',
+  strokeWidth: 1,
+})
+```
+
+![Parallel hatch](https://pattapatta.madorkestra.com/assets/hatch-parallel.svg)
+
+## Pack circles
+
+```ts
+import { createRect, maximumInscribedPack } from 'pattapatta'
+
+const cell = createRect(10, 10, 80, 80)
+const circles = maximumInscribedPack(cell, 6, 0.5)
+// circles: { x, y, r }[] — emit <circle> or approximate with polygons for toSvg
+```
+
+![Maximum inscribed packing](https://pattapatta.madorkestra.com/assets/packing-inscribed.svg)
+
+## CLI
+
+```bash
+npx pattapatta --help
+npx pattapatta svg:roundtrip input.svg -o output.svg
+```
+
+## Next
+
+Continue with [Getting started](https://pattapatta.madorkestra.com/getting-started) for imports and mental model, or [Examples](https://pattapatta.madorkestra.com/examples) for more chained recipes.
+
+---
+
+<!-- getting-started -->
+
+# Getting started
+
+This page covers how to think in **pattapatta**, how imports work, and a small end-to-end plotter pipeline.
+
+## Mental model
+
+1. Build or load geometry as `Path` / `Group` values.
+2. **Operate** on regions (boolean, transform, buffer, …) — see [Operations](https://pattapatta.madorkestra.com/concepts/operations).
+3. **Fill** with stroke marks (hatch, pack, tile, …) — see [Fills](https://pattapatta.madorkestra.com/concepts/fills).
+4. Emit SVG with `toSvg` (`fill="none"`, stroked marks).
+
+Solid area fills are **out of scope**. See [Pen-plotter output](https://pattapatta.madorkestra.com/concepts/pen-plotter).
+
+## Imports
+
+Root import (convenient):
+
+```ts
+import { polygon, vec2, union, toSvg } from 'pattapatta'
+```
+
+Feature subpaths (tree-shake friendly):
+
+```ts
+import { hatchParallel } from 'pattapatta/hatch'
+import { hexLatticePack } from 'pattapatta/circlePacking'
+import { buffer } from 'pattapatta/morphology'
+```
+
+## Geometry in 30 seconds
+
+```ts
+import { vec2, polygon, group, createCircle } from 'pattapatta'
+
+const square = polygon([
+  vec2(0, 0),
+  vec2(1, 0),
+  vec2(1, 1),
+  vec2(0, 1),
+])
+
+const disk = createCircle(0.5, 0.5, 0.4, 48)
+const scene = group([square, disk])
+```
+
+Read [Geometry model](https://pattapatta.madorkestra.com/concepts/geometry-model) for `Path`, holes, and `Group` z-order.
+
+## Mini pipeline: cut → hatch → pack
+
+```ts
+import {
+  createRect,
+  subtract,
+  hatchParallel,
+  segmentsToOpenPaths,
+  maximumInscribedPack,
+  group,
+  toSvg,
+  polyline,
+} from 'pattapatta'
+
+const paper = createRect(0, 0, 100, 100)
+const hole = createRect(30, 30, 40, 40)
+const frame = subtract(paper, hole) // Group
+
+const target = frame.paths[0]!
+const hatches = segmentsToOpenPaths(
+  hatchParallel(target, { spacing: 4, angle: Math.PI / 6 }),
+)
+const packs = maximumInscribedPack(target, 5, 0.5)
+
+// Circles → open rings for SVG (or emit <circle> yourself)
+const circlePaths = packs.map((c) => {
+  const n = 32
+  const pts = Array.from({ length: n }, (_, i) => {
+    const t = (i / n) * Math.PI * 2
+    return { x: c.x + Math.cos(t) * c.r, y: c.y + Math.sin(t) * c.r }
+  })
+  return { rings: [pts], closed: true }
+})
+
+const out = toSvg(group([...hatches, ...circlePaths]), {
+  viewBox: '0 0 100 100',
+  strokeWidth: 0.8,
+})
+```
+
+![Inscribed packing example](https://pattapatta.madorkestra.com/assets/packing-inscribed.svg)
+
+More chained recipes (union → hatch, star cut → cross hatch, ring → hatch, …) live on [Examples](https://pattapatta.madorkestra.com/examples). Try them interactively under [Live demos](https://pattapatta.madorkestra.com/demos).
+
+## Coordinates
+
+There is no fixed unit. Use plotter millimetres, pixels, or normalized `[0,1]` — just keep `strokeWidth` consistent with your scale.
+
+## TypeScript
+
+The package ships `.d.ts` next to ESM. No extra `@types` package is required for the public API (`d3-delaunay` types are a dependency of the build).
+
+## Regenerating doc pictures
+
+Example SVGs in this book are produced by:
+
+```bash
+pnpm docs:examples
+```
+
+That writes into `website/static/assets/`.
+
+## Next
+
+Browse the [API reference](https://pattapatta.madorkestra.com/api/shape-boolean) — each module page includes pictured examples.
+
+---
+
+<!-- examples -->
+
+# Examples
+
+Compose **construct → boolean (or buffer) → fill → SVG**. “Fill” means hatch or packing — stroke marks only.
+
+Try the same recipes interactively on [Live demos](https://pattapatta.madorkestra.com/demos).
+
+## Union → hatch
+
+Two overlapping rectangles, merge, then parallel hatch the result.
+
+```ts
+import {
+  createRect,
+  union,
+  hatchParallel,
+  segmentsToOpenPaths,
+  group,
+  toSvg,
+} from 'pattapatta'
+
+const a = createRect(10, 25, 50, 40)
+const b = createRect(40, 35, 50, 40)
+const merged = union(a, b)
+const target = merged.paths[0]!
+const strokes = segmentsToOpenPaths(
+  hatchParallel(target, { spacing: 6, angle: Math.PI / 4 }),
+)
+
+console.log(
+  toSvg(group([target, ...strokes]), {
+    viewBox: '0 0 110 100',
+    strokeWidth: 1,
+  }),
+)
+```
+
+![Union then hatch](https://pattapatta.madorkestra.com/assets/pipeline-union-hatch.svg)
+
+## Frame → pack
+
+Outer rectangle minus an inset hole, then a hex lattice fill clipped to the frame.
+
+```ts
+import {
+  createRect,
+  subtract,
+  hexLatticePack,
+} from 'pattapatta'
+
+const outer = createRect(10, 10, 80, 80)
+const hole = createRect(30, 30, 40, 40)
+const frame = subtract(outer, hole)
+const circles = hexLatticePack(frame.paths[0]!, 10) // overlap fill — clip in SVG
+// circles: { x, y, r }[] — emit <circle> inside a clipPath of the frame
+```
+
+![Frame then hex pack](https://pattapatta.madorkestra.com/assets/pipeline-frame-pack.svg)
+
+## Star cut → hatch
+
+A star with a circular hole, filled with cross hatch.
+
+```ts
+import {
+  createStar,
+  createCircle,
+  subtract,
+  hatchCross,
+  segmentsToOpenPaths,
+  group,
+  toSvg,
+} from 'pattapatta'
+
+const star = createStar(50, 50, 38, 16, 5)
+const hole = createCircle(50, 50, 14)
+const cut = subtract(star, hole)
+const target = cut.paths[0]!
+const strokes = segmentsToOpenPaths(
+  hatchCross(target, { spacing: 6, angle: Math.PI / 4 }),
+)
+
+console.log(
+  toSvg(group([target, ...strokes]), {
+    viewBox: '0 0 100 100',
+    strokeWidth: 1,
+  }),
+)
+```
+
+![Star cut then cross hatch](https://pattapatta.madorkestra.com/assets/pipeline-star-cut-hatch.svg)
+
+## Ring → hatch
+
+Buffer a circle outward, subtract a smaller disk, hatch the annulus.
+
+```ts
+import {
+  createCircle,
+  buffer,
+  subtract,
+  hatchParallel,
+  segmentsToOpenPaths,
+  group,
+  toSvg,
+} from 'pattapatta'
+
+const seed = createCircle(50, 50, 28)
+const outer = buffer(seed, 8).paths[0]!
+const inner = createCircle(50, 50, 18)
+const ring = subtract(outer, inner)
+const target = ring.paths[0]!
+const strokes = segmentsToOpenPaths(
+  hatchParallel(target, { spacing: 5, angle: Math.PI / 5 }),
+)
+
+console.log(
+  toSvg(group([target, ...strokes]), {
+    viewBox: '0 0 100 100',
+    strokeWidth: 1,
+  }),
+)
+```
+
+![Ring then hatch](https://pattapatta.madorkestra.com/assets/pipeline-ring-hatch.svg)
+
+## Triangulation
+
+Delaunay, earcut, Poisson Steiner Delaunay, and Ruppert-inspired refine on a star.
+
+```ts
+import {
+  createStar,
+  delaunayTriangulation,
+  earCutTriangulation,
+  poissonTriangulation,
+  refine,
+} from 'pattapatta'
+
+const star = createStar(50, 50, 38, 16, 5)
+const delaunay = delaunayTriangulation(star)
+const earcut = earCutTriangulation(star)
+const poisson = poissonTriangulation(star, 6, 4)
+const refined = refine(star, { minAngle: Math.PI / 4, maxIterations: 200 })
+```
+
+### Delaunay
+
+![Delaunay star](https://pattapatta.madorkestra.com/assets/triangulation-delaunay.svg)
+
+### Earcut
+
+![Earcut star](https://pattapatta.madorkestra.com/assets/triangulation-earcut.svg)
+
+### Poisson Delaunay
+
+![Poisson Delaunay star](https://pattapatta.madorkestra.com/assets/triangulation-poisson.svg)
+
+### Refine
+
+![Refine star](https://pattapatta.madorkestra.com/assets/triangulation-refine.svg)
+
+## Points → shortest tour
+
+Poisson samples connected by an approximate TSP tour — a stroke fill through the point set.
+
+```ts
+import { poisson, findShortestTour, toSvg } from 'pattapatta'
+
+const pts = poisson(14, 10, 10, 90, 90, 8)
+const tour = findShortestTour(pts)
+console.log(toSvg(tour, { viewBox: '0 0 100 100', strokeWidth: 1.2 }))
+```
+
+![Points then shortest tour](https://pattapatta.madorkestra.com/assets/pointset-shortest-tour.svg)
+
+## Next
+
+- [Live demos](https://pattapatta.madorkestra.com/demos) — tweak spacing, angle, and diameter
+- [Getting started](https://pattapatta.madorkestra.com/getting-started) — mental model and cut → hatch → pack
+- [API reference](https://pattapatta.madorkestra.com/api/shape-boolean) — per-module pictures
+
+---
+
+<!-- types -->
+
+# Types
+
+Constructors and structural types for geometry.
+
+## Imports
+
+```ts
+import {
+  vec2, circle, segment, path, polygon, polyline, group,
+  type Vec2, type Ring, type Path, type Group, type Circle, type Segment,
+} from 'pattapatta'
+```
+
+## Types
+
+| Type | Meaning |
+|------|---------|
+| `Vec2` | `{ x, y }` |
+| `Ring` | `Vec2[]` — one closed or open vertex loop |
+| `Path` | `{ rings: Ring[], closed: boolean }` — exterior + holes |
+| `Group` | `{ paths: Path[] }` |
+| `Circle` | `{ x, y, r }` |
+| `Segment` | `{ a: Vec2, b: Vec2 }` |
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `vec2(x, y)` | Point |
+| `circle(x, y, r)` | Disk descriptor |
+| `segment(a, b)` | Line segment |
+| `polygon(exterior, holes?)` | Closed path |
+| `polyline(points)` | Open path |
+| `path(rings, closed?)` | General path |
+| `group(paths)` / `groupFromPaths` | Ordered group |
+| `clonePath` / `cloneGroup` / `cloneVec2` | Deep copies |
+| `normalizeRing(ring)` | Drop duplicate closing vertex |
+| `equalsVec2(a, b, eps?)` | Approximate equality |
+| `circleCenter(c)` | `{ x, y }` of a circle |
+
+## Example
+
+```ts
+const square = polygon([
+  vec2(0, 0), vec2(100, 0), vec2(100, 100), vec2(0, 100),
+])
+```
+
+![Construction shapes](https://pattapatta.madorkestra.com/assets/construction-shapes.svg)
+
+---
+
+<!-- construction -->
+
+# construction
+
+Primitive shape constructors.
+
+## Imports
+
+```ts
+import {
+  createCircle, createRect, createRegularPolygon, createRing,
+  createArc, createStar, createKochSnowflake, createSponge, construction,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `createCircle(cx, cy, r, segments?)` | Regular n-gon disk |
+| `createRect(x, y, w, h)` | Axis-aligned rect |
+| `createRegularPolygon(cx, cy, r, sides, rotation?)` | Regular polygon |
+| `createRing(cx, cy, outer, inner, segments?)` | Annulus (hole) |
+| `createArc(…)` | Open arc polyline |
+| `createStar(cx, cy, outer, inner, points?, rotation?)` | Star |
+| `createKochSnowflake(cx, cy, r, iterations?)` | Koch flake |
+| `createSponge(w, h, generators, thickness, smoothing, classes, seed?)` | Porous Voronoi sponge (`Group`) |
+
+## Examples
+
+### Circle / star / snowflake
+
+![Shapes](https://pattapatta.madorkestra.com/assets/construction-shapes.svg)
+
+### Ring / arc
+
+![Ring and arc](https://pattapatta.madorkestra.com/assets/construction-ring-arc.svg)
+
+### Sponge
+
+Merged Voronoi cells, Chaikin-smoothed, subtracted from a rectangle. Stroke the result as a fill. Lower `classes` → coarser blobs; higher `thickness` → thicker walls.
+
+![Sponge](https://pattapatta.madorkestra.com/assets/construction-sponge.svg)
+
+```ts
+const sponge = createSponge(100, 100, 40, 1.5, 2, 8, 19)
+// stroke sponge.paths
+```
+
+---
+
+<!-- svg -->
+
+# SVG I/O
+
+Parse and serialize plotter-oriented SVG.
+
+## Imports
+
+```ts
+import {
+  parseSvg, toSvg, parsePathData, serializePathData,
+  type ToSvgOptions,
+} from 'pattapatta'
+// or: import { parseSvg, toSvg } from 'pattapatta/svg'
+```
+
+## `parseSvg(svg: string): Group`
+
+Reads `path`, `rect`, `circle`, `line`, `polyline`, `polygon` in document order. Circles become polygonal approximations when needed for path ops.
+
+## `toSvg(group, options?: ToSvgOptions): string`
+
+Always emits `fill="none"` stroked paths.
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `viewBox` | inferred | SVG viewBox |
+| `width` / `height` | — | Root attributes |
+| `stroke` | `#000` | Stroke color |
+| `strokeWidth` | `1` | Stroke width |
+
+## Path data
+
+- `parsePathData(d)` → rings
+- `serializePathData(rings, closed)` → `d` string
+
+## Example
+
+```ts
+const g = parseSvg(``)
+console.log(toSvg(g, { strokeWidth: 1.2 }))
+```
+
+---
+
+<!-- conversion -->
+
+# conversion
+
+Portable structure helpers (PShape bridges omitted on purpose).
+
+## Imports
+
+```ts
+import {
+  copy, flatten, roundVertexCoords, toArray, fromArray,
+  toContours, fromContours, conversion,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `copy(path)` | Clone |
+| `flatten(group)` | Cloned path list |
+| `roundVertexCoords(path, decimals)` | Round verts |
+| `toArray` / `fromArray` | Flat `[x0,y0,…]` exterior |
+| `toContours` / `fromContours` | Ring ↔ path list |
+
+Style / WKT / Java2D bridges from PGS are not ported; use SVG + these helpers.
+
+---
+
+<!-- transformation -->
+
+# transformation
+
+**Operation** — affine helpers on paths (rotate, scale, translate, …). See [Operations](https://pattapatta.madorkestra.com/concepts/operations).
+
+## Imports
+
+```ts
+import {
+  translate, translateToOrigin, translateCentroidTo, translateCornerTo,
+  rotate, rotateAroundCenter, scale, originScale,
+  flipHorizontal, flipVertical, resizeByWidth, resizeByHeight, shear,
+  transformation,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `translate(p, dx, dy)` | Shift |
+| `translateToOrigin` / `translateCentroidTo` / `translateCornerTo` | Place by centroid / corner |
+| `rotate(p, angle, pivot?)` | Radians |
+| `rotateAroundCenter` | Pivot = centroid |
+| `scale(p, sx, sy?, pivot?)` | Scale about pivot |
+| `originScale` | Scale about `(0,0)` |
+| `flipHorizontal` / `flipVertical` | Mirror |
+| `resizeByWidth` / `resizeByHeight` | Uniform fit to AABB size |
+| `shear(p, shx, shy?, pivot?)` | Shear |
+
+## Examples
+
+### Translate
+
+![Translate](https://pattapatta.madorkestra.com/assets/transform-translate.svg)
+
+### Rotate
+
+![Rotate](https://pattapatta.madorkestra.com/assets/transform-rotate.svg)
+
+### Scale
+
+![Scale](https://pattapatta.madorkestra.com/assets/transform-scale.svg)
+
+---
+
+<!-- shape-boolean -->
+
+# shapeBoolean
+
+Clipper2-backed boolean operations on closed paths.
+
+## Imports
+
+```ts
+import {
+  union, unionAll, intersect, subtract, subtractAll,
+  symDifference, complement, occlusionSubtract, overlapRegions,
+  shapeBoolean,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `union(a, b)` | A ∪ B |
+| `unionAll(paths)` | Folded union |
+| `intersect(a, b)` | A ∩ B |
+| `subtract(a, b)` | A \\ B |
+| `subtractAll(base, shapes)` | Sequential subtract |
+| `symDifference(a, b)` | XOR |
+| `complement(shape, w, h)` | `[0,w]×[0,h]` minus shape |
+| `occlusionSubtract(group)` | Painter occlusion (later on top) |
+| `overlapRegions(a, b)` | Overlap contours |
+
+All return a `Group`.
+
+## Examples
+
+### Union
+
+```ts
+const merged = union(createRect(10, 25, 50, 40), createRect(40, 35, 50, 40))
+```
+
+![Union](https://pattapatta.madorkestra.com/assets/boolean-union.svg)
+
+### Subtract
+
+```ts
+const cut = subtract(createRect(10, 25, 50, 40), createRect(40, 35, 50, 40))
+```
+
+![Subtract](https://pattapatta.madorkestra.com/assets/boolean-subtract.svg)
+
+---
+
+<!-- morphology -->
+
+# morphology
+
+Offset, simplify, smooth, and warp closed paths.
+
+## Imports
+
+```ts
+import {
+  buffer, erosionDilation, dilationErosion,
+  simplify, reducePrecision, chaikinCut, smooth,
+  radialWarp, sineWarp, minkSum, minkDifference, morphology,
+  type BufferOptions,
+} from 'pattapatta'
+```
+
+## `BufferOptions`
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `join` | `'round'` | Offset join: `'round'` \| `'miter'` \| `'square'` |
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `buffer(path, delta, opts?: BufferOptions)` | Clipper offset (+ expand / − erode) |
+| `erosionDilation` / `dilationErosion` | Opening / closing |
+| `simplify(path, epsilon)` | RDP simplify |
+| `reducePrecision(path, decimals)` | Round vertices |
+| `chaikinCut` / `smooth` | Corner cutting |
+| `radialWarp` / `sineWarp` | Deterministic warps |
+| `minkSum` / `minkDifference` | Minkowski ops |
+
+## Examples
+
+### Buffer
+
+![Buffer](https://pattapatta.madorkestra.com/assets/morphology-buffer.svg)
+
+### Chaikin
+
+![Chaikin](https://pattapatta.madorkestra.com/assets/morphology-chaikin.svg)
+
+### Radial warp
+
+![Radial warp](https://pattapatta.madorkestra.com/assets/morphology-radial-warp.svg)
+
+### Sine warp
+
+![Sine warp](https://pattapatta.madorkestra.com/assets/morphology-sine-warp.svg)
+
+### Simplify
+
+![Simplify](https://pattapatta.madorkestra.com/assets/morphology-simplify.svg)
+
+---
+
+<!-- processing -->
+
+# processing
+
+Perimeter extracts, densify, slice, and point sampling.
+
+## Imports
+
+```ts
+import {
+  extractPerimeter, extractBoundary, extractHoles, densify,
+  removeSmallHoles, generateRandomPoints, generateRandomGridPoints,
+  pointsOnExterior, segmentsOnExterior, slice, centroidSplit,
+  dissolve, intersectionPoints, processing,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `extractPerimeter` / `extractBoundary` | Exterior only |
+| `extractHoles` | Hole paths |
+| `densify(path, maxSegLen)` | Insert vertices |
+| `removeSmallHoles(path, minArea)` | Drop tiny holes |
+| `generateRandomPoints(path, n, seed?)` | Seeded interior samples |
+| `generateRandomGridPoints(path, spacing)` | Grid filter |
+| `pointsOnExterior` / `segmentsOnExterior` | Boundary samples / edges |
+| `slice(path, a, b)` | Cut by infinite line through `a→b` |
+| `centroidSplit` | Vertical cut through centroid |
+| `dissolve(paths)` | `unionAll` |
+| `intersectionPoints(a, b)` | Boundary crossings |
+
+## Example — slice
+
+![Slice](https://pattapatta.madorkestra.com/assets/processing-slice.svg)
+
+```ts
+const pieces = slice(createRect(15, 15, 70, 70), vec2(10, 20), vec2(90, 80))
+```
+
+---
+
+<!-- predicates -->
+
+# predicates
+
+Measurements and queries on paths.
+
+## Imports
+
+```ts
+import {
+  area, areaGroup, ringArea, centroid, containsPoint,
+  bounds, width, height, areaSimilarity, predicates,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `area(path)` | Absolute area (holes subtracted) |
+| `areaGroup(group)` | Sum of path areas |
+| `ringArea(ring)` | Signed shoelace |
+| `centroid(path)` | Exterior centroid |
+| `containsPoint(path, p)` | Point-in-polygon with holes |
+| `bounds(path)` | Axis-aligned bounds |
+| `width` / `height` | Bound extents |
+| `areaSimilarity(a, b)` | `1 - \|Δarea\| / max` |
+
+## Example
+
+```ts
+const sq = createRect(0, 0, 10, 10)
+area(sq) // 100
+containsPoint(sq, vec2(5, 5)) // true
+```
+
+---
+
+<!-- compare -->
+
+# compare
+
+Helpers for validating geometry against expected areas and oracle fixtures (used in tests).
+
+## Imports
+
+```ts
+import {
+  relativeAreaError,
+  containmentAgreement,
+  assertAreaClose,
+  oraclePathsToGroup,
+  ringsToPath,
+  type OracleCase,
+} from 'pattapatta'
+```
+
+## Types
+
+### `OracleCase`
+
+Fixture shape for oracle comparisons:
+
+| Field | Meaning |
+|-------|---------|
+| `id` | Case identifier |
+| `seed` | RNG seed used to build the case |
+| `operation` | Operation name under test |
+| `outputs.paths` | Expected rings as `number[][][]` per path |
+| `outputs.lines` | Expected open polylines |
+| `outputs.circles` | Expected disks `{ x, y, r }` |
+| `outputs.scalars` | Optional scalars (e.g. `area`) |
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `ringsToPath(rings)` | Convert `number[][][]` rings → closed `Path` |
+| `oraclePathsToGroup(paths)` | Map oracle path rings → `Group` |
+| `relativeAreaError(a, b)` | `\|area(a) − area(b)\| / max(\|a\|, \|b\|, ε)` |
+| `assertAreaClose(actual, expectedArea, tol?)` | Throw if relative area error exceeds `tol` (default `1e-3`) |
+| `containmentAgreement(a, b, samples?)` | Fraction of grid samples with matching point-in-group (default `20×20`) |
+
+## Example
+
+```ts
+const got = union(a, b)
+assertAreaClose(got, 150, 1e-3)
+relativeAreaError(got, expected) // ~0 when areas match
+containmentAgreement(got, expected, 16) // 1 when regions agree
+```
+
+---
+
+<!-- hatch -->
+
+# hatch
+
+**Fill** — plotter marks via clipped stroke patterns. See [Fills](https://pattapatta.madorkestra.com/concepts/fills).
+
+## Imports
+
+```ts
+import {
+  hatchParallel, hatchCross, hatchWeave, hatchStochastic,
+  hatchPerpendicular, hatchConcentric, hatch,
+  type ParallelHatchOptions, type WeaveHatchOptions,
+  type StochasticHatchOptions, type PerpendicularHatchOptions,
+  type ConcentricHatchOptions,
+} from 'pattapatta'
+// or from 'pattapatta/hatch'
+```
+
+## `hatchParallel(path, options?: ParallelHatchOptions) → Segment[]`
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `angle` | `π/4` | Line direction (radians) |
+| `spacing` | `0.15` | Perpendicular spacing |
+| `count` | *auto* | Line count; omit to cover the whole path AABB |
+| `length` | bbox diagonal | Pre-clip half-length |
+| `center` | bbox center | Field center |
+
+## `hatchCross(path, options?)`
+
+Two perpendicular parallel fields.
+
+## `hatchWeave(path, options?: WeaveHatchOptions) → Segment[]`
+
+ABC fabric weave over the path AABB, clipped to the path.
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `cellSize` | ~1/12 shorter side | Grid cell size |
+| `A` / `B` / `C` | `1` / `1` / `1` | Weft run / warp run / row shift |
+
+## `hatchStochastic(path, options?: StochasticHatchOptions) → Segment[]`
+
+Random non-intersecting segments in the AABB, clipped to the path.
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `count` | `40` | Segments before clip |
+| `length` | — | Fixed length (overrides min/max) |
+| `seed` | `1` | PRNG seed |
+
+## `hatchPerpendicular(path, options?) → Segment[]`
+
+Perimeter ticks centered on the boundary (outline texture, not area fill).
+
+## `hatchConcentric(path, options?) → Path[]`
+
+Nested inward offset shells as closed stroke paths.
+
+## Examples
+
+### Parallel
+
+![Parallel hatch](https://pattapatta.madorkestra.com/assets/hatch-parallel.svg)
+
+```ts
+const strokes = hatchParallel(createRect(15, 15, 70, 70), {
+  spacing: 6, angle: Math.PI / 4,
+})
+```
+
+### Cross
+
+![Cross hatch](https://pattapatta.madorkestra.com/assets/hatch-cross.svg)
+
+```ts
+const strokes = hatchCross(createRect(15, 15, 70, 70), { spacing: 8 })
+```
+
+### Weave
+
+![Weave hatch](https://pattapatta.madorkestra.com/assets/hatch-weave.svg)
+
+```ts
+const strokes = hatchWeave(createRect(15, 15, 70, 70), {
+  cellSize: 8, A: 2, B: 2, C: 1,
+})
+```
+
+### Stochastic
+
+![Stochastic hatch](https://pattapatta.madorkestra.com/assets/hatch-stochastic.svg)
+
+```ts
+const strokes = hatchStochastic(createRect(15, 15, 70, 70), {
+  count: 50, length: 18, seed: 3,
+})
+```
+
+### Concentric
+
+![Concentric hatch](https://pattapatta.madorkestra.com/assets/hatch-concentric.svg)
+
+```ts
+const shells = hatchConcentric(createRect(15, 15, 70, 70), {
+  spacing: 6, count: 5,
+})
+```
+
+Serialize segments with `toSvg(group(segmentsToOpenPaths(strokes)))`.
+Concentric shells are already closed `Path`s — pass them to `group(shells)`.
+
+---
+
+<!-- segment-set -->
+
+# segmentSet
+
+Generate and filter infinite-style segment fields (PGS hatching building blocks).
+
+## Imports
+
+```ts
+import {
+  parallelSegments, weaveSegments, stochasticSegments,
+  perpendicularPathSegments,
+  filterByMinLength, filterAxisAligned,
+  segmentLength, segmentsToOpenPaths, clipSegmentsToPath,
+  segmentSet,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `parallelSegments(…)` | Parallel line field (float32-compatible spacing) |
+| `weaveSegments(w, h, cellSize, A, B, C, opts?)` | ABC fabric H/V runs in a box |
+| `stochasticSegments(w, h, n, minLen?, maxLen?, seed?, ox?, oy?)` | Random non-intersecting segments |
+| `perpendicularPathSegments(path, spacing, length, startOffset?)` | Perimeter-normal ticks |
+| `filterByMinLength(segs, min)` | Drop short segments |
+| `filterAxisAligned(segs)` | Drop near-axis-aligned segments |
+| `segmentLength(seg)` | Length |
+| `segmentsToOpenPaths(segs)` | Convert to open `Path`s for `toSvg` |
+| `clipSegmentToPath` / `clipSegmentsToPath` | Clip lines to a polygon |
+
+## Example
+
+Raw `parallelSegments` field (muted) clipped to a circle (accent):
+
+![Parallel segments clipped to a circle](https://pattapatta.madorkestra.com/assets/segment-set-parallel.svg)
+
+```ts
+const cell = createCircle(50, 50, 32, 64)
+const raw = parallelSegments(50, 50, 55, 7, Math.PI / 5, 18)
+const clipped = clipSegmentsToPath(raw, cell)
+```
+
+Prefer the [hatch](https://pattapatta.madorkestra.com/api/hatch) helpers for filled regions.
+
+---
+
+<!-- circle-packing -->
+
+# circlePacking
+
+**Fill** — lattice, stochastic, and inscribed circle packings. See [Fills](https://pattapatta.madorkestra.com/concepts/fills).
+
+## Imports
+
+```ts
+import {
+  squareLatticePack, hexLatticePack, stochasticPack,
+  maximumInscribedPack, maximumInscribedPackUntil,
+  frontChainPack, repulsionPack, obstaclePack,
+  circleOverlapsPath, circleContainedInPath,
+  circlePacking,
+  type LatticePackMode,
+} from 'pattapatta'
+```
+
+## Lattice modes
+
+`LatticePackMode`: `'overlap'` (default — full-path fill, centered cutoffs; **clip in SVG**) | `'contained'` (fully inside disks only — when you must stroke complete circles).
+
+```ts
+squareLatticePack(path, 0.25)              // overlap
+squareLatticePack(path, 0.25, 'contained')
+hexLatticePack(path, 0.25, 'contained')
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `squareLatticePack(path, diameter, mode?)` | Square lattice |
+| `hexLatticePack(path, diameter, mode?)` | Hex lattice |
+| `stochasticPack(path, points, minRadius, seed?)` | Seeded random growth |
+| `maximumInscribedPack(path, n, tolerance?)` | Iterative LEC packing |
+| `maximumInscribedPackUntil(path, minR, tolerance?)` | Until radius threshold |
+| `obstaclePack(path, obstacles, n, tolerance?)` | LEC pack avoiding seed disks |
+| `frontChainPack(path, minR, maxR, seed?)` | Seeded front-chain style |
+| `repulsionPack(path, minR, maxR, seed?, iterations?)` | Overlap + push |
+| `circleOverlapsPath(c, path)` | Disk overlaps filled path |
+| `circleContainedInPath(c, path)` | Disk fully inside path |
+
+### Not implemented
+
+`tangencyPack` and `trinscribedPack` are **deferred** (Apollonius / true tangency graphs). See ADR `docs/decisions/0003-deferred-circle-packing.md`.
+
+Try interactive controls on [Live demos](https://pattapatta.madorkestra.com/demos).
+
+## Examples
+
+### Square lattice
+
+![Square lattice](https://pattapatta.madorkestra.com/assets/packing-square.svg)
+
+### Hex lattice
+
+![Hex lattice](https://pattapatta.madorkestra.com/assets/packing-hex.svg)
+
+### Maximum inscribed
+
+![Inscribed pack](https://pattapatta.madorkestra.com/assets/packing-inscribed.svg)
+
+### Stochastic
+
+![Stochastic](https://pattapatta.madorkestra.com/assets/packing-stochastic.svg)
+
+### Front chain
+
+![Front chain](https://pattapatta.madorkestra.com/assets/packing-frontchain.svg)
+
+### Repulsion
+
+![Repulsion](https://pattapatta.madorkestra.com/assets/packing-repulsion.svg)
+
+### Obstacle pack
+
+Seed disk (muted) plus LEC packs that avoid it:
+
+![Obstacle pack](https://pattapatta.madorkestra.com/assets/packing-obstacle.svg)
+
+---
+
+<!-- tiling -->
+
+# tiling
+
+Grids and subdivisions as stroked cell boundaries.
+
+## Imports
+
+```ts
+import {
+  squareTiling, hexTiling, rectSubdivision,
+  quadSubdivision, triangleSubdivision,
+  sliceDivision, hatchSubdivision, arcDivision, tiling,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `squareTiling(spacing, minX, minY, maxX, maxY)` | Square cells (`squareGrid` alias) |
+| `hexTiling(spacing, …)` | Hex cells |
+| `rectSubdivision(path, nx, ny)` | Clip grid to path |
+| `quadSubdivision(faces, depth?)` | Midpoint quad split |
+| `triangleSubdivision(faces, depth?)` | Midpoint tri split |
+| `sliceDivision` / `hatchSubdivision` | Parallel strip cuts |
+| `arcDivision(width, height, arcs, seed?, circlePoints?)` | Arc-based cellular partition |
+
+## Examples
+
+### Square tiling
+
+![Square tiling](https://pattapatta.madorkestra.com/assets/tiling-square.svg)
+
+### Hex tiling
+
+![Hex tiling](https://pattapatta.madorkestra.com/assets/tiling-hex.svg)
+
+### Rect subdivision
+
+![Rect subdivision](https://pattapatta.madorkestra.com/assets/tiling-rect-subdiv.svg)
+
+### Triangle subdivision
+
+![Triangle subdivision](https://pattapatta.madorkestra.com/assets/tiling-tri-subdiv.svg)
+
+### Arc division
+
+Circles seeded on the boundary carve arc cells — stroke the faces as a fill.
+
+![Arc division](https://pattapatta.madorkestra.com/assets/tiling-arc-division.svg)
+
+```ts
+const cells = arcDivision(100, 100, 8, 7)
+// stroke cells.paths
+```
+
+---
+
+<!-- contour -->
+
+# contour
+
+Offset curves, skeletons, isolines, and field contours.
+
+## Imports
+
+```ts
+import {
+  offsetCurvesOutward,
+  offsetCurvesInward,
+  medialAxis,
+  chordalAxis,
+  straightSkeleton,
+  straightSkeletonParts,
+  centerLine,
+  distanceField,
+  contrastField,
+  distanceTree,
+  isolines,
+  isolinesFromFunction,
+  isolineZeroFromFunction,
+  contour,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `offsetCurvesOutward(path, distance)` | Positive buffer |
+| `offsetCurvesInward(path, distance)` | Erosion (may vanish) |
+| `medialAxis(path, axial, distance, area)` | Medial axis with feature pruning (thresholds in `[0,1]`) |
+| `chordalAxis(path)` | Chordal axis from Delaunay triangle classification |
+| `straightSkeleton(path)` | Flat group of faces + branches + bones |
+| `straightSkeletonParts(path)` | Structured `{ faces, branches, bones }` |
+| `centerLine(path, straightness?, smoothing?)` | Longest smoothed medial center line |
+| `distanceField(path, spacing, pole?)` | Isolines of `d_boundary − d_pole` (default pole = MIC) |
+| `contrastField(path, intervals, reference)` | Isolines of `\|d_boundary − d_reference\|` |
+| `distanceTree(mesh, source, flatten)` | BFS shortest-path tree on a mesh |
+| `isolines(path, highPoint, spacing)` | Radial isolines from a high point |
+| `isolinesFromFunction(bounds, sample, interval, fn)` | Marching-squares isolines |
+| `isolineZeroFromFunction(bounds, sample, fn)` | Zero level-set |
+
+## Offset curves
+
+![Offset curves](https://pattapatta.madorkestra.com/assets/contour-offset.svg)
+
+```ts
+const cross = polygon([/* …cross outline… */])
+offsetCurvesOutward(cross, 5)
+offsetCurvesInward(cross, 5)
+```
+
+## Skeletons
+
+![Medial axis](https://pattapatta.madorkestra.com/assets/contour-medial.svg)
+![Medial axis pruned](https://pattapatta.madorkestra.com/assets/contour-medial-pruned.svg)
+![Chordal axis](https://pattapatta.madorkestra.com/assets/contour-chordal.svg)
+![Straight skeleton](https://pattapatta.madorkestra.com/assets/contour-straight-skeleton.svg)
+
+```ts
+const shape = densify(cross, 2.5)
+medialAxis(shape, 0, 0, 0)           // full
+medialAxis(shape, 0.15, 0.1, 0.1)    // pruned
+chordalAxis(shape)
+
+// Straight skeleton ≈ successive inward offsets (wavefronts above)
+let cur = cross
+for (let i = 0; i < 5; i++) {
+  const next = offsetCurvesInward(cur, 4)
+  if (!next.paths.length) break
+  cur = next.paths[0]!
+}
+straightSkeletonParts(cross)         // faces, branches, bones from the same process
+```
+
+## Center line
+
+![Center line](https://pattapatta.madorkestra.com/assets/contour-centerline.svg)
+
+```ts
+let capsule = union(createRect(22, 40, 56, 20), createCircle(22, 50, 10))
+capsule = densify(
+  union(capsule.paths[0]!, createCircle(78, 50, 10)).paths[0]!,
+  2.5,
+)
+centerLine(capsule, 0.65, 30)
+```
+
+## Fields
+
+![Distance field](https://pattapatta.madorkestra.com/assets/contour-distance-field.svg)
+![Contrast field](https://pattapatta.madorkestra.com/assets/contour-contrast-field.svg)
+![Isolines](https://pattapatta.madorkestra.com/assets/contour-isolines.svg)
+![Distance tree](https://pattapatta.madorkestra.com/assets/contour-distance-tree.svg)
+
+```ts
+const L = polygon([/* …L outline… */])
+distanceField(L, 7)
+contrastField(L, 5, vec2(35, 65))
+isolines(L, vec2(35, 65), 8)
+distanceTree(meshGroup, vec2(35, 65), true)
+```
+
+## Notes
+
+- Clean-room MIT reimplementations (not ports of PGS / JMedialAxis / grassfire4j).
+- `straightSkeleton` uses successive inward offsets (robust approximation); exact kinetic skeletons may follow later.
+- Densify sparse polygons before `medialAxis` / `centerLine` for better quality.
+
+---
+
+<!-- hull -->
+
+# hull
+
+Convex hull and bounding box.
+
+## Imports
+
+```ts
+import { convexHull, convexHullPath, boundingBox, hull } from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `convexHull(points)` | Andrew monotone chain → polygon |
+| `convexHullPath(path)` | Hull of all path vertices |
+| `boundingBox(path)` | AABB as rectangle path |
+
+## Examples
+
+### Convex hull
+
+![Convex hull](https://pattapatta.madorkestra.com/assets/hull-convex.svg)
+
+### Bounding box
+
+![Bounding box](https://pattapatta.madorkestra.com/assets/hull-bbox.svg)
+
+---
+
+<!-- triangulation -->
+
+# triangulation
+
+Polygon and point-set triangulations.
+
+## Imports
+
+```ts
+import {
+  earCutTriangulation,
+  delaunayTriangulation,
+  delaunayTriangulationPoints,
+  poissonTriangulation,
+  poissonTriangulationPoints,
+  refine,
+  triangulation,
+  type RefineOptions,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `earCutTriangulation(path, opts?)` | Clipper2 triangulate (holes OK) |
+| `delaunayTriangulation(path)` | Same with `useDelaunay: true` |
+| `delaunayTriangulationPoints(points)` | d3-delaunay triangles |
+| `poissonTriangulation(path, minDist, seed?)` | Delaunay with Poisson Steiner points inside the path |
+| `poissonTriangulationPoints(path, minDist, seed?)` | Boundary + Steiner point set only |
+| `refine(path, opts?)` | Ruppert-inspired angle refinement (approximate) |
+
+`refine` options (`RefineOptions`): `minAngle` (radians, default ≈20°), `maxIterations` (default 200).
+
+Try interactive controls on [Live demos](https://pattapatta.madorkestra.com/demos).
+
+## Examples
+
+Uses a star polygon (this repo has no maple-leaf constructor).
+
+### Delaunay
+
+![Delaunay](https://pattapatta.madorkestra.com/assets/triangulation-delaunay.svg)
+
+### Earcut
+
+![Earcut](https://pattapatta.madorkestra.com/assets/triangulation-earcut.svg)
+
+### Poisson Delaunay
+
+Delaunay triangulation where Steiner points from Poisson-disk sampling are inserted.
+
+![Poisson Delaunay](https://pattapatta.madorkestra.com/assets/triangulation-poisson.svg)
+
+### Refine
+
+Ruppert-inspired angle refinement.
+
+![Refine](https://pattapatta.madorkestra.com/assets/triangulation-refine.svg)
+
+---
+
+<!-- voronoi -->
+
+# voronoi
+
+Voronoi cells from point sites (`d3-delaunay`).
+
+## Imports
+
+```ts
+import {
+  compoundVoronoi, innerVoronoi, innerVoronoiRaw, voronoi,
+  type VoronoiOptions,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `compoundVoronoi(sites, opts?)` | Cells clipped to bbox |
+| `innerVoronoi(sites, container, opts?)` | Intersect cells with path |
+| `innerVoronoiRaw` | Alias of compound |
+
+`opts.bounds` defaults to a padded site AABB.
+
+## Examples
+
+### Compound
+
+![Compound Voronoi](https://pattapatta.madorkestra.com/assets/voronoi-compound.svg)
+
+### Inner (clipped)
+
+![Inner Voronoi](https://pattapatta.madorkestra.com/assets/voronoi-inner.svg)
+
+---
+
+<!-- point-set -->
+
+# pointSet
+
+Point distributions, pruning, spatial ordering, and tours.
+
+## Imports
+
+```ts
+import {
+  randomPoints, squareGrid, hexGrid, pointRing,
+  poisson, prunePointsWithinDistance,
+  hilbertSort, findShortestTour, pointSet,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `randomPoints(n, minX, minY, maxX, maxY, seed?)` | Uniform box samples |
+| `squareGrid` / `hexGrid` | Lattices in a box |
+| `pointRing(count, center, radius)` | Circle samples |
+| `poisson(minDist, …, seed?)` | Bridson-style Poisson disk |
+| `prunePointsWithinDistance(pts, minDist)` | Greedy thinning |
+| `hilbertSort(pts)` | Order by 2D Hilbert index (spatial locality) |
+| `findShortestTour(pts)` | Approximate TSP tour (NN + 2-opt), closed path |
+
+## Example — Poisson
+
+![Poisson](https://pattapatta.madorkestra.com/assets/pointset-poisson.svg)
+
+```ts
+const pts = poisson(14, 10, 10, 90, 90, 8)
+```
+
+## Example — Hilbert sort
+
+Connect points in Hilbert order for a locality-preserving stroke path.
+
+![Hilbert sort](https://pattapatta.madorkestra.com/assets/pointset-hilbert-sort.svg)
+
+```ts
+import { hilbertSort, polyline, poisson } from 'pattapatta'
+
+const pts = poisson(14, 10, 10, 90, 90, 8)
+const ordered = hilbertSort(pts)
+const stroke = polyline(ordered) // open path fill mark
+```
+
+## Example — Shortest tour
+
+Closed tour visiting every point once (stroke fill / stipple connect).
+
+![Shortest tour](https://pattapatta.madorkestra.com/assets/pointset-shortest-tour.svg)
+
+```ts
+import { findShortestTour, poisson } from 'pattapatta'
+
+const pts = poisson(14, 10, 10, 90, 90, 8)
+const tour = findShortestTour(pts) // closed Path
+```
+
+---
+
+<!-- optimisation -->
+
+# optimisation
+
+Inscribed / bounding circles and distance queries.
+
+## Imports
+
+```ts
+import {
+  envelope, maximumInscribedCircle, largestEmptyCircle, largestEmptyCircles,
+  maximumInscribedAARectangle, closestPoint, closestVertex,
+  closestPointPair, farthestPointPair, minimumBoundingCircle,
+  optimisation,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `envelope(path)` | AABB polygon |
+| `maximumInscribedCircle` / `largestEmptyCircle` | MIC / LEC |
+| `largestEmptyCircles` | Pack until min radius |
+| `maximumInscribedAARectangle` | Heuristic AA inset rect |
+| `closestPoint` / `closestVertex` | On boundary / vertices |
+| `closestPointPair` / `farthestPointPair` | Among a point set |
+| `minimumBoundingCircle` | Welzl on hull |
+
+## Examples
+
+### Maximum inscribed circle
+
+![MIC](https://pattapatta.madorkestra.com/assets/optimisation-mic.svg)
+
+### Minimum bounding circle
+
+![MBC](https://pattapatta.madorkestra.com/assets/optimisation-mbc.svg)
+
+---
+
+<!-- polygonisation -->
+
+# polygonisation
+
+Turn point clouds into closed polygons.
+
+## Imports
+
+```ts
+import {
+  maxArea, minArea, minPerimeter,
+  polygoniseHorizontal, polygoniseVertical,
+  angular, circular, onion, onionLayers, hilbertPolygonise,
+  polygonisation,
+} from 'pattapatta'
+```
+
+## Functions
+
+| Function | Description |
+|----------|-------------|
+| `maxArea(points)` | Convex hull |
+| `minArea(points)` | Small covering triangle heuristic |
+| `minPerimeter(points)` | Nearest-neighbor tour |
+| `polygoniseHorizontal` / `Vertical` | Sort then close |
+| `angular` / `circular` | Polar order |
+| `onion` / `onionLayers` | Convex peels |
+| `hilbertPolygonise` | Hilbert order then close |
+
+## Examples
+
+### Angular
+
+![Angular](https://pattapatta.madorkestra.com/assets/polygonise-angular.svg)
+
+### Hilbert
+
+![Hilbert](https://pattapatta.madorkestra.com/assets/polygonise-hilbert.svg)
+
+### Onion
+
+![Onion](https://pattapatta.madorkestra.com/assets/polygonise-onion.svg)
+
+---
+
+<!-- meshing -->
+
+# meshing
+
+Faces, edges, graph filters, quadrangulation, and mesh processing.
+
+## Imports
+
+```ts
+import {
+  urquhartFaces, gabrielFaces, relativeNeighborFaces, spannerFaces, dualFaces,
+  centroidQuadrangulation, edgeCollapseQuadrangulation, splitQuadrangulation,
+  spiralQuadrangulation, matchingQuadrangulation,
+  smoothMesh, subdivideMesh, simplifyMesh, stochasticMerge, areaMerge,
+  extractInnerEdges, extractInnerVertices, findContainingFace, splitEdges,
+  findBreaks, fixBreaks, fixBrokenFaces, findIslands,
+  radialSortFaces, centroidSortFaces, meshing,
+} from 'pattapatta'
+```
+
+## Graph faces
+
+| Function | Description |
+|----------|-------------|
+| `urquhartFaces(points\|faces, preservePerimeter?)` | Remove longest edge per triangle → polygonal faces |
+| `gabrielFaces(points\|faces, preservePerimeter?)` | Delaunay ∩ Gabriel faces |
+| `relativeNeighborFaces(points\|faces, preservePerimeter?)` | Delaunay ∩ RNG faces |
+| `spannerFaces(points\|faces, k, preservePerimeter?)` | Greedy sparse spanner faces (higher `k` → larger faces) |
+| `dualFaces(faces)` | Closed dual cells around interior vertices |
+
+### Urquhart faces
+
+![Urquhart](https://pattapatta.madorkestra.com/assets/meshing-urquhart.svg)
+
+### Gabriel faces
+
+![Gabriel](https://pattapatta.madorkestra.com/assets/meshing-gabriel.svg)
+
+### Triangulation dual
+
+![Dual](https://pattapatta.madorkestra.com/assets/meshing-dual.svg)
+
+### Relative neighbour faces
+
+![RNG](https://pattapatta.madorkestra.com/assets/meshing-rng.svg)
+
+### Spanner faces
+
+![Spanner](https://pattapatta.madorkestra.com/assets/meshing-spanner.svg)
+
+## Quadrangulation
+
+| Function | Description |
+|----------|-------------|
+| `centroidQuadrangulation(points\|faces, preservePerimeter?)` | Quads from triangle centroids across shared edges |
+| `edgeCollapseQuadrangulation(points\|faces, preservePerimeter?)` | Pair adjacent triangles into quads |
+| `splitQuadrangulation(points\|faces)` | Catmull–Clark: 3 quads per triangle |
+| `spiralQuadrangulation(points)` | Spiral-patterned quads from a point set |
+| `matchingQuadrangulation(points\|faces)` | Quality-weighted triangle matching |
+
+### Centroid quadrangulation
+
+![Centroid quad](https://pattapatta.madorkestra.com/assets/meshing-centroid-quad.svg)
+
+### Edge collapse quadrangulation
+
+![Edge collapse](https://pattapatta.madorkestra.com/assets/meshing-edge-collapse.svg)
+
+### Split quadrangulation
+
+![Split quad](https://pattapatta.madorkestra.com/assets/meshing-split-quad.svg)
+
+### Spiral quadrangulation
+
+![Spiral](https://pattapatta.madorkestra.com/assets/meshing-spiral-quad.svg)
+
+### Matching quadrangulation
+
+![Matching](https://pattapatta.madorkestra.com/assets/meshing-matching-quad.svg)
+
+## Process
+
+| Function | Description |
+|----------|-------------|
+| `smoothMesh(faces, iterations\|cutoff, preservePerimeter?)` | Weighted Laplacian smoothing |
+| `subdivideMesh(faces, edgeSplitRatio?)` | Centroid subdivision (N subfaces per N-gon) |
+| `simplifyMesh(faces, tolerance, preservePerimeter?)` | Simplify face boundaries, keep topology |
+| `stochasticMerge(faces, nClasses, seed?)` | Random dissolve of adjacent same-class faces |
+| `areaMerge(faces, minArea \| { remainingFaces })` | Merge tiny faces into neighbors |
+| `splitEdges(faces, maxLen)` | Densify long edges |
+
+### Mesh smoothing
+
+![Smooth](https://pattapatta.madorkestra.com/assets/meshing-smooth.svg)
+
+### Mesh subdivision
+
+![Subdivide](https://pattapatta.madorkestra.com/assets/meshing-subdivide.svg)
+
+### Mesh simplification
+
+![Simplify](https://pattapatta.madorkestra.com/assets/meshing-simplify.svg)
+
+### Stochastic merge
+
+![Stochastic](https://pattapatta.madorkestra.com/assets/meshing-stochastic-merge.svg)
+
+### Area merge
+
+![Area merge](https://pattapatta.madorkestra.com/assets/meshing-area-merge.svg)
+
+## Extract / repair
+
+| Function | Description |
+|----------|-------------|
+| `extractInnerEdges(faces)` | Edges shared by ≥2 faces |
+| `extractInnerVertices(faces)` | Vertices not on the perimeter |
+| `findContainingFace(faces, point)` | First containing face |
+| `findBreaks(faces)` | Near-miss gap segments |
+| `fixBreaks(faces, maxGapWidth)` | Snap gaps / clean coverage |
+| `fixBrokenFaces(coverage, tolerance, polygonise?)` | Endpoint snap + polygonise |
+| `findIslands(faces)` | Disconnected face components |
+| `radialSortFaces` / `centroidSortFaces` | Order faces |
+
+### Extract inner edges
+
+![Edges](https://pattapatta.madorkestra.com/assets/meshing-edges.svg)
+
+### Extract inner vertices
+
+![Inner vertices](https://pattapatta.madorkestra.com/assets/meshing-inner-vertices.svg)
+
+### Fix breaks
+
+![Fix breaks](https://pattapatta.madorkestra.com/assets/meshing-fix-breaks.svg)
+
+---
+
+<!-- cli -->
+
+# CLI
+
+```bash
+npx pattapatta --help
+npx pattapatta --version
+```
+
+## `svg:roundtrip`
+
+Parse an SVG, rebuild the path model, write SVG back out (useful for smoke-checking I/O).
+
+```bash
+npx pattapatta svg:roundtrip input.svg -o output.svg
+```
+
+## Notes
+
+- The binary is ESM (`dist/cli.js`) with a Node shebang.
+- Prefer the library API for geometry work; the CLI stays intentionally thin.
