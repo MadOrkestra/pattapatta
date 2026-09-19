@@ -1,5 +1,8 @@
 # pattapatta
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/MadOrkestra)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/madorkestra)
+
 **pattapatta** is a TypeScript geometry library for **pen plotters**: hatching, circle packing, triangulation and meshing, boolean path ops, Voronoi, tilings, and SVG I/O — for Node and the browser.
 
 Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), implemented clean-room under **MIT** (not a line port).
@@ -30,6 +33,8 @@ Inspired by [Processing Geometry Suite (PGS)](https://github.com/micycle1/PGS), 
 
 - Repository: [github.com/MadOrkestra/pattapatta](https://github.com/MadOrkestra/pattapatta)
 - Issues: [github.com/MadOrkestra/pattapatta/issues](https://github.com/MadOrkestra/pattapatta/issues)
+- [Sponsor on GitHub](https://github.com/sponsors/MadOrkestra)
+- [Buy Me a Coffee](https://www.buymeacoffee.com/madorkestra)
 
 ## Design notes
 

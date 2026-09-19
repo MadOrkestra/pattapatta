@@ -72,5 +72,20 @@
 				rel="noopener noreferrer"
 			>Issues</a>
 		</p>
+		<p class="text-muted-foreground px-2 pb-1 text-xs leading-relaxed">
+			<a
+				class="text-foreground underline-offset-2 hover:underline"
+				href="https://github.com/sponsors/MadOrkestra"
+				target="_blank"
+				rel="noopener noreferrer"
+			>Sponsor</a>
+			·
+			<a
+				class="text-foreground underline-offset-2 hover:underline"
+				href="https://www.buymeacoffee.com/madorkestra"
+				target="_blank"
+				rel="noopener noreferrer"
+			>Buy Me a Coffee</a>
+		</p>
 	</SidebarFooter>
 </Sidebar>

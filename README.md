@@ -1,5 +1,8 @@
 # pattapatta
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/MadOrkestra)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/madorkestra)
+
 Pen-plotter geometry library (inspired by [PGS](https://github.com/micycle1/PGS)): hatching, circle packing, triangulation / meshing, boolean path ops, Voronoi, tilings, and SVG I/O for Node and the browser.
 
 **Stroke marks only** — solid area fills are not the goal.
@@ -64,4 +67,4 @@ pnpm docs:examples   # regenerate SVG figures
 
 MIT — clean-room implementation (not a GPL line-port of PGS). See `docs/decisions/`.
 
-Source: [github.com/MadOrkestra/pattapatta](https://github.com/MadOrkestra/pattapatta) · [Issues](https://github.com/MadOrkestra/pattapatta/issues)
+Source: [github.com/MadOrkestra/pattapatta](https://github.com/MadOrkestra/pattapatta) · [Issues](https://github.com/MadOrkestra/pattapatta/issues) · [Sponsor](https://github.com/sponsors/MadOrkestra) · [Buy Me a Coffee](https://www.buymeacoffee.com/madorkestra)
